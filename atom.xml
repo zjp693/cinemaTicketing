@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zjp693.github.io</id>
     <title>Gridea</title>
-    <updated>2021-10-13T15:19:05.752Z</updated>
+    <updated>2021-10-18T06:50:52.745Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zjp693.github.io"/>
     <link rel="self" href="https://zjp693.github.io/atom.xml"/>
@@ -10,6 +10,28 @@
     <logo>https://zjp693.github.io/images/avatar.png</logo>
     <icon>https://zjp693.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[mysql安装教程]]></title>
+        <id>https://zjp693.github.io/post/my-an-zhuang-jiao-cheng/</id>
+        <link href="https://zjp693.github.io/post/my-an-zhuang-jiao-cheng/">
+        </link>
+        <updated>2021-10-14T02:37:55.000Z</updated>
+        <content type="html"><![CDATA[<p>mysql 安装教程</p>
+<p>首先在再<a href="https://www.mysql.com/">mysql官网</a>下载安装包</p>
+<p>进入页面顶部的&quot;Downloads&quot;</p>
+<figure data-type="image" tabindex="1"><img src="https://zjp693.github.io/post-images/mysql/image-20211014102843746.png" alt="" loading="lazy"></figure>
+<p>打开页面底部的“Community(GPL) Downloads”</p>
+<figure data-type="image" tabindex="2"><img src="https://zjp693.github.io/post-images/mysql/image-20211014103020882.png" alt="" loading="lazy"></figure>
+<p>在页面中找到我们windows上要用的下载页面“MySQL  Installer for Windows</p>
+<figure data-type="image" tabindex="3"><img src="https://zjp693.github.io/post-images/mysql/image-20211014103138404.png" alt="" loading="lazy"></figure>
+<p>页面底端找到下载入口“ Windows (x86, 32-bit), MSI Installer ”，点击Download按钮开始下载</p>
+<figure data-type="image" tabindex="4"><img src="https://zjp693.github.io/post-images/mysql/image-20211014103304747.png" alt="" loading="lazy"></figure>
+<p>这个页面告诉询问你是否登录，告诉你登录之后有哪些好处，我们不登录，点击页面底部的“ <strong>No thanks, just start my download.</strong> ”按钮进入下载页面</p>
+<figure data-type="image" tabindex="5"><img src="https://zjp693.github.io/post-images/mysql/image-20211014103456873.png" alt="" loading="lazy"></figure>
+<p>下载完成<br>
+<img src="https://zjp693.github.io/post-images/mysql/image-20211014103610773.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
         <id>https://zjp693.github.io/post/hello-gridea/</id>
