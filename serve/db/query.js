@@ -6,7 +6,6 @@ const { config } = require("./config");
 
 // 连接数据库配置信息
 var pool = mysql.createPool(config);
-console.log(2);
 //  创建连接   sql：sql语句
 module.exports.query = (sql, values) => {
   return new Promise(function (resolve, reject) {
@@ -18,10 +17,8 @@ module.exports.query = (sql, values) => {
       connection.query(sql, values, function (error, results, fields) {
         // When done with the connection, release it.   没连接上之拿到返回数据的之后，会把当前连接释放掉
         connection.release();
-        console.log(1);
         // Handle error after the release.  抛出异常
         if (error) throw error;
-        console.log(results, "results");
         resolve(results);
 
         // Don't use the connection here, it has been returned to the pool.

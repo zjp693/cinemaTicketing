@@ -1,10 +1,10 @@
+const { findUserInfo } = require("../model/users");
+const jwt = require("jsonwebtoken");
 // 登录
 module.exports.login = async (ctx) => {
   const { username, password } = ctx.request.body;
-
-  // 在数据库查询用户信息是否有
-  const result = await findUserInfo(username, password + secret);
-
+  // // 在数据库查询用户信息是否有
+  const result = await findUserInfo(username, password);
   // 用户是否存在
   if (result[0]) {
     // 根据用户名和密码生成token
@@ -13,7 +13,7 @@ module.exports.login = async (ctx) => {
         username,
         password,
       },
-      jwtSecret,
+      "secret",
       { expiresIn: "1h" }
     );
     ctx.body = {
@@ -21,7 +21,6 @@ module.exports.login = async (ctx) => {
       data: {
         token,
       },
-
       message: "登录成功",
     };
   } else {

@@ -1,2 +1,2 @@
-const { query } = require("../db/query");
-console.log(query);
+// const { query } = require("../db/query");
+// console.log(query);
