@@ -10,8 +10,12 @@ export function login({ username, password }) {
   return requestWithToken("/login", "post", { username, password });
 }
 
-// 加载电影列表
-export function getMovieList() {
-  return requestWithToken("/movie/list", "get");
+// 加载用户列表
+export function getCurrentPageUser({ input, currentPage, pageSize }) {
+  console.log(input, currentPage, pageSize);
+  return requestWithToken("/users/getCurrentPageUser", "get", {
+    input,
+    currentPage,
+    pageSize,
+  });
 }
-

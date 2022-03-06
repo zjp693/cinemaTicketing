@@ -1,17 +1,23 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import Home from "../views/Home/index";
+import Login from "../views/Login";
+import UserManage from "../components/UserManage.vue";
 
 const routes = [
-  {
-    path: "/",
-    name: "Home",
-    component: Home,
-  },
   // 登录
   {
     path: "/login",
     name: "login",
-    component: () => import("../views/Login"),
+    component: Login,
+  },
+  {
+    path: "/",
+    name: "Home",
+    component: Home,
+    children: [
+      { path: "/", redirect: "/user_manage" },
+      { path: "user_manage", component: UserManage },
+    ],
   },
 ];
 
