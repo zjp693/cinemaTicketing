@@ -3,5 +3,5 @@ module.exports.config = {
   host: "localhost", // 主机
   user: "root", // 用户名
   password: "123456", // 密码
-  database: "db_film", // 数据库名称
+  database: "cinema", // 数据库名称
 };
