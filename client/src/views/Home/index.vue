@@ -95,6 +95,10 @@
 <script setup>
 import { ref } from "vue";
 const currentMenuIndex = ref("/user_manage");
+
+const logout = () => {
+  console.log("退出登录");
+};
 </script>
 
 <style>
