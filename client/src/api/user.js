@@ -11,11 +11,7 @@ export function login({ username, password }) {
 }
 
 // 加载用户列表
-export function getCurrentPageUser({ currentPage, pageSize, input }) {
-  console.log(currentPage, pageSize, input);
-  return requestWithToken("/users/getCurrentPageUser", "get", {
-    currentPage,
-    pageSize,
-    input,
-  });
+export function getCurrentPageUser() {
+  // console.log(currentPage, pageSize, input);
+  return requestWithToken("/users/getCurrentPageUser", "get");
 }

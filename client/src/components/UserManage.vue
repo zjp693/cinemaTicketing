@@ -80,7 +80,7 @@
         background
         layout="prev, pager, next"
         :page-size="3"
-        :total="total"
+        :total="1111"
       />
     </div>
   </div>
@@ -89,17 +89,35 @@
 <script setup>
 import { getCurrentPageUser } from "@/api/user";
 import { ref } from "vue";
-//表格数据
+//region 定义的数据
+//搜索输入内容
+const input = ref("");
+//表格所需数据
 const tableData = ref([]);
 const total = ref();
+//endregion
 
-getCurrentPageUser({ currentPage: 1, pageSize: 5, input: "" }).then((res) => {
+//region 获取用户数据
+getCurrentPageUser().then((res) => {
   console.log(res);
   if (res.status == 200) {
     tableData.value = res.data;
     total.value = res.total;
   }
 });
+//endregion
+
+//region 搜索
+const search = () => {
+  console.log("搜索功能");
+};
+//endregion
+
+//region
+const addUser = () => {
+  console.log("添加功能");
+};
+//endregion
 </script>
 
 <style>
