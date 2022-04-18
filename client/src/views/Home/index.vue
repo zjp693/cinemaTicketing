@@ -101,7 +101,7 @@ const logout = () => {
 };
 </script>
 
-<style>
+<style scope>
 #home {
   width: 100%;
   height: 100%;

@@ -21,7 +21,12 @@
     </div>
     <!--表格-->
     <div class="user-table">
-      <el-table border :data="tableData">
+      <el-table
+        border
+        :data="
+          tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+        "
+      >
         <el-table-column
           label="用户 ID"
           align="center"
@@ -69,18 +74,12 @@
     </div>
     <!--    分页-->
     <div class="block" v-if="tableData.length">
-      <!--      <el-pagination-->
-      <!--        @current-change="currentChange"-->
-      <!--        background-->
-      <!--        layout="prev, pager, next"-->
-      <!--        :page-size="8"-->
-      <!--        :total="111"-->
-      <!--      ></el-pagination>-->
       <el-pagination
         background
         layout="prev, pager, next"
-        :page-size="3"
-        :total="1111"
+        v-model:page-size="pageSize"
+        v-model:current-page="currentPage"
+        :total="total"
       />
     </div>
   </div>
@@ -95,6 +94,8 @@ const input = ref("");
 //表格所需数据
 const tableData = ref([]);
 const total = ref();
+const pageSize = ref(8);
+const currentPage = ref(1);
 //endregion
 
 //region 获取用户数据
@@ -120,7 +121,7 @@ const addUser = () => {
 //endregion
 </script>
 
-<style>
+<style scope>
 .user-table {
   width: 90%;
   min-width: 900px;
@@ -134,12 +135,7 @@ const addUser = () => {
   margin-bottom: 30px;
 }
 .block {
-  text-align: center;
-}
-.el-dialog__header {
-  text-align: center;
-}
-.el-dialog__body .el-form-item {
-  padding-left: 20%;
+  display: flex;
+  justify-content: center;
 }
 </style>
