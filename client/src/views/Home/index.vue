@@ -1,47 +1,35 @@
 <template>
   <div id="home">
-    <!-- 头部 -->
-    <el-row class="header" :span="24">
+    <el-row class="header">
       <div class="head-bar">
-        <el-col :span="2">
-          <div class="left">
-            <i
-              class="icon-film-logo"
-              style="font-size: 48px; margin-right: 5px"
-            ></i>
-            <span style="font-size: 16px; font-weight: bolder">票票电影</span>
-          </div>
-        </el-col>
-        <el-col :span="2">
-          <div class="right">
-            <img
-              class="user-avatar"
-              width="40px"
-              height="40px"
-              style="border-radius: 20px"
-              alt=""
-            />
-            <!-- <div>111</div> -->
-            <!-- 下拉菜单 -->
-            <el-dropdown style="margin-left: 12px">
-              <span class="el-dropdown-link">
-                用户账号
-                <el-icon class="el-icon--right">
-                  <arrow-down />
-                </el-icon>
-              </span>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item>个人信息</el-dropdown-item>
-                  <el-dropdown-item>退出</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </div>
-        </el-col>
+        <div class="left">
+          <i
+            class="icon-film-logo"
+            style="font-size: 48px; margin-right: 5px"
+          ></i>
+          <span style="font-size: 16px; font-weight: bolder">淘气电影</span>
+        </div>
+        <div class="right">
+          <img
+            class="user-avatar"
+            width="40px"
+            height="40px"
+            style="border-radius: 20px"
+          />
+          <el-dropdown style="margin-left: 12px">
+            <span class="el-dropdown-link">
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item>个人信息</el-dropdown-item>
+                <el-dropdown-item @click="logout">退出</el-dropdown-item>
+              </el-dropdown-menu></template
+            >
+          </el-dropdown>
+        </div>
       </div>
     </el-row>
-    <!-- 惨 -->
     <el-row class="container">
       <div class="section">
         <div class="nav-bar">
@@ -51,23 +39,22 @@
               @click="handleMenuItemClick('/user_manage')"
             >
               <i class="el-icon-user-solid"></i>
-              <template #title>
-                <span>用户管理</span>
-              </template>
+              <span>用户管理</span>
             </el-menu-item>
             <el-menu-item
               index="/movie_manage"
               @click="handleMenuItemClick('/movie_manage')"
             >
               <i class="el-icon-s-kpi"></i>
-              <template #title> 电影管理</template>
+
+              <template #title>电影管理 </template>
             </el-menu-item>
             <el-menu-item
               index="/cinema_manage"
               @click="handleMenuItemClick('/cinema_manage')"
             >
               <i class="el-icon-video-camera-solid"></i>
-              <template #title>影院管理</template>
+              <template #title>影院管理 </template>
             </el-menu-item>
             <el-menu-item
               index="/hall_manage"
@@ -81,7 +68,7 @@
               @click="handleMenuItemClick('/movie_schedule')"
             >
               <i class="el-icon-s-fold"></i>
-              <template #title> 电影排片</template>
+              <template #title>电影排片 </template>
             </el-menu-item>
             <el-menu-item
               index="/comment_manage"
@@ -95,7 +82,7 @@
               @click="handleMenuItemClick('/order_manage')"
             >
               <i class="el-icon-s-ticket"></i>
-              <template #title> 订单管理</template>
+              <template #title>订单管理 </template>
             </el-menu-item>
           </el-menu>
         </div>
@@ -107,7 +94,6 @@
 
 <script setup>
 import { ref } from "vue";
-
 const currentMenuIndex = ref("/user_manage");
 </script>
 
@@ -125,7 +111,7 @@ const currentMenuIndex = ref("/user_manage");
 }
 .container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;

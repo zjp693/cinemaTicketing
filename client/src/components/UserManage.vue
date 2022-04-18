@@ -16,9 +16,7 @@
         </el-input>
       </el-col>
       <el-col :span="2" :offset="1">
-        <el-button type="primary" size="small" @click="addUser"
-          >添加用户</el-button
-        >
+        <el-button type="primary" @click="addUser">添加用户</el-button>
       </el-col>
     </div>
     <!--表格-->
@@ -56,11 +54,11 @@
         ></el-table-column>
         <el-table-column align="center" width="200" label="操作">
           <template #default="scope">
-            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
+            <el-button size="small" @click="handleEdit(scope.$index, scope.row)"
               >编辑</el-button
             >
             <el-button
-              size="mini"
+              size="small"
               type="danger"
               @click="handleDelete(scope.$index, scope.row)"
               >注销</el-button
@@ -70,29 +68,37 @@
       </el-table>
     </div>
     <!--    分页-->
-    <!--    <div class="block" v-if="tableData.length">-->
-    <!--      <el-pagination-->
-    <!--        @current-change="currentChange"-->
-    <!--        background-->
-    <!--        layout="prev, pager, next"-->
-    <!--        :page-size="8"-->
-    <!--        :total="total"-->
-    <!--      ></el-pagination>-->
-    <!--    </div>-->
+    <div class="block" v-if="tableData.length">
+      <!--      <el-pagination-->
+      <!--        @current-change="currentChange"-->
+      <!--        background-->
+      <!--        layout="prev, pager, next"-->
+      <!--        :page-size="8"-->
+      <!--        :total="111"-->
+      <!--      ></el-pagination>-->
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :page-size="3"
+        :total="total"
+      />
+    </div>
   </div>
 </template>
 
 <script setup>
 import { getCurrentPageUser } from "@/api/user";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
+//表格数据
+const tableData = ref([]);
+const total = ref();
 
-const tableData1 = ref("");
-console.log(tableData1);
-onMounted(() => {
-  tableData1.value = getCurrentPageUser({
-    currentPage: 1,
-    pageSize: 8,
-  });
+getCurrentPageUser({ currentPage: 1, pageSize: 5, input: "" }).then((res) => {
+  console.log(res);
+  if (res.status == 200) {
+    tableData.value = res.data;
+    total.value = res.total;
+  }
 });
 </script>
 

@@ -8,8 +8,10 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 //配置字体图标
-import "/src/assets/common/css/style.css";
+import "@/assets/common/css/style.css";
+
 const app = createApp(App);
+
 app.use(ElementPlus, {
   locale: zhCn,
 });
