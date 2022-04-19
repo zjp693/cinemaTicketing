@@ -84,12 +84,129 @@
         :total="total"
       />
     </div>
+    <!--用户弹框-->
+    <div>
+      <el-dialog
+        :title="dialogTitle"
+        v-model="dialogFormVisible"
+        :append-to-body="false"
+        v-if="dialogFormVisible"
+        :show-close="false"
+      >
+        <el-form
+          label-position="right"
+          :rules="rules"
+          label-width="80px"
+          :model="userInfo"
+        >
+          <el-form-item label="用户名" prop="user_name">
+            <el-col :span="16">
+              <el-input v-model="userInfo.user_name"></el-input>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="头像">
+            <el-col :span="16">
+              <template #tip>
+                <div
+                  class="el-upload__tip"
+                  style="position: absolute; left: 0; top: 32px; height: 32px"
+                >
+                  只能上传jpg/png文件，且不超过500kb（默认为系统头像）
+                </div>
+              </template>
+              <img
+                :src="
+                  userInfo.avatar
+                    ? userInfo.avatar
+                    : server + '/images/avatar/monkey.png'
+                "
+                alt=""
+                style="width: 80px; height: 80px"
+              />
+              <div style="position: relative; height: 64px">
+                <el-button
+                  size="small"
+                  type="primary"
+                  style="position: absolute; left: 0; top: 0; cursor: pointer"
+                  >点击上传</el-button
+                >
+                <input
+                  type="file"
+                  id="file"
+                  name="file"
+                  ref="uploadImg"
+                  accept="image/png, image/jpeg, image/gif, image/jpg"
+                  style="
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    opacity: 0;
+                    height: 32px;
+                    width: 80px;
+                    cursor: pointer;
+                  "
+                  @change="changeImg"
+                />
+              </div>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="手机" prop="phone">
+            <el-col :span="16">
+              <el-input v-model="userInfo.phone"></el-input>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-col :span="16">
+              <el-input v-model="userInfo.password" show-password></el-input>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="性别" prop="sex">
+            <el-col :span="16">
+              <el-select
+                v-model="userInfo.sex"
+                placeholder="请选择性别"
+                style="width: 100%"
+              >
+                <el-option label="男" value="男"></el-option>
+                <el-option label="女" value="女"></el-option>
+              </el-select>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="生日">
+            <el-col :span="16" prop="birthday">
+              <el-date-picker
+                type="date"
+                placeholder="选择日期"
+                v-model="userInfo.birthday"
+                style="width: 100%"
+              ></el-date-picker>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="个人签名" prop="sign">
+            <el-col :span="16">
+              <el-input
+                type="textarea"
+                v-model="userInfo.sign"
+                :autosize="{ minRows: 2, maxRows: 4 }"
+              ></el-input>
+            </el-col>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="cancel">取 消</el-button>
+            <el-button type="primary" @click="manageUserInfo">确 定</el-button>
+          </div></template
+        >
+      </el-dialog>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { getCurrentPageUser, getSearchUser } from "@/api/user";
-import { ref } from "vue";
+import { getAddUser, getCurrentPageUser, getSearchUser } from "@/api/user";
+import { ElMessage } from "element-plus";
+import { reactive, ref } from "vue";
 //region 定义的数据
 
 //表格所需数据
@@ -102,6 +219,22 @@ const pageSize = ref(8);
 const currentPage = ref(1);
 //搜索输入的内容
 const searchInput = ref();
+//用户信息
+const userInfo = ref({
+  user_name: null,
+  avatar: null,
+  phone: null,
+  password: null,
+  sex: null,
+  sign: null,
+  birthday: null,
+});
+//服务器地址
+const server = "http://localhost:3001";
+//弹出框的标题
+const dialogTitle = ref("");
+//控制是否弹出
+const dialogFormVisible = ref(false);
 //endregion
 
 //region 获取用户数据
@@ -126,14 +259,112 @@ const searchs = () => {
 };
 //endregion
 
-//region
+//region 添加用户
 const addUser = () => {
-  console.log("添加功能");
+  dialogTitle.value = "添加用户";
+  userInfo.value = {};
+  dialogFormVisible.value = true;
 };
+//取消
+const cancel = () => {
+  dialogFormVisible.value = false;
+  userInfo.value = {};
+};
+//确定
+const manageUserInfo = () => {
+  dialogFormVisible.value = false;
+  console.log(userInfo.value);
+  getAddUser(userInfo.value).then((res) => {
+    console.log(res);
+    //添加成功的提示
+    if (res.status == 200) {
+      getCurrentPageUser();
+      ElMessage({
+        message: res.message,
+        type: "success",
+      });
+    } else {
+      ElMessage({
+        message: res.message,
+        type: "warning",
+      });
+    }
+    //  刷新数据
+    getCurrentPageUser().then((res) => {
+      if (res.status == 200) {
+        tableData.value = res.data;
+        total.value = res.total;
+      }
+    });
+  });
+};
+//表单校验规则
+let checkName = (rule, value, callback) => {
+  if (!value) {
+    callback(new Error("用户名不能为空！"));
+  } else {
+    callback();
+  }
+};
+let checkPhone = (rule, value, callback) => {
+  if (!value) {
+    callback(new Error("请输入手机号码"));
+  } else {
+    if (/^1[3|4|5|6|7|8][0-9]{9}$/.test(value)) {
+      callback();
+    } else {
+      callback(new Error("请输入正确格式的手机号码"));
+    }
+  }
+};
+let checkPassword = (rule, value, callback) => {
+  if (!value) {
+    callback(new Error("请输入密码"));
+  } else {
+    callback();
+  }
+};
+let checkSex = (rule, value, callback) => {
+  if (!value) {
+    callback(new Error("请选择性别"));
+  } else {
+    callback();
+  }
+};
+let checkSign = (rule, value, callback) => {
+  if (!value) {
+    callback(new Error("请输入个性签名"));
+  } else {
+    callback();
+  }
+};
+const rules = reactive({
+  user_name: [
+    { required: true, message: "请输入用户名", trigger: "blur" },
+    { validator: checkName, trigger: "blur" },
+  ],
+  phone: [
+    { required: true, message: "请输入手机号码", trigger: "blur" },
+    { validator: checkPhone, trigger: "blur" },
+  ],
+  password: [
+    { required: true, message: "请输入密码", trigger: "blur" },
+    { validator: checkPassword, trigger: "blur" },
+  ],
+  sex: [
+    { required: true, message: "请选择性别", trigger: "blur" },
+    { validator: checkSex, trigger: "blur" },
+  ],
+  sign: [
+    { required: true, message: "请输入个性签名", trigger: "blur" },
+    { validator: checkSign, trigger: "blur" },
+  ],
+});
+//
 //endregion
 </script>
 
-<style scope>
+<style scoped>
 .user-table {
   width: 90%;
   min-width: 900px;
@@ -149,5 +380,14 @@ const addUser = () => {
 .block {
   display: flex;
   justify-content: center;
+}
+.el-dialog__body {
+  text-align: center;
+}
+.el-dialog__body .el-form-item {
+  padding-left: 20%;
+}
+:deep(.el-input__inner) {
+  padding-left: calc(5px + 14px + 12px);
 }
 </style>

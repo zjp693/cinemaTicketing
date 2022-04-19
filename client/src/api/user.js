@@ -26,6 +26,22 @@ export function getCurrentPageUser() {
  * @returns {AxiosPromise}
  */
 export function getSearchUser(searchInput) {
-  // console.log(currentPage, pageSize, input);
   return requestWithToken("/users/getSearchUser", "get", { searchInput });
+}
+
+/**
+ * 添加用户
+ * @param user_name 用户名
+ * @param avatar 头像
+ * @param phone 手机号
+ * @param password 密码
+ * @param sex 性别
+ * @param sign 个性签名
+ * @param birthday 生日
+ * @returns {AxiosPromise}
+ */
+export function getAddUser(userInfo) {
+  return requestWithToken("/users/getAddUser", "post", {
+    userInfo,
+  });
 }
