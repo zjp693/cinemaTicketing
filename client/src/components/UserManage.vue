@@ -5,13 +5,15 @@
       <el-col :span="12">
         <el-input
           placeholder="请输入内容"
-          v-model="input"
+          v-model="searchInput"
           class="input-with-select"
           clearable
           style="width: 100%"
         >
           <template #append>
-            <el-button icon="el-icon-search" @click="search">搜索</el-button>
+            <el-button @click="searchs" @keyup="searchs">
+              <el-icon><search /></el-icon> 搜索</el-button
+            >
           </template>
         </el-input>
       </el-col>
@@ -86,21 +88,24 @@
 </template>
 
 <script setup>
-import { getCurrentPageUser } from "@/api/user";
+import { getCurrentPageUser, getSearchUser } from "@/api/user";
 import { ref } from "vue";
 //region 定义的数据
-//搜索输入内容
-const input = ref("");
+
 //表格所需数据
 const tableData = ref([]);
+//数据总条数
 const total = ref();
+//一页显示多少条数据
 const pageSize = ref(8);
+// /当前页数
 const currentPage = ref(1);
+//搜索输入的内容
+const searchInput = ref();
 //endregion
 
 //region 获取用户数据
 getCurrentPageUser().then((res) => {
-  console.log(res);
   if (res.status == 200) {
     tableData.value = res.data;
     total.value = res.total;
@@ -109,8 +114,15 @@ getCurrentPageUser().then((res) => {
 //endregion
 
 //region 搜索
-const search = () => {
-  console.log("搜索功能");
+const searchs = () => {
+  if (searchInput.value == undefined) return;
+  getSearchUser(searchInput.value).then((res) => {
+    console.log(res);
+    if (res.status == 200) {
+      tableData.value = res.data;
+      total.value = res.total;
+    }
+  });
 };
 //endregion
 
