@@ -117,7 +117,7 @@
               <img
                 :src="
                   userInfo.avatar
-                    ? userInfo.avatar
+                    ? server + userInfo.avatar
                     : server + '/images/avatar/monkey.png'
                 "
                 alt=""
@@ -360,7 +360,14 @@ const rules = reactive({
     { validator: checkSign, trigger: "blur" },
   ],
 });
-//
+//编辑
+const handleEdit = (index, row) => {
+  console.log(index, row);
+  dialogTitle.value = "编辑用户信息";
+  dialogFormVisible.value = true;
+  userInfo.value = row;
+};
+
 //endregion
 </script>
 
