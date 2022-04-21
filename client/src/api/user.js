@@ -56,11 +56,14 @@ export function getUpLoadImg(form) {
 }
 
 /**
- *
+ * 编辑用户
  * @param userInfo
  * @returns {AxiosPromise}
  */
 export function getEditUser(userInfo) {
-  console.log(userInfo);
   return requestWithToken("/users/getEditUser", "post", userInfo);
+}
+
+export function getDeleteUser(user_id) {
+  return requestWithToken("/users/getDeleteUser", "post", { user_id });
 }

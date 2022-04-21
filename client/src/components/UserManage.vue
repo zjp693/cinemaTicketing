@@ -17,6 +17,9 @@
           </template>
         </el-input>
       </el-col>
+      <!--      :data="-->
+      <!--      tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)-->
+      <!--      "-->
       <el-col :span="2" :offset="1">
         <el-button type="primary" @click="addUser">添加用户</el-button>
       </el-col>
@@ -207,11 +210,12 @@
 import {
   getAddUser,
   getCurrentPageUser,
+  getDeleteUser,
   getEditUser,
   getSearchUser,
   getUpLoadImg,
 } from "@/api/user";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { reactive, ref } from "vue";
 //region 定义的数据
 
@@ -220,7 +224,7 @@ const tableData = ref([]);
 //数据总条数
 const total = ref();
 //一页显示多少条数据
-const pageSize = ref(8);
+const pageSize = ref(10);
 // /当前页数
 const currentPage = ref(1);
 //搜索输入的内容
@@ -236,15 +240,28 @@ const server = "http://localhost:3001";
 const dialogTitle = ref("");
 //控制是否弹出
 const dialogFormVisible = ref(false);
+//被注销用户的个数
+const number = ref(0);
 //endregion
 
 //region 获取用户数据
-getCurrentPageUser().then((res) => {
-  if (res.status === 200) {
-    tableData.value = res.data;
-    total.value = res.total;
-  }
-});
+
+const news = () => {
+  getCurrentPageUser().then((res) => {
+    // 过滤的被注销的数据
+    if (res.status === 200) {
+      const date = res.data.filter((item) => {
+        return item.state === 1;
+      });
+      number.value = res.total - date.length;
+      tableData.value = date;
+      total.value = res.total - number.value;
+      // console.log(number.value);
+    }
+  });
+};
+news();
+
 //endregion
 
 //region 搜索
@@ -298,7 +315,8 @@ const manageUserInfo = () => {
     getAddUser(userInfo.value).then((res) => {
       //添加成功的提示
       if (res.status === 200) {
-        getCurrentPageUser();
+        //  刷新数据
+        news();
         ElMessage({
           message: res.message,
           type: "success",
@@ -309,13 +327,6 @@ const manageUserInfo = () => {
           type: "warning",
         });
       }
-      //  刷新数据
-      getCurrentPageUser().then((res) => {
-        if (res.status == 200) {
-          tableData.value = res.data;
-          total.value = res.total;
-        }
-      });
     });
   }
   if (dialogTitle.value === "编辑用户信息") {
@@ -323,16 +334,11 @@ const manageUserInfo = () => {
     getEditUser(userInfo.value).then((res) => {
       console.log(res.status);
       if (res.status == 200) {
+        //  刷新数据
+        news();
         ElMessage({
           message: res.message,
           type: "success",
-        });
-        getCurrentPageUser().then((res) => {
-          console.log(res);
-          if (res.status == 200) {
-            tableData.value = res.data;
-            total.value = res.total;
-          }
         });
       }
     });
@@ -386,7 +392,33 @@ const handleEdit = (index, row) => {
   dialogFormVisible.value = true;
   userInfo.value = row;
 };
-
+//注销
+const handleDelete = (index, row) => {
+  console.log(index, row.user_id);
+  ElMessageBox.confirm("此操作将永久删除该用户所有信息, 是否继续？", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      getDeleteUser(row.user_id).then((res) => {
+        if (res.status == 200) {
+          //  刷新数据
+          news();
+          ElMessage({
+            type: "success",
+            message: res.message,
+          });
+        }
+      });
+    })
+    .catch(() => {
+      ElMessage({
+        type: "info",
+        message: "取消注销用户",
+      });
+    });
+};
 //endregion
 </script>
 
