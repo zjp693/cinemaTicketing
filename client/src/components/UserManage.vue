@@ -106,23 +106,22 @@
           </el-form-item>
           <el-form-item label="头像">
             <el-col :span="16">
-              <template #tip>
-                <div
-                  class="el-upload__tip"
-                  style="position: absolute; left: 0; top: 32px; height: 32px"
-                >
-                  只能上传jpg/png文件，且不超过500kb（默认为系统头像）
-                </div>
-              </template>
               <img
                 :src="
                   userInfo.avatar
-                    ? server + userInfo.avatar
+                    ? userInfo.avatar
                     : server + '/images/avatar/monkey.png'
                 "
+                ref="previewImg"
                 alt=""
                 style="width: 80px; height: 80px"
               />
+              <div
+                class="el-upload__tip"
+                style="position: absolute; left: 0; top: 118px; height: 32px"
+              >
+                只能上传jpg/png文件，且不超过2M（默认为系统头像）
+              </div>
               <div style="position: relative; height: 64px">
                 <el-button
                   size="small"
@@ -130,10 +129,11 @@
                   style="position: absolute; left: 0; top: 0; cursor: pointer"
                   >点击上传</el-button
                 >
+
                 <input
                   type="file"
-                  id="file"
                   name="file"
+                  id="file"
                   ref="uploadImg"
                   accept="image/png, image/jpeg, image/gif, image/jpg"
                   style="
@@ -204,7 +204,12 @@
 </template>
 
 <script setup>
-import { getAddUser, getCurrentPageUser, getSearchUser } from "@/api/user";
+import {
+  getAddUser,
+  getCurrentPageUser,
+  getSearchUser,
+  getUpLoadImg,
+} from "@/api/user";
 import { ElMessage } from "element-plus";
 import { reactive, ref } from "vue";
 //region 定义的数据
@@ -220,15 +225,10 @@ const currentPage = ref(1);
 //搜索输入的内容
 const searchInput = ref();
 //用户信息
-const userInfo = ref({
-  user_name: null,
-  avatar: null,
-  phone: null,
-  password: null,
-  sex: null,
-  sign: null,
-  birthday: null,
-});
+const userInfo = ref({});
+//图片dom
+const previewImg = ref();
+const uploadImg = ref();
 //服务器地址
 const server = "http://localhost:3001";
 //弹出框的标题
@@ -239,7 +239,7 @@ const dialogFormVisible = ref(false);
 
 //region 获取用户数据
 getCurrentPageUser().then((res) => {
-  if (res.status == 200) {
+  if (res.status === 200) {
     tableData.value = res.data;
     total.value = res.total;
   }
@@ -248,7 +248,7 @@ getCurrentPageUser().then((res) => {
 
 //region 搜索
 const searchs = () => {
-  if (searchInput.value == undefined) return;
+  if (searchInput.value === undefined) return;
   getSearchUser(searchInput.value).then((res) => {
     console.log(res);
     if (res.status == 200) {
@@ -265,6 +265,15 @@ const addUser = () => {
   userInfo.value = {};
   dialogFormVisible.value = true;
 };
+//上传图片
+const changeImg = () => {
+  let reader = new FileReader();
+  reader.readAsDataURL(uploadImg.value.files[0]); //发起异步请求
+  reader.onload = function (e) {
+    //读取完成后，将结果赋值给img的src
+    previewImg.value.src = e.target.result;
+  };
+};
 //取消
 const cancel = () => {
   dialogFormVisible.value = false;
@@ -273,11 +282,17 @@ const cancel = () => {
 //确定
 const manageUserInfo = () => {
   dialogFormVisible.value = false;
-  console.log(userInfo.value);
+  let form = new FormData();
+  form.append("file", uploadImg.value.files[0]);
+  getUpLoadImg(form).then((res) => {
+    if (res.status == 200) {
+      userInfo.value.avatar = res.data;
+    }
+  });
   getAddUser(userInfo.value).then((res) => {
     console.log(res);
     //添加成功的提示
-    if (res.status == 200) {
+    if (res.status === 200) {
       getCurrentPageUser();
       ElMessage({
         message: res.message,
@@ -324,20 +339,7 @@ let checkPassword = (rule, value, callback) => {
     callback();
   }
 };
-let checkSex = (rule, value, callback) => {
-  if (!value) {
-    callback(new Error("请选择性别"));
-  } else {
-    callback();
-  }
-};
-let checkSign = (rule, value, callback) => {
-  if (!value) {
-    callback(new Error("请输入个性签名"));
-  } else {
-    callback();
-  }
-};
+
 const rules = reactive({
   user_name: [
     { required: true, message: "请输入用户名", trigger: "blur" },
@@ -350,14 +352,6 @@ const rules = reactive({
   password: [
     { required: true, message: "请输入密码", trigger: "blur" },
     { validator: checkPassword, trigger: "blur" },
-  ],
-  sex: [
-    { required: true, message: "请选择性别", trigger: "blur" },
-    { validator: checkSex, trigger: "blur" },
-  ],
-  sign: [
-    { required: true, message: "请输入个性签名", trigger: "blur" },
-    { validator: checkSign, trigger: "blur" },
   ],
 });
 //编辑

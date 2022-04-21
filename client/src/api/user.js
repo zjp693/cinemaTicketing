@@ -45,3 +45,12 @@ export function getAddUser(userInfo) {
     userInfo,
   });
 }
+
+/**
+ * 上传图片
+ * @param formData 图片参数
+ * @returns {AxiosPromise}
+ */
+export function getUpLoadImg(form) {
+  return requestWithToken("/users/getUpLoadImg", "post", form);
+}
