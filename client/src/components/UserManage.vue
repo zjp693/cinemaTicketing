@@ -207,6 +207,7 @@
 import {
   getAddUser,
   getCurrentPageUser,
+  getEditUser,
   getSearchUser,
   getUpLoadImg,
 } from "@/api/user";
@@ -285,34 +286,57 @@ const manageUserInfo = () => {
   let form = new FormData();
   form.append("file", uploadImg.value.files[0]);
   //图片上传
-  getUpLoadImg(form).then((res) => {
-    if (res.status == 200) {
-      userInfo.value.avatar = res.data;
-      //添加用户
-      getAddUser(userInfo.value).then((res) => {
-        //添加成功的提示
-        if (res.status === 200) {
-          getCurrentPageUser();
-          ElMessage({
-            message: res.message,
-            type: "success",
-          });
-        } else {
-          ElMessage({
-            message: res.message,
-            type: "warning",
-          });
+  if (uploadImg.value.files[0]) {
+    getUpLoadImg(form).then((res) => {
+      if (res.status == 200) {
+        userInfo.value.avatar = res.data;
+      }
+    });
+  }
+  if (dialogTitle.value === "添加用户") {
+    //添加用户
+    getAddUser(userInfo.value).then((res) => {
+      //添加成功的提示
+      if (res.status === 200) {
+        getCurrentPageUser();
+        ElMessage({
+          message: res.message,
+          type: "success",
+        });
+      } else {
+        ElMessage({
+          message: res.message,
+          type: "warning",
+        });
+      }
+      //  刷新数据
+      getCurrentPageUser().then((res) => {
+        if (res.status == 200) {
+          tableData.value = res.data;
+          total.value = res.total;
         }
-        //  刷新数据
+      });
+    });
+  }
+  if (dialogTitle.value === "编辑用户信息") {
+    console.log(userInfo.value);
+    getEditUser(userInfo.value).then((res) => {
+      console.log(res.status);
+      if (res.status == 200) {
+        ElMessage({
+          message: res.message,
+          type: "success",
+        });
         getCurrentPageUser().then((res) => {
+          console.log(res);
           if (res.status == 200) {
             tableData.value = res.data;
             total.value = res.total;
           }
         });
-      });
-    }
-  });
+      }
+    });
+  }
 };
 //表单校验规则
 let checkName = (rule, value, callback) => {

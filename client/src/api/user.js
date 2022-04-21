@@ -54,3 +54,13 @@ export function getAddUser(userInfo) {
 export function getUpLoadImg(form) {
   return requestWithToken("/users/getUpLoadImg", "post", form);
 }
+
+/**
+ *
+ * @param userInfo
+ * @returns {AxiosPromise}
+ */
+export function getEditUser(userInfo) {
+  console.log(userInfo);
+  return requestWithToken("/users/getEditUser", "post", userInfo);
+}
