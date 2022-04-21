@@ -109,7 +109,7 @@
               <img
                 :src="
                   userInfo.avatar
-                    ? userInfo.avatar
+                    ? server + userInfo.avatar
                     : server + '/images/avatar/monkey.png'
                 "
                 ref="previewImg"
@@ -284,33 +284,34 @@ const manageUserInfo = () => {
   dialogFormVisible.value = false;
   let form = new FormData();
   form.append("file", uploadImg.value.files[0]);
+  //图片上传
   getUpLoadImg(form).then((res) => {
     if (res.status == 200) {
       userInfo.value.avatar = res.data;
-    }
-  });
-  getAddUser(userInfo.value).then((res) => {
-    console.log(res);
-    //添加成功的提示
-    if (res.status === 200) {
-      getCurrentPageUser();
-      ElMessage({
-        message: res.message,
-        type: "success",
+      //添加用户
+      getAddUser(userInfo.value).then((res) => {
+        //添加成功的提示
+        if (res.status === 200) {
+          getCurrentPageUser();
+          ElMessage({
+            message: res.message,
+            type: "success",
+          });
+        } else {
+          ElMessage({
+            message: res.message,
+            type: "warning",
+          });
+        }
+        //  刷新数据
+        getCurrentPageUser().then((res) => {
+          if (res.status == 200) {
+            tableData.value = res.data;
+            total.value = res.total;
+          }
+        });
       });
-    } else {
-      ElMessage({
-        message: res.message,
-        type: "warning",
-      });
     }
-    //  刷新数据
-    getCurrentPageUser().then((res) => {
-      if (res.status == 200) {
-        tableData.value = res.data;
-        total.value = res.total;
-      }
-    });
   });
 };
 //表单校验规则
