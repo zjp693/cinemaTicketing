@@ -94,10 +94,16 @@
 
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 const currentMenuIndex = ref("/user_manage");
-
+const router = useRouter();
 const logout = () => {
   console.log("退出登录");
+};
+//路由跳转
+const handleMenuItemClick = (path) => {
+  router.push(path);
+  currentMenuIndex.value = path;
 };
 </script>
 
