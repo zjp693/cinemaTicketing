@@ -246,8 +246,8 @@ const number = ref(0);
 
 //region 获取用户数据
 
-const news = () => {
-  getCurrentPageUser().then((res) => {
+const news = async () => {
+  await getCurrentPageUser().then((res) => {
     // 过滤的被注销的数据
     if (res.status === 200) {
       const date = res.data.filter((item) => {
@@ -265,9 +265,9 @@ news();
 //endregion
 
 //region 搜索
-const searchs = () => {
+const searchs = async () => {
   if (searchInput.value === undefined) return;
-  getSearchUser(searchInput.value).then((res) => {
+  await getSearchUser(searchInput.value).then((res) => {
     console.log(res);
     if (res.status == 200) {
       tableData.value = res.data;
@@ -284,9 +284,9 @@ const addUser = () => {
   dialogFormVisible.value = true;
 };
 //上传图片
-const changeImg = () => {
+const changeImg = async () => {
   let reader = new FileReader();
-  reader.readAsDataURL(uploadImg.value.files[0]); //发起异步请求
+  reader.readAsDataURL(await uploadImg.value.files[0]); //发起异步请求
   reader.onload = function (e) {
     //读取完成后，将结果赋值给img的src
     previewImg.value.src = e.target.result;
@@ -298,21 +298,22 @@ const cancel = () => {
   userInfo.value = {};
 };
 //确定
-const manageUserInfo = () => {
+const manageUserInfo = async () => {
   dialogFormVisible.value = false;
   let form = new FormData();
   form.append("file", uploadImg.value.files[0]);
   //图片上传
   if (uploadImg.value.files[0]) {
-    getUpLoadImg(form).then((res) => {
+    await getUpLoadImg(form).then((res) => {
       if (res.status == 200) {
         userInfo.value.avatar = res.data;
+        console.log(userInfo.value.avatar);
       }
     });
   }
   if (dialogTitle.value === "添加用户") {
     //添加用户
-    getAddUser(userInfo.value).then((res) => {
+    await getAddUser(userInfo.value).then((res) => {
       //添加成功的提示
       if (res.status === 200) {
         //  刷新数据
@@ -331,8 +332,8 @@ const manageUserInfo = () => {
   }
   if (dialogTitle.value === "编辑用户信息") {
     console.log(userInfo.value);
-    getEditUser(userInfo.value).then((res) => {
-      console.log(res.status);
+    await getEditUser(userInfo.value).then((res) => {
+      console.log(res);
       if (res.status == 200) {
         //  刷新数据
         news();
@@ -387,14 +388,14 @@ const rules = reactive({
 });
 //编辑
 const handleEdit = (index, row) => {
-  console.log(index, row);
+  // console.log(index, row);
   dialogTitle.value = "编辑用户信息";
   dialogFormVisible.value = true;
   userInfo.value = row;
 };
 //注销
 const handleDelete = (index, row) => {
-  console.log(index, row.user_id);
+  // console.log(index, row.user_id);
   ElMessageBox.confirm("此操作将永久删除该用户所有信息, 是否继续？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
