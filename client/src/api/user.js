@@ -64,6 +64,12 @@ export function getEditUser(userInfo) {
   return requestWithToken("/users/getEditUser", "post", userInfo);
 }
 
+/**
+ *
+ *注销用户
+ * @param user_id 用户id
+ * @returns {AxiosPromise}
+ */
 export function getDeleteUser(user_id) {
   return requestWithToken("/users/getDeleteUser", "post", { user_id });
 }

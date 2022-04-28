@@ -17,9 +17,7 @@
           </template>
         </el-input>
       </el-col>
-      <!--      :data="-->
-      <!--      tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)-->
-      <!--      "-->
+
       <el-col :span="2" :offset="1">
         <el-button type="primary" @click="addUser">添加用户</el-button>
       </el-col>
@@ -84,6 +82,7 @@
         layout="prev, pager, next"
         v-model:page-size="pageSize"
         v-model:current-page="currentPage"
+        :current-page="1"
         :total="total"
       />
     </div>
