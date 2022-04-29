@@ -32,6 +32,14 @@ export function getAdminDeleteMovie(movie_id) {
  */
 
 export function getAdminAddMovie(info) {
-  console.log(info);
   return requestWithToken("/movie/getAdminAddMovie", "post", info);
+}
+
+/**
+ *  上传图片
+ * @returns {AxiosPromise}
+ */
+
+export function getAdminUpLoadImg(info) {
+  return requestWithToken("/movie/getAdminUpLoadImg", "post", info);
 }

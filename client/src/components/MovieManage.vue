@@ -228,7 +228,7 @@
 </template>
 
 <script setup>
-import { getEditUser, getUpLoadImg } from "@/api/user";
+import { getEditUser } from "@/api/user";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { ref } from "vue";
 import {
@@ -236,6 +236,7 @@ import {
   getAdminDeleteMovie,
   getAdminMovieList,
   getAdminSearchMovie,
+  getAdminUpLoadImg,
 } from "@/api/movie";
 //region 定义的数据
 
@@ -425,7 +426,7 @@ const manageMovieInfo = async () => {
   form.append("file", uploadImg.value.files[0]);
   //图片上传
   if (uploadImg.value.files[0]) {
-    await getUpLoadImg(form).then((res) => {
+    await getAdminUpLoadImg(form).then((res) => {
       if (res.status == 200) {
         movieInfo.value.avatar = res.data;
         console.log(movieInfo.value.avatar);

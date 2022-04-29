@@ -103,8 +103,10 @@ const logout = () => {
 //路由跳转
 const handleMenuItemClick = (path) => {
   router.push(path);
+  // console.log(path);
   currentMenuIndex.value = path;
 };
+// console.log(currentMenuIndex.value);
 </script>
 
 <style scoped>
@@ -153,8 +155,7 @@ const handleMenuItemClick = (path) => {
   border-left: none;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
 }
-</style>
-<style>
+
 #home .header {
   width: 100%;
   min-width: 1200px;
