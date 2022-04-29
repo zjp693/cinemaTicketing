@@ -106,7 +106,7 @@
               <el-input v-model="movieInfo.name"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="海报" prop="intro">
+          <el-form-item label="海报" prop="poster">
             <el-col :span="16">
               <img
                 :src="server + movieInfo.poster"
@@ -428,8 +428,8 @@ const manageMovieInfo = async () => {
   if (uploadImg.value.files[0]) {
     await getAdminUpLoadImg(form).then((res) => {
       if (res.status == 200) {
-        movieInfo.value.avatar = res.data;
-        console.log(movieInfo.value.avatar);
+        movieInfo.value.poster = res.data;
+        console.log(movieInfo.value.poster);
       }
     });
   }
