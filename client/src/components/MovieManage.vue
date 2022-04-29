@@ -86,7 +86,7 @@
         :total="total"
       />
     </div>
-    <!--用户弹框-->
+    <!--电影弹框-->
     <div>
       <el-dialog
         :title="dialogTitle"
@@ -99,28 +99,24 @@
           label-position="right"
           :rules="rules"
           label-width="80px"
-          :model="userInfo"
+          :model="movieInfo"
         >
-          <el-form-item label="用户名" prop="user_name">
+          <el-form-item label="电影名" prop="name">
             <el-col :span="16">
-              <el-input v-model="userInfo.user_name"></el-input>
+              <el-input v-model="movieInfo.name"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="头像">
+          <el-form-item label="海报" prop="intro">
             <el-col :span="16">
               <img
-                :src="
-                  userInfo.avatar
-                    ? server + userInfo.avatar
-                    : server + '/images/avatar/monkey.png'
-                "
+                :src="server + movieInfo.poster"
                 ref="previewImg"
                 alt=""
-                style="width: 80px; height: 80px"
+                style="width: 150px; height: 200px"
               />
               <div
                 class="el-upload__tip"
-                style="position: absolute; left: 0; top: 118px; height: 32px"
+                style="position: absolute; left: 0; top: 230px; height: 32px"
               >
                 只能上传jpg/png文件，且不超过2M（默认为系统头像）
               </div>
@@ -131,7 +127,6 @@
                   style="position: absolute; left: 0; top: 0; cursor: pointer"
                   >点击上传</el-button
                 >
-
                 <input
                   type="file"
                   name="file"
@@ -152,43 +147,70 @@
               </div>
             </el-col>
           </el-form-item>
-          <el-form-item label="手机" prop="phone">
+          <el-form-item label="导演" prop="director">
             <el-col :span="16">
-              <el-input v-model="userInfo.phone"></el-input>
+              <el-input v-model="movieInfo.director"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="密码" prop="password">
+          <el-form-item label="演员" prop="actor">
             <el-col :span="16">
-              <el-input v-model="userInfo.password" show-password></el-input>
+              <el-input v-model="movieInfo.actor"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="性别" prop="sex">
+          <el-form-item label="片长" prop="movie_long">
+            <el-col :span="16">
+              <el-input v-model="movieInfo.movie_long"></el-input>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="语言" prop="language">
             <el-col :span="16">
               <el-select
-                v-model="userInfo.sex"
-                placeholder="请选择性别"
+                v-model="movieInfo.language"
+                placeholder="请选择语言"
                 style="width: 100%"
               >
-                <el-option label="男" value="男"></el-option>
-                <el-option label="女" value="女"></el-option>
+                <el-option
+                  v-for="item in languageOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
               </el-select>
             </el-col>
           </el-form-item>
-          <el-form-item label="生日">
-            <el-col :span="16" prop="birthday">
+          <el-form-item label="类型" prop="type">
+            <el-col :span="16">
+              <el-select
+                v-model="movieInfo.type"
+                placeholder="请选择类型"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in typeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="上映时间" prop="public_date">
+            <el-col :span="16">
               <el-date-picker
                 type="date"
                 placeholder="选择日期"
-                v-model="userInfo.birthday"
+                v-model="movieInfo.public_date"
                 style="width: 100%"
+                value-format="YYYY-MM-DD"
               ></el-date-picker>
             </el-col>
           </el-form-item>
-          <el-form-item label="个人签名" prop="sign">
+          <el-form-item label="简介" prop="intro">
             <el-col :span="16">
               <el-input
                 type="textarea"
-                v-model="userInfo.sign"
+                v-model="movieInfo.intro"
                 :autosize="{ minRows: 2, maxRows: 4 }"
               ></el-input>
             </el-col>
@@ -197,7 +219,7 @@
         <template #footer>
           <div class="dialog-footer">
             <el-button @click="cancel">取 消</el-button>
-            <el-button type="primary" @click="manageUserInfo">确 定</el-button>
+            <el-button type="primary" @click="manageMovieInfo">确 定</el-button>
           </div></template
         >
       </el-dialog>
@@ -208,7 +230,7 @@
 <script setup>
 import { getEditUser, getUpLoadImg } from "@/api/user";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 import {
   getAdminAddMovie,
   getAdminDeleteMovie,
@@ -227,8 +249,8 @@ const pageSize = ref(Number(10));
 const currentPage = ref(Number(1));
 //搜索输入的内容
 const searchInput = ref();
-//用户信息
-const userInfo = ref({});
+//电影信息
+const movieInfo = ref({});
 //图片dom
 const previewImg = ref();
 const uploadImg = ref();
@@ -238,14 +260,116 @@ const server = "http://localhost:3001";
 const dialogTitle = ref("");
 //控制是否弹出
 const dialogFormVisible = ref(false);
-//被注销用户的个数
+//被注销电影的个数
 const number = ref(0);
+//语言
+const languageOptions = ref([
+  {
+    value: "粤语",
+    label: "粤语",
+  },
+  {
+    value: "国语",
+    label: "国语",
+  },
+  {
+    value: "英语",
+    label: "英语",
+  },
+  {
+    value: "日语",
+    label: "日语",
+  },
+  {
+    value: "其它",
+    label: "其它",
+  },
+]);
+//类型
+const typeOptions = [
+  {
+    value: "动漫",
+    label: "动漫",
+  },
+  {
+    value: "言情",
+    label: "言情",
+  },
+  {
+    value: "科幻",
+    label: "科幻",
+  },
+  {
+    value: "喜剧",
+    label: "喜剧",
+  },
+  {
+    value: "爱情",
+    label: "爱情",
+  },
+  {
+    value: "剧情",
+    label: "剧情",
+  },
+  {
+    value: "动作",
+    label: "动作",
+  },
+  {
+    value: "冒险",
+    label: "冒险",
+  },
+  {
+    value: "青春",
+    label: "青春",
+  },
+  {
+    value: "悬疑",
+    label: "悬疑",
+  },
+  {
+    value: "恐怖",
+    label: "恐怖",
+  },
+  {
+    value: "其它",
+    label: "其它",
+  },
+];
+//表单校验规则
+let checkMovieLong = (rule, value, callback) => {
+  if (!value) {
+    callback(new Error("片长信息不能为空"));
+  } else {
+    if (/^[1-9][0-9]+分钟$/.test(value)) {
+      callback();
+    } else {
+      callback(new Error("格式应为xx分钟"));
+    }
+  }
+};
+//表单校验规则
+const rules = ref({
+  name: [{ required: true, message: "电影名不能为空", trigger: "blur" }],
+  poster: [{ required: true, message: "请上传电影海报", trigger: "blur" }],
+  director: [{ required: true, message: "导演信息不能为空", trigger: "blur" }],
+  actor: [{ required: true, message: "主演信息不能为空", trigger: "blur" }],
+  movie_long: [
+    { required: true, message: "片长信息不能为空", trigger: "blur" },
+    { validator: checkMovieLong, trigger: "blur" },
+  ],
+  language: [{ required: true, message: "请选择语言", trigger: "change" }],
+  type: [{ required: true, message: "请选择电影类型", trigger: "change" }],
+  public_date: [{ required: true, message: "请选择上映日期", trigger: "blur" }],
+  intro: [{ required: true, message: "电影简介信息不能为空", trigger: "blur" }],
+});
 //endregion
 
-//region 获取用户数据
+//region 获取电影数据
 
 const news = async () => {
   await getAdminMovieList().then((res) => {
+    console.log(res);
     // 过滤的被注销的数据
     if (res.status === 200) {
       const date = res.data.filter((item) => {
@@ -263,7 +387,6 @@ news();
 
 //region 搜索
 const searchs = async () => {
-  console.log(111);
   if (searchInput.value === undefined) return;
   await getAdminSearchMovie(searchInput.value).then((res) => {
     console.log(res);
@@ -278,7 +401,7 @@ const searchs = async () => {
 //region 添加电影
 const addUser = () => {
   dialogTitle.value = "添加电影";
-  userInfo.value = {};
+  movieInfo.value = {};
   dialogFormVisible.value = true;
 };
 //上传图片
@@ -293,10 +416,10 @@ const changeImg = async () => {
 //取消
 const cancel = () => {
   dialogFormVisible.value = false;
-  userInfo.value = {};
+  movieInfo.value = {};
 };
 //确定
-const manageUserInfo = async () => {
+const manageMovieInfo = async () => {
   dialogFormVisible.value = false;
   let form = new FormData();
   form.append("file", uploadImg.value.files[0]);
@@ -304,14 +427,15 @@ const manageUserInfo = async () => {
   if (uploadImg.value.files[0]) {
     await getUpLoadImg(form).then((res) => {
       if (res.status == 200) {
-        userInfo.value.avatar = res.data;
-        console.log(userInfo.value.avatar);
+        movieInfo.value.avatar = res.data;
+        console.log(movieInfo.value.avatar);
       }
     });
   }
   if (dialogTitle.value === "添加电影") {
     //添加电影
-    await getAdminAddMovie(userInfo.value).then((res) => {
+    await getAdminAddMovie(movieInfo.value).then((res) => {
+      console.log(res);
       //添加成功的提示
       if (res.status === 200) {
         //  刷新数据
@@ -328,9 +452,9 @@ const manageUserInfo = async () => {
       }
     });
   }
-  if (dialogTitle.value === "编辑用户信息") {
-    console.log(userInfo.value);
-    await getEditUser(userInfo.value).then((res) => {
+  if (dialogTitle.value === "编辑电影信息") {
+    console.log(movieInfo.value);
+    await getEditUser(movieInfo.value).then((res) => {
       console.log(res);
       if (res.status == 200) {
         //  刷新数据
@@ -343,58 +467,18 @@ const manageUserInfo = async () => {
     });
   }
 };
-//表单校验规则
-let checkName = (rule, value, callback) => {
-  if (!value) {
-    callback(new Error("用户名不能为空！"));
-  } else {
-    callback();
-  }
-};
-let checkPhone = (rule, value, callback) => {
-  if (!value) {
-    callback(new Error("请输入手机号码"));
-  } else {
-    if (/^1[3|4|5|6|7|8][0-9]{9}$/.test(value)) {
-      callback();
-    } else {
-      callback(new Error("请输入正确格式的手机号码"));
-    }
-  }
-};
-let checkPassword = (rule, value, callback) => {
-  if (!value) {
-    callback(new Error("请输入密码"));
-  } else {
-    callback();
-  }
-};
 
-const rules = reactive({
-  user_name: [
-    { required: true, message: "请输入用户名", trigger: "blur" },
-    { validator: checkName, trigger: "blur" },
-  ],
-  phone: [
-    { required: true, message: "请输入手机号码", trigger: "blur" },
-    { validator: checkPhone, trigger: "blur" },
-  ],
-  password: [
-    { required: true, message: "请输入密码", trigger: "blur" },
-    { validator: checkPassword, trigger: "blur" },
-  ],
-});
 //编辑
 const handleEdit = (index, row) => {
   // console.log(index, row);
-  dialogTitle.value = "编辑用户信息";
+  dialogTitle.value = "编辑电影信息";
   dialogFormVisible.value = true;
-  userInfo.value = row;
+  movieInfo.value = row;
 };
 //注销
 const handleDelete = (index, row) => {
   // console.log(index, row.user_id);
-  ElMessageBox.confirm("此操作将永久删除该用户所有信息, 是否继续？", "提示", {
+  ElMessageBox.confirm("此操作将永久删除该电影所有信息, 是否继续？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -445,6 +529,6 @@ const handleDelete = (index, row) => {
   padding-left: 20%;
 }
 :deep(.el-input__inner) {
-  padding-left: calc(5px + 14px + 12px);
+  padding-left: calc(5px + 14px + 12px) !important;
 }
 </style>

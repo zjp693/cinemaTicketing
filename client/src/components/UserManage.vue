@@ -446,6 +446,6 @@ const handleDelete = (index, row) => {
   padding-left: 20%;
 }
 :deep(.el-input__inner) {
-  padding-left: calc(5px + 14px + 12px);
+  padding-left: calc(5px + 14px + 12px) !important;
 }
 </style>
