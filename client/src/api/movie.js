@@ -18,7 +18,7 @@ export function getAdminSearchMovie(searchInput) {
   return requestWithToken("/movie/getAdminSearchMovie", "get", { searchInput });
 }
 /**
- *  添加电影
+ * 删除电影
  * @returns {AxiosPromise}
  */
 
@@ -42,5 +42,14 @@ export function getAdminAddMovie(info) {
  */
 
 export function getAdminUpLoadImg(info) {
+  console.log(info);
   return requestWithToken("/movie/getAdminUpLoadImg", "post", info);
+}
+/**
+ *  编辑电影
+ * @returns {AxiosPromise}
+ */
+
+export function getAdminEditMovie(info) {
+  return requestWithToken("/movie/getAdminEditMovie", "post", info);
 }

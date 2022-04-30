@@ -267,7 +267,7 @@ news();
 const searchs = async () => {
   if (searchInput.value === undefined) return;
   await getSearchUser(searchInput.value).then((res) => {
-    console.log(res);
+    // console.log(res);
     if (res.status == 200) {
       tableData.value = res.data;
       total.value = res.total;
@@ -306,7 +306,7 @@ const manageUserInfo = async () => {
     await getUpLoadImg(form).then((res) => {
       if (res.status == 200) {
         userInfo.value.avatar = res.data;
-        console.log(userInfo.value.avatar);
+        // console.log(userInfo.value.avatar);
       }
     });
   }
@@ -330,9 +330,9 @@ const manageUserInfo = async () => {
     });
   }
   if (dialogTitle.value === "编辑用户信息") {
-    console.log(userInfo.value);
+    // console.log(userInfo.value);
     await getEditUser(userInfo.value).then((res) => {
-      console.log(res);
+      // console.log(res);
       if (res.status == 200) {
         //  刷新数据
         news();

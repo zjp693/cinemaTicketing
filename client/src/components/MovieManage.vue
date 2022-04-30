@@ -228,12 +228,12 @@
 </template>
 
 <script setup>
-import { getEditUser } from "@/api/user";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { ref } from "vue";
 import {
   getAdminAddMovie,
   getAdminDeleteMovie,
+  getAdminEditMovie,
   getAdminMovieList,
   getAdminSearchMovie,
   getAdminUpLoadImg,
@@ -426,12 +426,17 @@ const manageMovieInfo = async () => {
   form.append("file", uploadImg.value.files[0]);
   //图片上传
   if (uploadImg.value.files[0]) {
-    await getAdminUpLoadImg(form).then((res) => {
-      if (res.status == 200) {
-        movieInfo.value.poster = res.data;
-        console.log(movieInfo.value.poster);
-      }
-    });
+    console.log(1111);
+    await getAdminUpLoadImg(form)
+      .then((res) => {
+        if (res.status == 200) {
+          movieInfo.value.poster = res.data;
+          console.log(movieInfo.value.poster);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
   if (dialogTitle.value === "添加电影") {
     //添加电影
@@ -455,7 +460,7 @@ const manageMovieInfo = async () => {
   }
   if (dialogTitle.value === "编辑电影信息") {
     console.log(movieInfo.value);
-    await getEditUser(movieInfo.value).then((res) => {
+    await getAdminEditMovie(movieInfo.value).then((res) => {
       console.log(res);
       if (res.status == 200) {
         //  刷新数据
