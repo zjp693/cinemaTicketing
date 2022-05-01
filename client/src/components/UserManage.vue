@@ -241,8 +241,13 @@ const dialogTitle = ref("");
 const dialogFormVisible = ref(false);
 //被注销用户的个数
 const number = ref(0);
-//endregion
+//当前路由
+// const path = window.location.href.split("#")[1];
+// path.split("#");
+// console.log(1);
+// console.log(path);
 
+//endregion
 //region 获取用户数据
 
 const news = async () => {
