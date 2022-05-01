@@ -19,7 +19,7 @@
       </el-col>
 
       <el-col :span="2" :offset="1">
-        <el-button type="primary" @click="addUser">添加用户</el-button>
+        <el-button type="primary" @click="addUser">添加影院</el-button>
       </el-col>
     </div>
     <!--表格-->
@@ -31,34 +31,29 @@
         "
       >
         <el-table-column
-          label="用户 ID"
+          label="影院 ID"
           align="center"
           width="100"
-          prop="user_id"
+          prop="cinema_id"
         ></el-table-column>
         <el-table-column
-          label="用户名"
+          label="影院名"
           align="center"
           width="120"
           show-overflow-tooltip
-          prop="user_name"
+          prop="cinema_name"
         ></el-table-column>
-        <el-table-column
-          label="性别"
-          align="center"
-          width="60"
-          prop="sex"
-        ></el-table-column>
+
         <el-table-column
           label="手机"
           align="center"
           width="120"
-          prop="phone"
+          prop="cinema_phone"
         ></el-table-column>
         <el-table-column
-          label="个人签名"
+          label="详细地址"
           show-overflow-tooltip
-          prop="sign"
+          prop="specified_address"
         ></el-table-column>
         <el-table-column align="center" width="200" label="操作">
           <template #default="scope">
@@ -69,7 +64,7 @@
               size="small"
               type="danger"
               @click="handleDelete(scope.$index, scope.row)"
-              >注销</el-button
+              >删除</el-button
             >
           </template>
         </el-table-column>
@@ -86,7 +81,7 @@
         :total="total"
       />
     </div>
-    <!--用户弹框-->
+    <!--电影弹框-->
     <div>
       <el-dialog
         :title="dialogTitle"
@@ -101,7 +96,7 @@
           label-width="80px"
           :model="userInfo"
         >
-          <el-form-item label="用户名" prop="user_name">
+          <el-form-item label="电影名" prop="user_name">
             <el-col :span="16">
               <el-input v-model="userInfo.user_name"></el-input>
             </el-col>
@@ -208,14 +203,13 @@
 <script setup>
 import {
   getAddUser,
-  getCurrentPageUser,
   getDeleteUser,
   getEditUser,
-  getSearchUser,
   getUpLoadImg,
 } from "@/api/user";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { reactive, ref } from "vue";
+import { getAdminCinemaList, getAdminSearchCinema } from "@/api/cinema。js";
 //region 定义的数据
 
 //表格所需数据
@@ -228,7 +222,7 @@ const pageSize = ref(10);
 const currentPage = ref(1);
 //搜索输入的内容
 const searchInput = ref();
-//用户信息
+//电影信息
 const userInfo = ref({});
 //图片dom
 const previewImg = ref();
@@ -239,15 +233,15 @@ const server = "http://localhost:3001";
 const dialogTitle = ref("");
 //控制是否弹出
 const dialogFormVisible = ref(false);
-//被注销用户的个数
+//被删除电影的个数
 const number = ref(0);
 //endregion
 
-//region 获取用户数据
+//region 获取电影数据
 
 const news = async () => {
-  await getCurrentPageUser().then((res) => {
-    // 过滤的被注销的数据
+  await getAdminCinemaList().then((res) => {
+    // 过滤的被删除的数据
     if (res.status === 200) {
       const date = res.data.filter((item) => {
         return item.state === 1;
@@ -255,7 +249,6 @@ const news = async () => {
       number.value = res.total - date.length;
       tableData.value = date;
       total.value = res.total - number.value;
-      // console.log(number.value);
     }
   });
 };
@@ -266,7 +259,7 @@ news();
 //region 搜索
 const searchs = async () => {
   if (searchInput.value === undefined) return;
-  await getSearchUser(searchInput.value).then((res) => {
+  await getAdminSearchCinema(searchInput.value).then((res) => {
     console.log(res);
     if (res.status == 200) {
       tableData.value = res.data;
@@ -276,9 +269,9 @@ const searchs = async () => {
 };
 //endregion
 
-//region 添加用户
+//region 添加电影
 const addUser = () => {
-  dialogTitle.value = "添加用户";
+  dialogTitle.value = "添加电影";
   userInfo.value = {};
   dialogFormVisible.value = true;
 };
@@ -310,8 +303,8 @@ const manageUserInfo = async () => {
       }
     });
   }
-  if (dialogTitle.value === "添加用户") {
-    //添加用户
+  if (dialogTitle.value === "添加电影") {
+    //添加电影
     await getAddUser(userInfo.value).then((res) => {
       //添加成功的提示
       if (res.status === 200) {
@@ -329,7 +322,7 @@ const manageUserInfo = async () => {
       }
     });
   }
-  if (dialogTitle.value === "编辑用户信息") {
+  if (dialogTitle.value === "编辑电影信息") {
     console.log(userInfo.value);
     await getEditUser(userInfo.value).then((res) => {
       console.log(res);
@@ -347,7 +340,7 @@ const manageUserInfo = async () => {
 //表单校验规则
 let checkName = (rule, value, callback) => {
   if (!value) {
-    callback(new Error("用户名不能为空！"));
+    callback(new Error("电影名不能为空！"));
   } else {
     callback();
   }
@@ -373,7 +366,7 @@ let checkPassword = (rule, value, callback) => {
 
 const rules = reactive({
   user_name: [
-    { required: true, message: "请输入用户名", trigger: "blur" },
+    { required: true, message: "请输入电影名", trigger: "blur" },
     { validator: checkName, trigger: "blur" },
   ],
   phone: [
@@ -388,14 +381,14 @@ const rules = reactive({
 //编辑
 const handleEdit = (index, row) => {
   // console.log(index, row);
-  dialogTitle.value = "编辑用户信息";
+  dialogTitle.value = "编辑电影信息";
   dialogFormVisible.value = true;
   userInfo.value = row;
 };
-//注销
+//删除
 const handleDelete = (index, row) => {
   // console.log(index, row.user_id);
-  ElMessageBox.confirm("此操作将永久删除该用户所有信息, 是否继续？", "提示", {
+  ElMessageBox.confirm("此操作将永久删除该电影所有信息, 是否继续？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -415,7 +408,7 @@ const handleDelete = (index, row) => {
     .catch(() => {
       ElMessage({
         type: "info",
-        message: "取消注销用户",
+        message: "取消删除电影",
       });
     });
 };
