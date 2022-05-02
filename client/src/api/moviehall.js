@@ -6,3 +6,11 @@ import { requestWithToken } from "@/utils/request";
  */ export function getAdminMovieHallList() {
   return requestWithToken("/cinema/getAdminMovieHallList", "get");
 }
+/**
+ *  搜索影厅列表
+ * @returns {AxiosPromise} getAdminSearchMovieHall
+ */ export function getAdminSearchMovieHall(searchInput) {
+  return requestWithToken("/cinema/getAdminSearchMovieHall", "get", {
+    searchInput,
+  });
+}

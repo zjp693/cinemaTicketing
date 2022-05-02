@@ -205,12 +205,14 @@ import {
   getAddUser,
   getDeleteUser,
   getEditUser,
-  getSearchUser,
   getUpLoadImg,
 } from "@/api/user";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { reactive, ref } from "vue";
-import { getAdminMovieHallList } from "@/api/moviehall";
+import {
+  getAdminMovieHallList,
+  getAdminSearchMovieHall,
+} from "@/api/moviehall";
 //region 定义的数据
 
 //表格所需数据
@@ -266,8 +268,9 @@ news();
 
 //region 搜索
 const searchs = async () => {
+  console.log(11);
   if (searchInput.value === undefined) return;
-  await getSearchUser(searchInput.value).then((res) => {
+  await getAdminSearchMovieHall(searchInput.value).then((res) => {
     // console.log(res);
     if (res.status == 200) {
       tableData.value = res.data;
