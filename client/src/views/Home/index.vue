@@ -93,10 +93,15 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-const currentMenuIndex = ref("/user_manage");
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+const currentMenuIndex = ref("");
 const router = useRouter();
+const route = useRoute();
+//
+onMounted(() => {
+  currentMenuIndex.value = route.path;
+});
 const logout = () => {
   console.log("退出登录");
 };
