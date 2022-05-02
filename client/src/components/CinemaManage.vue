@@ -131,14 +131,15 @@
 </template>
 
 <script setup>
-import { getDeleteUser, getEditUser } from "@/api/user";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { reactive, ref } from "vue";
 import {
   getAdminAddCinema,
   getAdminCinemaList,
+  getAdminDeleteCinema,
+  getAdminExistCinema,
   getAdminSearchCinema,
-} from "@/api/cinema。js";
+} from "@/api/cinema";
 //region 定义的数据
 
 //表格所需数据
@@ -171,6 +172,7 @@ const news = async () => {
       const date = res.data.filter((item) => {
         return item.state === 1;
       });
+      number.value = res.total - date.length;
       number.value = res.total - date.length;
       tableData.value = date;
       total.value = res.total - number.value;
@@ -231,7 +233,7 @@ const manageInfo = async () => {
   }
   if (dialogTitle.value === "编辑影院信息") {
     console.log(Info.value);
-    await getEditUser(Info.value).then((res) => {
+    await getAdminExistCinema(Info.value).then((res) => {
       console.log(res);
       if (res.status == 200) {
         //  刷新数据
@@ -301,7 +303,8 @@ const handleDelete = (index, row) => {
     type: "warning",
   })
     .then(() => {
-      getDeleteUser(row.user_id).then((res) => {
+      console.log(row.cinema_id);
+      getAdminDeleteCinema(row.cinema_id).then((res) => {
         if (res.status == 200) {
           //  刷新数据
           news();
