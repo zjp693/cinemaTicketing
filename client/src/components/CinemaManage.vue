@@ -39,7 +39,7 @@
         <el-table-column
           label="影院名"
           align="center"
-          width="120"
+          show-password
           show-overflow-tooltip
           prop="cinema_name"
         ></el-table-column>
@@ -52,6 +52,8 @@
         ></el-table-column>
         <el-table-column
           label="详细地址"
+          align="center"
+          show-password
           show-overflow-tooltip
           prop="specified_address"
         ></el-table-column>
@@ -81,7 +83,7 @@
         :total="total"
       />
     </div>
-    <!--电影弹框-->
+    <!--影院弹框-->
     <div>
       <el-dialog
         :title="dialogTitle"
@@ -94,96 +96,24 @@
           label-position="right"
           :rules="rules"
           label-width="80px"
-          :model="userInfo"
+          :model="Info"
         >
-          <el-form-item label="电影名" prop="user_name">
+          <el-form-item label="影院名" prop="cinema_name">
             <el-col :span="16">
-              <el-input v-model="userInfo.user_name"></el-input>
+              <el-input v-model="Info.cinema_name" show-password></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="头像">
+          <el-form-item label="手机" prop="cinema_phone">
             <el-col :span="16">
-              <img
-                :src="
-                  userInfo.avatar
-                    ? server + userInfo.avatar
-                    : server + '/images/avatar/monkey.png'
-                "
-                ref="previewImg"
-                alt=""
-                style="width: 80px; height: 80px"
-              />
-              <div
-                class="el-upload__tip"
-                style="position: absolute; left: 0; top: 118px; height: 32px"
-              >
-                只能上传jpg/png文件，且不超过2M（默认为系统头像）
-              </div>
-              <div style="position: relative; height: 64px">
-                <el-button
-                  size="small"
-                  type="primary"
-                  style="position: absolute; left: 0; top: 0; cursor: pointer"
-                  >点击上传</el-button
-                >
+              <el-input v-model="Info.cinema_phone" show-password></el-input>
+            </el-col>
+          </el-form-item>
 
-                <input
-                  type="file"
-                  name="file"
-                  id="file"
-                  ref="uploadImg"
-                  accept="image/png, image/jpeg, image/gif, image/jpg"
-                  style="
-                    position: absolute;
-                    left: 0;
-                    top: 0;
-                    opacity: 0;
-                    height: 32px;
-                    width: 80px;
-                    cursor: pointer;
-                  "
-                  @change="changeImg"
-                />
-              </div>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="手机" prop="phone">
-            <el-col :span="16">
-              <el-input v-model="userInfo.phone"></el-input>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-col :span="16">
-              <el-input v-model="userInfo.password" show-password></el-input>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="性别" prop="sex">
-            <el-col :span="16">
-              <el-select
-                v-model="userInfo.sex"
-                placeholder="请选择性别"
-                style="width: 100%"
-              >
-                <el-option label="男" value="男"></el-option>
-                <el-option label="女" value="女"></el-option>
-              </el-select>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="生日">
-            <el-col :span="16" prop="birthday">
-              <el-date-picker
-                type="date"
-                placeholder="选择日期"
-                v-model="userInfo.birthday"
-                style="width: 100%"
-              ></el-date-picker>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="个人签名" prop="sign">
+          <el-form-item label="详细地址" prop="specified_address">
             <el-col :span="16">
               <el-input
                 type="textarea"
-                v-model="userInfo.sign"
+                v-model="Info.specified_address"
                 :autosize="{ minRows: 2, maxRows: 4 }"
               ></el-input>
             </el-col>
@@ -192,7 +122,7 @@
         <template #footer>
           <div class="dialog-footer">
             <el-button @click="cancel">取 消</el-button>
-            <el-button type="primary" @click="manageUserInfo">确 定</el-button>
+            <el-button type="primary" @click="manageInfo">确 定</el-button>
           </div></template
         >
       </el-dialog>
@@ -201,15 +131,14 @@
 </template>
 
 <script setup>
-import {
-  getAddUser,
-  getDeleteUser,
-  getEditUser,
-  getUpLoadImg,
-} from "@/api/user";
+import { getDeleteUser, getEditUser } from "@/api/user";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { reactive, ref } from "vue";
-import { getAdminCinemaList, getAdminSearchCinema } from "@/api/cinema。js";
+import {
+  getAdminAddCinema,
+  getAdminCinemaList,
+  getAdminSearchCinema,
+} from "@/api/cinema。js";
 //region 定义的数据
 
 //表格所需数据
@@ -222,22 +151,18 @@ const pageSize = ref(10);
 const currentPage = ref(1);
 //搜索输入的内容
 const searchInput = ref();
-//电影信息
-const userInfo = ref({});
-//图片dom
-const previewImg = ref();
-const uploadImg = ref();
-//服务器地址
-const server = "http://localhost:3001";
+//影院信息
+const Info = ref({});
+
 //弹出框的标题
 const dialogTitle = ref("");
 //控制是否弹出
 const dialogFormVisible = ref(false);
-//被删除电影的个数
+//被删除影院的个数
 const number = ref(0);
 //endregion
 
-//region 获取电影数据
+//region 获取影院数据
 
 const news = async () => {
   await getAdminCinemaList().then((res) => {
@@ -269,43 +194,25 @@ const searchs = async () => {
 };
 //endregion
 
-//region 添加电影
+//region 添加影院
 const addUser = () => {
-  dialogTitle.value = "添加电影";
-  userInfo.value = {};
+  dialogTitle.value = "添加影院";
+  Info.value = {};
   dialogFormVisible.value = true;
 };
-//上传图片
-const changeImg = async () => {
-  let reader = new FileReader();
-  reader.readAsDataURL(await uploadImg.value.files[0]); //发起异步请求
-  reader.onload = function (e) {
-    //读取完成后，将结果赋值给img的src
-    previewImg.value.src = e.target.result;
-  };
-};
+
 //取消
 const cancel = () => {
   dialogFormVisible.value = false;
-  userInfo.value = {};
+  Info.value = {};
 };
 //确定
-const manageUserInfo = async () => {
+const manageInfo = async () => {
   dialogFormVisible.value = false;
-  let form = new FormData();
-  form.append("file", uploadImg.value.files[0]);
-  //图片上传
-  if (uploadImg.value.files[0]) {
-    await getUpLoadImg(form).then((res) => {
-      if (res.status == 200) {
-        userInfo.value.avatar = res.data;
-        console.log(userInfo.value.avatar);
-      }
-    });
-  }
-  if (dialogTitle.value === "添加电影") {
-    //添加电影
-    await getAddUser(userInfo.value).then((res) => {
+
+  if (dialogTitle.value === "添加影院") {
+    //添加影院
+    await getAdminAddCinema(Info.value).then((res) => {
       //添加成功的提示
       if (res.status === 200) {
         //  刷新数据
@@ -322,9 +229,9 @@ const manageUserInfo = async () => {
       }
     });
   }
-  if (dialogTitle.value === "编辑电影信息") {
-    console.log(userInfo.value);
-    await getEditUser(userInfo.value).then((res) => {
+  if (dialogTitle.value === "编辑影院信息") {
+    console.log(Info.value);
+    await getEditUser(Info.value).then((res) => {
       console.log(res);
       if (res.status == 200) {
         //  刷新数据
@@ -340,7 +247,7 @@ const manageUserInfo = async () => {
 //表单校验规则
 let checkName = (rule, value, callback) => {
   if (!value) {
-    callback(new Error("电影名不能为空！"));
+    callback(new Error("影院名不能为空！"));
   } else {
     callback();
   }
@@ -356,39 +263,39 @@ let checkPhone = (rule, value, callback) => {
     }
   }
 };
-let checkPassword = (rule, value, callback) => {
+let checkWord = (rule, value, callback) => {
   if (!value) {
-    callback(new Error("请输入密码"));
+    callback(new Error("请输入详细地址"));
   } else {
     callback();
   }
 };
 
 const rules = reactive({
-  user_name: [
-    { required: true, message: "请输入电影名", trigger: "blur" },
+  cinema_name: [
+    { required: true, message: "请输入影院名", trigger: "blur" },
     { validator: checkName, trigger: "blur" },
   ],
-  phone: [
+  cinema_phone: [
     { required: true, message: "请输入手机号码", trigger: "blur" },
     { validator: checkPhone, trigger: "blur" },
   ],
-  password: [
-    { required: true, message: "请输入密码", trigger: "blur" },
-    { validator: checkPassword, trigger: "blur" },
+  specified_address: [
+    { required: true, message: "请输入详细地址", trigger: "blur" },
+    { validator: checkWord, trigger: "blur" },
   ],
 });
 //编辑
 const handleEdit = (index, row) => {
   // console.log(index, row);
-  dialogTitle.value = "编辑电影信息";
+  dialogTitle.value = "编辑影院信息";
   dialogFormVisible.value = true;
-  userInfo.value = row;
+  Info.value = row;
 };
 //删除
 const handleDelete = (index, row) => {
   // console.log(index, row.user_id);
-  ElMessageBox.confirm("此操作将永久删除该电影所有信息, 是否继续？", "提示", {
+  ElMessageBox.confirm("此操作将永久删除该影院所有信息, 是否继续？", "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
@@ -408,7 +315,7 @@ const handleDelete = (index, row) => {
     .catch(() => {
       ElMessage({
         type: "info",
-        message: "取消删除电影",
+        message: "取消删除影院",
       });
     });
 };
