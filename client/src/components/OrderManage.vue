@@ -142,7 +142,6 @@ const news = async () => {
       });
       number.value = res.total - date.length;
       tableData.value = date;
-      console.log(date);
       total.value = res.total - number.value;
     }
   });
