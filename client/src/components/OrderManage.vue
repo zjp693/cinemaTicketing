@@ -107,8 +107,11 @@
 <script setup>
 import { ElMessage, ElMessageBox } from "element-plus";
 import { ref } from "vue";
-import { getAdminSearchMovieHall, getAdminDelMovieHall } from "@/api/moviehall";
-import { getAdminOrder } from "@/api/orderComment";
+import {
+  getAdminDelOrder,
+  getAdminOrder,
+  getAdminSearchOrder,
+} from "@/api/orderComment";
 //region 定义的数据
 
 //表格所需数据
@@ -150,8 +153,7 @@ news();
 
 //region 搜索
 const searchs = async () => {
-  await getAdminSearchMovieHall(searchInput.value).then((res) => {
-    // console.log(res);
+  await getAdminSearchOrder(searchInput.value).then((res) => {
     if (res.status == 200) {
       tableData.value = res.data;
       total.value = res.total;
@@ -170,7 +172,7 @@ const handleDelete = (index, row) => {
     type: "warning",
   })
     .then(() => {
-      getAdminDelMovieHall(row.hall_id).then((res) => {
+      getAdminDelOrder(row.order_id).then((res) => {
         if (res.status == 200) {
           //  刷新数据
           news();
