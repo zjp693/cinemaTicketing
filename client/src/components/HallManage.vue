@@ -94,105 +94,36 @@
           label-position="right"
           :rules="rules"
           label-width="80px"
-          :model="userInfo"
+          :model="Info"
         >
-          <el-form-item label="影厅名" prop="user_name">
-            <el-col :span="16">
-              <el-input v-model="userInfo.user_name"></el-input>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="头像">
-            <el-col :span="16">
-              <img
-                :src="
-                  userInfo.avatar
-                    ? server + userInfo.avatar
-                    : server + '/images/avatar/monkey.png'
-                "
-                ref="previewImg"
-                alt=""
-                style="width: 80px; height: 80px"
-              />
-              <div
-                class="el-upload__tip"
-                style="position: absolute; left: 0; top: 118px; height: 32px"
-              >
-                只能上传jpg/png文件，且不超过2M（默认为系统头像）
-              </div>
-              <div style="position: relative; height: 64px">
-                <el-button
-                  size="small"
-                  type="primary"
-                  style="position: absolute; left: 0; top: 0; cursor: pointer"
-                  >点击上传</el-button
-                >
-
-                <input
-                  type="file"
-                  name="file"
-                  id="file"
-                  ref="uploadImg"
-                  accept="image/png, image/jpeg, image/gif, image/jpg"
-                  style="
-                    position: absolute;
-                    left: 0;
-                    top: 0;
-                    opacity: 0;
-                    height: 32px;
-                    width: 80px;
-                    cursor: pointer;
-                  "
-                  @change="changeImg"
-                />
-              </div>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="手机" prop="phone">
-            <el-col :span="16">
-              <el-input v-model="userInfo.phone"></el-input>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-col :span="16">
-              <el-input v-model="userInfo.password" show-password></el-input>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="性别" prop="sex">
+          <el-form-item label="影院名" prop="cinema_name">
             <el-col :span="16">
               <el-select
-                v-model="userInfo.sex"
-                placeholder="请选择性别"
+                v-model="Info.cinema_id"
+                placeholder="请选择影院"
                 style="width: 100%"
               >
-                <el-option label="男" value="男"></el-option>
-                <el-option label="女" value="女"></el-option>
+                <el-option
+                  v-for="item in options"
+                  :key="item.cinema_id"
+                  :label="item.cinema_name"
+                  :value="item.cinema_id"
+                >
+                </el-option>
               </el-select>
             </el-col>
           </el-form-item>
-          <el-form-item label="生日">
-            <el-col :span="16" prop="birthday">
-              <el-date-picker
-                type="date"
-                placeholder="选择日期"
-                v-model="userInfo.birthday"
-                style="width: 100%"
-              ></el-date-picker>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="个人签名" prop="sign">
+
+          <el-form-item label="影厅名" prop="name">
             <el-col :span="16">
-              <el-input
-                type="textarea"
-                v-model="userInfo.sign"
-                :autosize="{ minRows: 2, maxRows: 4 }"
-              ></el-input>
+              <el-input v-model="Info.name"></el-input>
             </el-col>
           </el-form-item>
         </el-form>
         <template #footer>
           <div class="dialog-footer">
             <el-button @click="cancel">取 消</el-button>
-            <el-button type="primary" @click="manageUserInfo">确 定</el-button>
+            <el-button type="primary" @click="manageInfo">确 定</el-button>
           </div></template
         >
       </el-dialog>
@@ -201,17 +132,14 @@
 </template>
 
 <script setup>
-import {
-  getAddUser,
-  getDeleteUser,
-  getEditUser,
-  getUpLoadImg,
-} from "@/api/user";
+import { getDeleteUser, getEditUser } from "@/api/user";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { reactive, ref } from "vue";
 import {
   getAdminMovieHallList,
   getAdminSearchMovieHall,
+  getAdminAddMovieHall,
+  getAdminAllCinema,
 } from "@/api/moviehall";
 //region 定义的数据
 
@@ -226,30 +154,22 @@ const currentPage = ref(1);
 //搜索输入的内容
 const searchInput = ref();
 //影厅信息
-const userInfo = ref({});
-//图片dom
-const previewImg = ref();
-const uploadImg = ref();
-//服务器地址
-const server = "http://localhost:3001";
+const Info = ref({});
+
 //弹出框的标题
 const dialogTitle = ref("");
 //控制是否弹出
 const dialogFormVisible = ref(false);
 //被注销影厅的个数
 const number = ref(0);
-//当前路由
-// const path = window.location.href.split("#")[1];
-// path.split("#");
-// console.log(1);
-// console.log(path);
+const options = ref([]);
 
 //endregion
 //region 获取影厅数据
 
 const news = async () => {
+  //表格数据
   await getAdminMovieHallList().then((res) => {
-    console.log(res);
     // 过滤的被注销的数据
     if (res.status === 200) {
       const date = res.data.filter((item) => {
@@ -258,7 +178,13 @@ const news = async () => {
       number.value = res.total - date.length;
       tableData.value = date;
       total.value = res.total - number.value;
-      // console.log(number.value);
+    }
+  });
+  //获取影院名称
+  await getAdminAllCinema().then((res) => {
+    console.log(res);
+    if (res.status === 200) {
+      options.value = res.data;
     }
   });
 };
@@ -283,40 +209,22 @@ const searchs = async () => {
 //region 添加影厅
 const addUser = () => {
   dialogTitle.value = "添加影厅";
-  userInfo.value = {};
+  Info.value = {};
   dialogFormVisible.value = true;
 };
-//上传图片
-const changeImg = async () => {
-  let reader = new FileReader();
-  reader.readAsDataURL(await uploadImg.value.files[0]); //发起异步请求
-  reader.onload = function (e) {
-    //读取完成后，将结果赋值给img的src
-    previewImg.value.src = e.target.result;
-  };
-};
+
 //取消
 const cancel = () => {
   dialogFormVisible.value = false;
-  userInfo.value = {};
+  Info.value = {};
 };
 //确定
-const manageUserInfo = async () => {
+const manageInfo = async () => {
   dialogFormVisible.value = false;
-  let form = new FormData();
-  form.append("file", uploadImg.value.files[0]);
-  //图片上传
-  if (uploadImg.value.files[0]) {
-    await getUpLoadImg(form).then((res) => {
-      if (res.status == 200) {
-        userInfo.value.avatar = res.data;
-        // console.log(userInfo.value.avatar);
-      }
-    });
-  }
+
   if (dialogTitle.value === "添加影厅") {
     //添加影厅
-    await getAddUser(userInfo.value).then((res) => {
+    await getAdminAddMovieHall(Info.value).then((res) => {
       //添加成功的提示
       if (res.status === 200) {
         //  刷新数据
@@ -334,8 +242,8 @@ const manageUserInfo = async () => {
     });
   }
   if (dialogTitle.value === "编辑影厅信息") {
-    // console.log(userInfo.value);
-    await getEditUser(userInfo.value).then((res) => {
+    // console.log(Info.value);
+    await getEditUser(Info.value).then((res) => {
       // console.log(res);
       if (res.status == 200) {
         //  刷新数据
@@ -349,44 +257,30 @@ const manageUserInfo = async () => {
   }
 };
 //表单校验规则
-let checkName = (rule, value, callback) => {
+let checkCinema_name = (rule, value, callback) => {
   if (!value) {
-    callback(new Error("影厅名不能为空！"));
+    callback(new Error("影院名不能为空！"));
   } else {
     callback();
   }
 };
-let checkPhone = (rule, value, callback) => {
+
+let checkName = (rule, value, callback) => {
   if (!value) {
-    callback(new Error("请输入手机号码"));
-  } else {
-    if (/^1[3|4|5|6|7|8][0-9]{9}$/.test(value)) {
-      callback();
-    } else {
-      callback(new Error("请输入正确格式的手机号码"));
-    }
-  }
-};
-let checkPassword = (rule, value, callback) => {
-  if (!value) {
-    callback(new Error("请输入密码"));
+    callback(new Error("请输入影厅"));
   } else {
     callback();
   }
 };
 
 const rules = reactive({
-  user_name: [
+  cinema_name: [
+    { required: true, message: "请输入影院名", trigger: "blur" },
+    { validator: checkCinema_name, trigger: "blur" },
+  ],
+  name: [
     { required: true, message: "请输入影厅名", trigger: "blur" },
     { validator: checkName, trigger: "blur" },
-  ],
-  phone: [
-    { required: true, message: "请输入手机号码", trigger: "blur" },
-    { validator: checkPhone, trigger: "blur" },
-  ],
-  password: [
-    { required: true, message: "请输入密码", trigger: "blur" },
-    { validator: checkPassword, trigger: "blur" },
   ],
 });
 //编辑
@@ -394,7 +288,7 @@ const handleEdit = (index, row) => {
   // console.log(index, row);
   dialogTitle.value = "编辑影厅信息";
   dialogFormVisible.value = true;
-  userInfo.value = row;
+  Info.value = row;
 };
 //注销
 const handleDelete = (index, row) => {
