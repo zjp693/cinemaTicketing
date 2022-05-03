@@ -37,3 +37,10 @@ export function getAdminAllCinema() {
 export function getAdminEditHall(info) {
   return requestWithToken("/cinema/getAdminEditHall", "post", info);
 }
+/**
+ *  删除影厅
+ * @returns {AxiosPromise}
+ */
+export function getAdminDelMovieHall(hall_id) {
+  return requestWithToken("/cinema/getAdminDelMovieHall", "post", { hall_id });
+}

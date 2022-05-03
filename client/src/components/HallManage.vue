@@ -64,7 +64,7 @@
               size="small"
               type="danger"
               @click="handleDelete(scope.$index, scope.row)"
-              >注销</el-button
+              >删除</el-button
             >
           </template>
         </el-table-column>
@@ -133,7 +133,6 @@
 </template>
 
 <script setup>
-import { getDeleteUser } from "@/api/user";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { reactive, ref } from "vue";
 import {
@@ -142,6 +141,7 @@ import {
   getAdminAddMovieHall,
   getAdminAllCinema,
   getAdminEditHall,
+  getAdminDelMovieHall,
 } from "@/api/moviehall";
 //region 定义的数据
 
@@ -245,8 +245,8 @@ const manageInfo = async () => {
   }
   if (dialogTitle.value === "编辑影厅信息") {
     // console.log(Info.value);
+    //禁用
     disabled.value = true;
-
     await getAdminEditHall(Info.value).then((res) => {
       // console.log(res);
       console.log(Info);
@@ -305,7 +305,7 @@ const handleDelete = (index, row) => {
     type: "warning",
   })
     .then(() => {
-      getDeleteUser(row.user_id).then((res) => {
+      getAdminDelMovieHall(row.hall_id).then((res) => {
         if (res.status == 200) {
           //  刷新数据
           news();
@@ -319,7 +319,7 @@ const handleDelete = (index, row) => {
     .catch(() => {
       ElMessage({
         type: "info",
-        message: "取消注销影厅",
+        message: "取消删除影厅",
       });
     });
 };
