@@ -102,6 +102,7 @@
                 v-model="Info.cinema_id"
                 placeholder="请选择影院"
                 style="width: 100%"
+                :disabled="disabled"
               >
                 <el-option
                   v-for="item in options"
@@ -132,7 +133,7 @@
 </template>
 
 <script setup>
-import { getDeleteUser, getEditUser } from "@/api/user";
+import { getDeleteUser } from "@/api/user";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { reactive, ref } from "vue";
 import {
@@ -140,6 +141,7 @@ import {
   getAdminSearchMovieHall,
   getAdminAddMovieHall,
   getAdminAllCinema,
+  getAdminEditHall,
 } from "@/api/moviehall";
 //region 定义的数据
 
@@ -162,8 +164,10 @@ const dialogTitle = ref("");
 const dialogFormVisible = ref(false);
 //被注销影厅的个数
 const number = ref(0);
+//下拉影院名称
 const options = ref([]);
-
+//是否被禁用
+const disabled = ref(false);
 //endregion
 //region 获取影厅数据
 
@@ -182,7 +186,7 @@ const news = async () => {
   });
   //获取影院名称
   await getAdminAllCinema().then((res) => {
-    console.log(res);
+    // console.log(res);
     if (res.status === 200) {
       options.value = res.data;
     }
@@ -194,8 +198,6 @@ news();
 
 //region 搜索
 const searchs = async () => {
-  console.log(11);
-  if (searchInput.value === undefined) return;
   await getAdminSearchMovieHall(searchInput.value).then((res) => {
     // console.log(res);
     if (res.status == 200) {
@@ -243,8 +245,11 @@ const manageInfo = async () => {
   }
   if (dialogTitle.value === "编辑影厅信息") {
     // console.log(Info.value);
-    await getEditUser(Info.value).then((res) => {
+    disabled.value = true;
+
+    await getAdminEditHall(Info.value).then((res) => {
       // console.log(res);
+      console.log(Info);
       if (res.status == 200) {
         //  刷新数据
         news();
@@ -289,6 +294,7 @@ const handleEdit = (index, row) => {
   dialogTitle.value = "编辑影厅信息";
   dialogFormVisible.value = true;
   Info.value = row;
+  disabled.value = true;
 };
 //注销
 const handleDelete = (index, row) => {

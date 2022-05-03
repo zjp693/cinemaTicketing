@@ -30,3 +30,10 @@ export function getAdminAddMovieHall(info) {
 export function getAdminAllCinema() {
   return requestWithToken("/cinema/getAdminAllCinema", "get");
 }
+/**
+ *  编辑影厅信息
+ * @returns {AxiosPromise}
+ */
+export function getAdminEditHall(info) {
+  return requestWithToken("/cinema/getAdminEditHall", "post", info);
+}
