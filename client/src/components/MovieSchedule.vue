@@ -114,68 +114,28 @@
           label-width="80px"
           :model="movieInfo"
         >
-          <el-form-item label="电影排片名" prop="name">
+          <el-form-item label="电影名" prop="name">
             <el-col :span="16">
               <el-input v-model="movieInfo.name"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="海报" prop="poster">
-            <el-col :span="16">
-              <img
-                :src="server + movieInfo.poster"
-                ref="previewImg"
-                alt=""
-                style="width: 150px; height: 200px"
-              />
-              <div
-                class="el-upload__tip"
-                style="position: absolute; left: 0; top: 230px; height: 32px"
-              >
-                只能上传jpg/png文件，且不超过2M（默认为系统头像）
-              </div>
-              <div style="position: relative; height: 64px">
-                <el-button
-                  size="small"
-                  type="primary"
-                  style="position: absolute; left: 0; top: 0; cursor: pointer"
-                  >点击上传</el-button
-                >
-                <input
-                  type="file"
-                  name="file"
-                  id="file"
-                  ref="uploadImg"
-                  accept="image/png, image/jpeg, image/gif, image/jpg"
-                  style="
-                    position: absolute;
-                    left: 0;
-                    top: 0;
-                    opacity: 0;
-                    height: 32px;
-                    width: 80px;
-                    cursor: pointer;
-                  "
-                  @change="changeImg"
-                />
-              </div>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="导演" prop="director">
+
+          <el-form-item label="影院" prop="director">
             <el-col :span="16">
               <el-input v-model="movieInfo.director"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="演员" prop="actor">
+          <el-form-item label="影厅" prop="actor">
             <el-col :span="16">
               <el-input v-model="movieInfo.actor"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="片长" prop="movie_long">
+          <el-form-item label="上映时间" prop="movie_long">
             <el-col :span="16">
               <el-input v-model="movieInfo.movie_long"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="语言" prop="language">
+          <el-form-item label="放映时间" prop="language">
             <el-col :span="16">
               <el-select
                 v-model="movieInfo.language"
@@ -192,22 +152,7 @@
               </el-select>
             </el-col>
           </el-form-item>
-          <el-form-item label="类型" prop="type">
-            <el-col :span="16">
-              <el-select
-                v-model="movieInfo.type"
-                placeholder="请选择类型"
-                style="width: 100%"
-              >
-                <el-option
-                  v-for="item in typeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-col>
-          </el-form-item>
+
           <el-form-item label="上映时间" prop="public_date">
             <el-col :span="16">
               <el-date-picker
@@ -219,7 +164,7 @@
               ></el-date-picker>
             </el-col>
           </el-form-item>
-          <el-form-item label="简介" prop="intro">
+          <el-form-item label="售价" prop="intro">
             <el-col :span="16">
               <el-input
                 type="textarea"
@@ -243,13 +188,11 @@
 <script setup>
 import { ElMessage, ElMessageBox } from "element-plus";
 import { ref } from "vue";
+import { getAdminAddMovie, getAdminDeleteMovie } from "@/api/movie";
 import {
-  getAdminAddMovie,
-  getAdminDeleteMovie,
-  getAdminSearchMovie,
-  getAdminUpLoadImg,
-} from "@/api/movie";
-import { getAdminArrangementList } from "@/api/arrangement";
+  getAdminArrangementList,
+  getAdminSearchArrangemen,
+} from "@/api/arrangement";
 //region 定义的数据
 
 //表格所需数据
@@ -264,11 +207,7 @@ const currentPage = ref(Number(1));
 const searchInput = ref();
 //电影排片信息
 const movieInfo = ref({});
-//图片dom
-const previewImg = ref();
-const uploadImg = ref();
-//服务器地址
-const server = "http://localhost:3001";
+
 //弹出框的标题
 const dialogTitle = ref("");
 //控制是否弹出
@@ -299,56 +238,7 @@ const languageOptions = ref([
   },
 ]);
 //类型
-const typeOptions = [
-  {
-    value: "动漫",
-    label: "动漫",
-  },
-  {
-    value: "言情",
-    label: "言情",
-  },
-  {
-    value: "科幻",
-    label: "科幻",
-  },
-  {
-    value: "喜剧",
-    label: "喜剧",
-  },
-  {
-    value: "爱情",
-    label: "爱情",
-  },
-  {
-    value: "剧情",
-    label: "剧情",
-  },
-  {
-    value: "动作",
-    label: "动作",
-  },
-  {
-    value: "冒险",
-    label: "冒险",
-  },
-  {
-    value: "青春",
-    label: "青春",
-  },
-  {
-    value: "悬疑",
-    label: "悬疑",
-  },
-  {
-    value: "恐怖",
-    label: "恐怖",
-  },
-  {
-    value: "其它",
-    label: "其它",
-  },
-];
+
 //表单校验规则
 let checkMovieLong = (rule, value, callback) => {
   if (!value) {
@@ -403,7 +293,7 @@ news();
 //region 搜索
 const searchs = async () => {
   if (searchInput.value === undefined) return;
-  await getAdminSearchMovie(searchInput.value).then((res) => {
+  await getAdminSearchArrangemen(searchInput.value).then((res) => {
     console.log(res);
     if (res.status == 200) {
       tableData.value = res.data;
@@ -419,15 +309,7 @@ const addUser = () => {
   movieInfo.value = {};
   dialogFormVisible.value = true;
 };
-//上传图片
-const changeImg = async () => {
-  let reader = new FileReader();
-  reader.readAsDataURL(await uploadImg.value.files[0]); //发起异步请求
-  reader.onload = function (e) {
-    //读取完成后，将结果赋值给img的src
-    previewImg.value.src = e.target.result;
-  };
-};
+
 //取消
 const cancel = () => {
   dialogFormVisible.value = false;
@@ -436,22 +318,7 @@ const cancel = () => {
 //确定
 const manageMovieInfo = async () => {
   dialogFormVisible.value = false;
-  let form = new FormData();
-  form.append("file", uploadImg.value.files[0]);
-  //图片上传
-  if (uploadImg.value.files[0]) {
-    console.log(1111);
-    await getAdminUpLoadImg(form)
-      .then((res) => {
-        if (res.status == 200) {
-          movieInfo.value.poster = res.data;
-          console.log(movieInfo.value.poster);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
+
   if (dialogTitle.value === "安排电影排片") {
     //安排电影排片
     await getAdminAddMovie(movieInfo.value).then((res) => {
