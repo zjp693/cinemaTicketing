@@ -114,36 +114,92 @@
           label-width="80px"
           :model="movieInfo"
         >
-          <el-form-item label="电影名" prop="name">
-            <el-col :span="16">
-              <el-input v-model="movieInfo.name"></el-input>
+          <el-form-item label="电影名" prop="movie_id">
+            <el-col :span="12">
+              <el-select
+                v-model="movieInfo.movie_id"
+                placeholder="请选择"
+                style="width: 100%"
+                @change="changeMovie"
+              >
+                <el-option
+                  v-for="item in movieName"
+                  :key="item.movie_id"
+                  :label="item.name"
+                  :value="item.movie_id"
+                >
+                </el-option>
+              </el-select>
             </el-col>
           </el-form-item>
 
-          <el-form-item label="影院" prop="director">
-            <el-col :span="16">
-              <el-input v-model="movieInfo.director"></el-input>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="影厅" prop="actor">
-            <el-col :span="16">
-              <el-input v-model="movieInfo.actor"></el-input>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="上映时间" prop="movie_long">
-            <el-col :span="16">
-              <el-input v-model="movieInfo.movie_long"></el-input>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="放映时间" prop="language">
-            <el-col :span="16">
+          <el-form-item label="影院" prop="cinema_id">
+            <el-col :span="12">
               <el-select
-                v-model="movieInfo.language"
-                placeholder="请选择语言"
+                v-model="movieInfo.cinema_id"
+                placeholder="请选择"
+                style="width: 100%"
+                @change="changeCinema"
+              >
+                <el-option
+                  v-for="item in cinemaName"
+                  :key="item.cinema_id"
+                  :label="item.cinema_name"
+                  :value="item.cinema_id"
+                >
+                </el-option>
+              </el-select>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="影厅" prop="hall_name">
+            <el-col :span="12">
+              <el-select
+                v-model="movieInfo.hall_name"
+                placeholder="请选择"
                 style="width: 100%"
               >
                 <el-option
-                  v-for="item in languageOptions"
+                  v-for="item in cinemaList"
+                  :key="item"
+                  :label="item.name"
+                  :value="item.name"
+                >
+                </el-option>
+              </el-select>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="上映日期" prop="public_date">
+            <el-col :span="12">
+              <el-date-picker
+                v-model="movieInfo.public_date"
+                type="date"
+                readonly
+                style="width: 100%"
+              >
+              </el-date-picker>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="放映日期" prop="show_date">
+            <el-col :span="12">
+              <el-date-picker
+                type="date"
+                placeholder="选择时间"
+                v-model="movieInfo.show_date"
+                style="width: 100%"
+                :disabled-date="disabledDate"
+                value-format="YYYY-MM-DD"
+              ></el-date-picker>
+            </el-col>
+          </el-form-item>
+          <el-form-item label="放映时间" prop="show_time">
+            <el-col :span="12">
+              <el-select
+                v-model="movieInfo.show_time"
+                placeholder="请选择"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in timeOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
@@ -152,23 +208,11 @@
               </el-select>
             </el-col>
           </el-form-item>
-
-          <el-form-item label="上映时间" prop="public_date">
-            <el-col :span="16">
-              <el-date-picker
-                type="date"
-                placeholder="选择日期"
-                v-model="movieInfo.public_date"
-                style="width: 100%"
-                value-format="YYYY-MM-DD"
-              ></el-date-picker>
-            </el-col>
-          </el-form-item>
-          <el-form-item label="售价" prop="intro">
-            <el-col :span="16">
+          <el-form-item label="售价" prop="price">
+            <el-col :span="12">
               <el-input
                 type="textarea"
-                v-model="movieInfo.intro"
+                v-model="movieInfo.price"
                 :autosize="{ minRows: 2, maxRows: 4 }"
               ></el-input>
             </el-col>
@@ -188,11 +232,15 @@
 <script setup>
 import { ElMessage, ElMessageBox } from "element-plus";
 import { ref } from "vue";
-import { getAdminAddMovie, getAdminDeleteMovie } from "@/api/movie";
 import {
+  getAdminAddArrangemen,
   getAdminArrangementList,
+  getAdminDelArrangemen,
+  getAdminMovieName,
   getAdminSearchArrangemen,
 } from "@/api/arrangement";
+import { getAdminAllCinema, getAdminIDCinema } from "@/api/moviehall";
+import { getAdminMovieList } from "@/api/movie";
 //region 定义的数据
 
 //表格所需数据
@@ -207,74 +255,61 @@ const currentPage = ref(Number(1));
 const searchInput = ref();
 //电影排片信息
 const movieInfo = ref({});
-
 //弹出框的标题
 const dialogTitle = ref("");
 //控制是否弹出
 const dialogFormVisible = ref(false);
 //被注销电影排片的个数
 const number = ref(0);
-//语言
-const languageOptions = ref([
-  {
-    value: "粤语",
-    label: "粤语",
-  },
-  {
-    value: "国语",
-    label: "国语",
-  },
-  {
-    value: "英语",
-    label: "英语",
-  },
-  {
-    value: "日语",
-    label: "日语",
-  },
-  {
-    value: "其它",
-    label: "其它",
-  },
+//电影名
+let movieName = ref([]);
+//影院名
+let cinemaName = ref([]);
+//放映时间
+let timeOptions = ref([
+  { label: "08:05", value: "08:05" },
+  { label: "12:05", value: "12:05" },
+  { label: "16:05", value: "16:05" },
+  { label: "20:05", value: "20:05" },
 ]);
 //类型
-
+// console.log(timeOptions);
+let cinemaList = ref([]);
 //表单校验规则
-let checkMovieLong = (rule, value, callback) => {
+let checkPrice = (rule, value, callback) => {
   if (!value) {
-    callback(new Error("片长信息不能为空"));
+    callback(new Error("售价不能为空"));
   } else {
-    if (/^[1-9][0-9]+分钟$/.test(value)) {
+    if (/((^[1-9]\d*)|^0)(\.\d{0,2})?$/.test(value)) {
       callback();
     } else {
-      callback(new Error("格式应为xx分钟"));
+      callback(new Error("请输入正确格式的售价"));
     }
   }
 };
 //表单校验规则
 const rules = ref({
-  name: [{ required: true, message: "电影排片名不能为空", trigger: "blur" }],
-  poster: [{ required: true, message: "请上传电影排片海报", trigger: "blur" }],
-  director: [{ required: true, message: "导演信息不能为空", trigger: "blur" }],
-  actor: [{ required: true, message: "主演信息不能为空", trigger: "blur" }],
-  movie_long: [
-    { required: true, message: "片长信息不能为空", trigger: "blur" },
-    { validator: checkMovieLong, trigger: "blur" },
+  name: [{ required: true, message: "电影名不能为空", trigger: "change" }],
+  cinema_name: [
+    { required: true, message: "影院名不能为空", trigger: "change" },
   ],
-  language: [{ required: true, message: "请选择语言", trigger: "change" }],
-  type: [{ required: true, message: "请选择电影排片类型", trigger: "change" }],
-  public_date: [{ required: true, message: "请选择上映日期", trigger: "blur" }],
-  intro: [
-    { required: true, message: "电影排片简介信息不能为空", trigger: "blur" },
+  hall_name: [{ required: true, message: "影厅名不能为空", trigger: "change" }],
+  show_date: [
+    { required: true, message: "放映日期不能为空", trigger: "change" },
+  ],
+  show_time: [
+    { required: true, message: "放映时间不能为空", trigger: "change" },
+  ],
+  price: [
+    { required: true, message: "售价不能为空", trigger: "blur" },
+    { validator: checkPrice, trigger: "blur" },
   ],
 });
 //endregion
 
 //region 获取电影排片数据
-
 const news = async () => {
   await getAdminArrangementList().then((res) => {
-    console.log(res);
     // 过滤的被注销的数据
     if (res.status === 200) {
       const date = res.data.filter((item) => {
@@ -285,9 +320,19 @@ const news = async () => {
       total.value = res.total - number.value;
     }
   });
+  await getAdminAllCinema().then((res) => {
+    if (res.status == 200) {
+      cinemaName.value = res.data;
+      // console.log(cinemaName.value);
+    }
+  });
+  await getAdminMovieName().then((res) => {
+    if (res.status == 200) {
+      movieName.value = res.data;
+    }
+  });
 };
 news();
-
 //endregion
 
 //region 搜索
@@ -317,11 +362,13 @@ const cancel = () => {
 };
 //确定
 const manageMovieInfo = async () => {
+  //是否弹出
   dialogFormVisible.value = false;
-
-  if (dialogTitle.value === "安排电影排片") {
-    //安排电影排片
-    await getAdminAddMovie(movieInfo.value).then((res) => {
+  //安排电影排片
+  console.log(movieInfo.value);
+  if (movieInfo.value == {}) {
+    console.log(1);
+    await getAdminAddArrangemen(movieInfo.value).then((res) => {
       console.log(res);
       //添加成功的提示
       if (res.status === 200) {
@@ -338,10 +385,35 @@ const manageMovieInfo = async () => {
         });
       }
     });
+  } else {
+    ElMessage({
+      message: "请输入必选项",
+      type: "error",
+    });
   }
 };
-
-//注销
+//填充上映时间
+const changeMovie = async (value) => {
+  await getAdminMovieList().then((res) => {
+    if (res.status === 200) {
+      movieInfo.value.public_date = res.data[value].public_date;
+    }
+  });
+};
+//填充影厅信息
+const changeCinema = async (value) => {
+  await getAdminIDCinema(value).then((res) => {
+    if (res.status === 200) {
+      cinemaList.value = res.data;
+    }
+    console.log(cinemaList.value);
+  });
+};
+//日期时间是否可选
+const disabledDate = (time) => {
+  return time.getTime() < Date.now();
+};
+//删除
 const handleDelete = (index, row) => {
   // console.log(index, row.user_id);
   ElMessageBox.confirm(
@@ -354,7 +426,7 @@ const handleDelete = (index, row) => {
     }
   )
     .then(() => {
-      getAdminDeleteMovie(row.movie_id).then((res) => {
+      getAdminDelArrangemen(row.schedule_id).then((res) => {
         if (res.status == 200) {
           //  刷新数据
           news();

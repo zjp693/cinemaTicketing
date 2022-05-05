@@ -30,17 +30,18 @@ export function getAdminAddMovieHall(info) {
 export function getAdminAllCinema() {
   return requestWithToken("/cinema/getAdminAllCinema", "get");
 }
-/**
- *  编辑影厅信息
- * @returns {AxiosPromise}
- */
-export function getAdminEditHall(info) {
-  return requestWithToken("/cinema/getAdminEditHall", "post", info);
-}
+
 /**
  *  删除影厅
  * @returns {AxiosPromise}
  */
 export function getAdminDelMovieHall(hall_id) {
   return requestWithToken("/cinema/getAdminDelMovieHall", "post", { hall_id });
+}
+/**
+ *  返回指定影院影厅
+ * @returns {AxiosPromise}
+ */
+export function getAdminIDCinema(cinema_id) {
+  return requestWithToken("/cinema/getAdminIDCinema", "get", { cinema_id });
 }

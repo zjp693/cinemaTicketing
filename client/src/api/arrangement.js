@@ -18,3 +18,29 @@ export function getAdminSearchArrangemen(searchInput) {
     searchInput,
   });
 }
+/**
+ *  删除电影排片信息
+ * @returns {AxiosPromise}
+ */
+
+export function getAdminDelArrangemen(schedule_id) {
+  return requestWithToken("/arrangement/getAdminDelArrangemen", "post", {
+    schedule_id,
+  });
+}
+/**
+ *  获取电影名称
+ * @returns {AxiosPromise}
+ */
+
+export function getAdminMovieName() {
+  return requestWithToken("/movie/getAdminMovieName", "get");
+}
+/**
+ *  获取电影名称
+ * @returns {AxiosPromise}
+ */
+
+export function getAdminAddArrangemen(info) {
+  return requestWithToken("/arrangement/getAdminAddArrangemen", "post", info);
+}
