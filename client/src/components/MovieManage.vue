@@ -440,23 +440,25 @@ const manageMovieInfo = async () => {
   }
   if (dialogTitle.value === "添加电影") {
     //添加电影
-    await getAdminAddMovie(movieInfo.value).then((res) => {
-      console.log(res);
-      //添加成功的提示
-      if (res.status === 200) {
-        //  刷新数据
-        news();
-        ElMessage({
-          message: res.message,
-          type: "success",
-        });
-      } else {
-        ElMessage({
-          message: res.message,
-          type: "warning",
-        });
-      }
-    });
+    if (movieInfo.value == {}) {
+      await getAdminAddMovie(movieInfo.value).then((res) => {
+        console.log(res);
+        //添加成功的提示
+        if (res.status === 200) {
+          //  刷新数据
+          news();
+          ElMessage({
+            message: res.message,
+            type: "success",
+          });
+        } else {
+          ElMessage({
+            message: res.message,
+            type: "warning",
+          });
+        }
+      });
+    }
   }
   if (dialogTitle.value === "编辑电影信息") {
     console.log(movieInfo.value);

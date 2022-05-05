@@ -226,22 +226,29 @@ const manageInfo = async () => {
 
   if (dialogTitle.value === "添加影厅") {
     //添加影厅
-    await getAdminAddMovieHall(Info.value).then((res) => {
-      //添加成功的提示
-      if (res.status === 200) {
-        //  刷新数据
-        news();
-        ElMessage({
-          message: res.message,
-          type: "success",
-        });
-      } else {
-        ElMessage({
-          message: res.message,
-          type: "warning",
-        });
-      }
-    });
+    if (Info.value == {}) {
+      await getAdminAddMovieHall(Info.value).then((res) => {
+        //添加成功的提示
+        if (res.status === 200) {
+          //  刷新数据
+          news();
+          ElMessage({
+            message: res.message,
+            type: "success",
+          });
+        } else {
+          ElMessage({
+            message: res.message,
+            type: "warning",
+          });
+        }
+      });
+    } else {
+      ElMessage({
+        message: "请输入必选项",
+        type: "error",
+      });
+    }
   }
   if (dialogTitle.value === "编辑影厅信息") {
     // console.log(Info.value);

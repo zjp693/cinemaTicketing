@@ -367,7 +367,6 @@ const manageMovieInfo = async () => {
   //安排电影排片
   console.log(movieInfo.value);
   if (movieInfo.value == {}) {
-    console.log(1);
     await getAdminAddArrangemen(movieInfo.value).then((res) => {
       console.log(res);
       //添加成功的提示
