@@ -39,6 +39,13 @@ export function getAdminDelMovieHall(hall_id) {
   return requestWithToken("/cinema/getAdminDelMovieHall", "post", { hall_id });
 }
 /**
+ *  编辑影厅
+ * @returns {AxiosPromise}
+ */
+export function getAdminEditHall(info) {
+  return requestWithToken("/cinema/getAdminEditHall", "post", info);
+}
+/**
  *  返回指定影院影厅
  * @returns {AxiosPromise}
  */

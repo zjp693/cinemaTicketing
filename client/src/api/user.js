@@ -7,7 +7,15 @@ import { requestWithToken } from "@/utils/request";
  * @returns {AxiosPromise}
  */
 export function login({ username, password }) {
-  return requestWithToken("/login", "post", { username, password });
+  console.log(username, password);
+  return requestWithToken("/users/adminLogin", "post", { username, password });
+}
+/**
+ *  获取管理员账号信息
+ * @returns {AxiosPromise}
+ */
+export function getAdminInfo(admin_id) {
+  return requestWithToken("/users/getAdminInfo", "get", admin_id);
 }
 /**
  *  获取用户列表
@@ -16,7 +24,6 @@ export function login({ username, password }) {
  * @returns {AxiosPromise}
  */
 export function getCurrentPageUser() {
-  // console.log(currentPage, pageSize, input);
   return requestWithToken("/users/getCurrentPageUser", "get");
 }
 

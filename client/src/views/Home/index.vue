@@ -9,20 +9,21 @@
           ></i>
           <span style="font-size: 16px; font-weight: bolder">淘气电影</span>
         </div>
-        <div class="right">
+        <div class="right" v-if="adminInfo">
           <img
+            :src="server + adminInfo.avatar"
             class="user-avatar"
             width="40px"
             height="40px"
-            style="border-radius: 20px"
+            style="border-radius: 20px; width: 40px; height: 40px"
           />
           <el-dropdown style="margin-left: 12px">
             <span class="el-dropdown-link">
-              <i class="el-icon-arrow-down el-icon--right"></i>
+              {{ adminInfo.name }}
+              <el-icon><arrow-down /></el-icon>
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>个人信息</el-dropdown-item>
                 <el-dropdown-item @click="logout">退出</el-dropdown-item>
               </el-dropdown-menu></template
             >
@@ -95,15 +96,28 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { getAdminInfo } from "@/api/user";
 const currentMenuIndex = ref("");
 const router = useRouter();
 const route = useRoute();
-//
+const adminInfo = ref({});
+//服务器地址
+const server = "http://localhost:3001";
 onMounted(() => {
   currentMenuIndex.value = route.path;
 });
+
+getAdminInfo({ admin_id: sessionStorage.getItem("admin_id") }).then((res) => {
+  console.log(res);
+  if (res.status == 200) {
+    adminInfo.value = res.data[0];
+    console.log(adminInfo.value.name);
+  }
+});
+//退出
 const logout = () => {
-  console.log("退出登录");
+  sessionStorage.removeItem("token");
+  router.push("/login");
 };
 //路由跳转
 const handleMenuItemClick = (path) => {
