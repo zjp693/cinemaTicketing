@@ -14,4 +14,3 @@ export function login({ username, password }) {
 export function getMovieList() {
   return requestWithToken("/movie/list", "get");
 }
-
