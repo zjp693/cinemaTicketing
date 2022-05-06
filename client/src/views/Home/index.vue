@@ -3,10 +3,15 @@
     <el-row class="header">
       <div class="head-bar">
         <div class="left">
-          <i
-            class="icon-film-logo"
-            style="font-size: 48px; margin-right: 5px"
-          ></i>
+          <!--          <i-->
+          <!--            class="icon-film-logo"-->
+          <!--            style="font-size: 48px; margin-right: 5px"-->
+          <!--          ></i>-->
+          <img
+            src="../../assets/logo.png"
+            alt=""
+            style="width: 40px; height: 40px; margin-right: 10px"
+          />
           <span style="font-size: 16px; font-weight: bolder">淘气电影</span>
         </div>
         <div class="right" v-if="adminInfo">
