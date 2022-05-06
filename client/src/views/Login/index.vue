@@ -41,7 +41,6 @@ const reset = () => {
 const adminLogin = async () => {
   await login({ username: username.value, password: password.value }).then(
     (res) => {
-      console.log(res);
       if (res.status == 200) {
         sessionStorage.setItem("token", res.data.token);
         sessionStorage.setItem("admin_id", res.data.result[0].admin_id);

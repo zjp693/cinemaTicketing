@@ -108,10 +108,10 @@ onMounted(() => {
 });
 
 getAdminInfo({ admin_id: sessionStorage.getItem("admin_id") }).then((res) => {
-  console.log(res);
+  // console.log(res);
   if (res.status == 200) {
     adminInfo.value = res.data[0];
-    console.log(adminInfo.value.name);
+    // console.log(adminInfo.value.name);
   }
 });
 //退出
