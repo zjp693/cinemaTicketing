@@ -1,18 +1,25 @@
 <template>
   <div id="home">
-    <div :class="['search-header', { active: headerActive }]">
-      <span class="location">广州</span>
-      <span class="search"
-        ><span class="icon-search"></span
-        ><input type="text" placeholder="找电影、影院"
-      /></span>
-      <span class="date"
-        ><span class="calender"><span class="day"></span></span
-      ></span>
+    <div class="search-header">
+      <div class="location">广州</div>
+      <div class="search">
+        <van-icon name="search" />
+        <input type="" name="" value="" placeholder="搜索电影" />
+      </div>
+      <div class="date"></div>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+const value = ref("");
+console.log(value);
+</script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+#home {
+  width: 100%;
+  height: 100%;
+}
+</style>
