@@ -6,6 +6,9 @@ import router from "./router";
 import store from "./store";
 //配置字体图标
 import "@/common/css/style.css";
+// 媒体查询
+import "@/assets/css/adapter.css";
+import "@/assets/css/reset.css";
 //引入vant
 import Vant from "vant";
 import { Icon } from "vant";
