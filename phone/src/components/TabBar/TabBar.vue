@@ -1,20 +1,27 @@
 <template>
-  <van-tabbar v-model="active">
+  <van-tabbar v-model="active" active-color="#ee0a24" inactive-color="#000">
     <van-tabbar-item icon="home-o" @click="router.push('/')">
       <span>首页</span>
       <template #icon="props">
         <img :src="props.active ? icon[0].active : icon[0].normal" />
       </template>
     </van-tabbar-item>
-    <van-tabbar-item icon="search" @click="router.push('movie')"
-      >电影</van-tabbar-item
-    >
-    <van-tabbar-item icon="friends-o" @click="router.push('cinema')"
-      >影院</van-tabbar-item
-    >
-    <van-tabbar-item icon="setting-o" @click="router.push('my')"
-      >我的</van-tabbar-item
-    >
+    <van-tabbar-item icon="search" @click="router.push('movie')">
+      <span>电影</span>
+      <template #icon="props">
+        <img :src="props.active ? icon[1].active : icon[1].normal" />
+      </template>
+    </van-tabbar-item>
+    <van-tabbar-item icon="friends-o" @click="router.push('cinema')">
+      <span>影院</span>
+      <template #icon="props">
+        <img :src="props.active ? icon[2].active : icon[2].normal" /> </template
+    ></van-tabbar-item>
+    <van-tabbar-item icon="setting-o" @click="router.push('my')">
+      <span>我的</span>
+      <template #icon="props">
+        <img :src="props.active ? icon[3].active : icon[3].normal" /> </template
+    ></van-tabbar-item>
   </van-tabbar>
 </template>
 
@@ -49,4 +56,11 @@ console.log(icon.value[0].active);
 // };
 //
 </script>
-<style scoped></style>
+<style scoped>
+.van-tabbar-item .van-badge__wrapper img {
+  height: 0.5rem;
+}
+.van-tabbar-item__text span {
+  font-size: 0.27rem;
+}
+</style>
