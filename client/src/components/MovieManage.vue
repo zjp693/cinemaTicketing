@@ -440,9 +440,8 @@ const manageMovieInfo = async () => {
   }
   if (dialogTitle.value === "添加电影") {
     //添加电影
-    if (movieInfo.value == {}) {
+    if (movieInfo.value) {
       await getAdminAddMovie(movieInfo.value).then((res) => {
-        console.log(res);
         //添加成功的提示
         if (res.status === 200) {
           //  刷新数据

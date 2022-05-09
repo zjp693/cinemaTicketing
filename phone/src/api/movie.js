@@ -7,6 +7,6 @@ import { requestWithToken } from "@/utils/request";
  * @returns {AxiosPromise}
  */
 
-export function getMovieList() {
-  return requestWithToken("/movie/list", "get");
+export function findMovieList() {
+  return requestWithToken("/movie/getMovieList", "get");
 }

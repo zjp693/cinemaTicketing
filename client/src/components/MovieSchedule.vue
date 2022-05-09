@@ -366,7 +366,7 @@ const manageMovieInfo = async () => {
   dialogFormVisible.value = false;
   //安排电影排片
   console.log(movieInfo.value);
-  if (movieInfo.value == {}) {
+  if (movieInfo.value) {
     await getAdminAddArrangemen(movieInfo.value).then((res) => {
       console.log(res);
       //添加成功的提示
