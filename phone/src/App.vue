@@ -1,7 +1,15 @@
 <template>
-  <router-view />
+  <div id="app">
+    <router-view />
+    <tab-bar v-if="router.meta.showTabBar" />
+  </div>
 </template>
 
+<script setup>
+import TabBar from "./components/TabBar/TabBar";
+import { useRoute } from "vue-router";
+const router = useRoute();
+</script>
 <style lang="scss">
 body,
 html,

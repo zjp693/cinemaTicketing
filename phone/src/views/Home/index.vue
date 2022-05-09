@@ -200,7 +200,6 @@ findMovieList().then((res) => {
 #home {
   width: 100%;
   height: 100%;
-  background-color: pink;
   .search-header {
     font-size: 0.3125rem;
     position: fixed;
