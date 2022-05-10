@@ -1,23 +1,27 @@
 <template>
   <van-tabbar v-model="active" active-color="#ee0a24" inactive-color="#000">
-    <van-tabbar-item icon="home-o" @click="router.push('/')">
+    <van-tabbar-item name="home" icon="home-o" @click="router.push('/')">
       <span>首页</span>
       <template #icon="props">
         <img :src="props.active ? icon[0].active : icon[0].normal" />
       </template>
     </van-tabbar-item>
-    <van-tabbar-item icon="search" @click="router.push('movie')">
+    <van-tabbar-item name="movie" icon="search" @click="router.push('movie')">
       <span>电影</span>
       <template #icon="props">
         <img :src="props.active ? icon[1].active : icon[1].normal" />
       </template>
     </van-tabbar-item>
-    <van-tabbar-item icon="friends-o" @click="router.push('cinema')">
+    <van-tabbar-item
+      name="cinema"
+      icon="friends-o"
+      @click="router.push('cinema')"
+    >
       <span>影院</span>
       <template #icon="props">
         <img :src="props.active ? icon[2].active : icon[2].normal" /> </template
     ></van-tabbar-item>
-    <van-tabbar-item icon="setting-o" @click="router.push('my')">
+    <van-tabbar-item name="my" icon="setting-o" @click="router.push('my')">
       <span>我的</span>
       <template #icon="props">
         <img :src="props.active ? icon[3].active : icon[3].normal" /> </template
@@ -26,10 +30,19 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-const active = ref(0);
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+const active = ref("home");
 let router = useRouter();
+let route = useRoute();
+
+onMounted(() => {
+  active.value = route.name;
+});
+// setInterval(() => {
+//   console.log(active.value);
+// });
+
 const icon = ref([
   {
     normal: require("./images/home_light.svg"),
@@ -48,13 +61,6 @@ const icon = ref([
     active: require("./images/my_fill_light.svg"),
   },
 ]);
-console.log(icon.value[0].active);
-
-// const search = () => {
-//   console.log(11);
-//   console.log(router.push);
-// };
-//
 </script>
 <style scoped>
 .van-tabbar-item .van-badge__wrapper img {
