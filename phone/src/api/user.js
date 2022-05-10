@@ -9,8 +9,3 @@ import { requestWithToken } from "@/utils/request";
 export function login({ username, password }) {
   return requestWithToken("/login", "post", { username, password });
 }
-
-// 加载电影列表
-export function getMovieList() {
-  return requestWithToken("/movie/list", "get");
-}
