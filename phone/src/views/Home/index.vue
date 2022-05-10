@@ -8,7 +8,7 @@
         ><input
           type="text"
           placeholder="找电影、影院"
-          @focus="router.push('search_all')"
+          @focus="router.push('/search_all')"
       /></span>
       <span class="date"
         ><span class="calender"

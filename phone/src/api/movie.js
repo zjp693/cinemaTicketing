@@ -10,3 +10,9 @@ import { requestWithToken } from "@/utils/request";
 export function getMovieList() {
   return requestWithToken("/movie/getMovieList", "get");
 }
+/**
+ * 根据名字匹配电影
+ */
+export function getmatchMovieByName(name) {
+  return requestWithToken("/movie/getmatchMovieByName", "get", { name });
+}
