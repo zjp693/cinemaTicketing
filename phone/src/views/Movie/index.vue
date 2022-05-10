@@ -16,10 +16,10 @@
     </div>
     <div class="tab-content" ref="container">
       <div class="panel" v-show="isHotMovie">
-        <movie-item :movie-list="hotMovieList"></movie-item>
+        <movie-item :movieList="hotMovieList"></movie-item>
       </div>
       <div class="panel" v-show="!isHotMovie">
-        <movie-item :movie-list="notShowMovieList"></movie-item>
+        <movie-item :movieList="notShowMovieList"></movie-item>
       </div>
     </div>
   </div>
@@ -27,6 +27,8 @@
 
 <script setup>
 import { ref } from "vue";
+import MovieItem from "../../components/MovieItem/MovieItem";
+import { getMovieList } from "../../api/movie";
 //切换电影选项
 const isHotMovie = ref(true);
 //服务器地址
@@ -35,6 +37,29 @@ const isHotMovie = ref(true);
 const hotMovieList = ref([]);
 //未上映电影列表
 const notShowMovieList = ref([]);
+getMovieList().then((res) => {
+  console.log(res);
+  if (res.status == 200) {
+    res.data.forEach((value) => {
+      if (new Date() - new Date(value.public_date) >= 0) {
+        hotMovieList.value.push(value);
+      } else {
+        notShowMovieList.value.push(value);
+      }
+    });
+    hotMovieList.value.sort((a, b) => {
+      return b.score - a.score;
+    });
+    notShowMovieList.value.sort((a, b) => {
+      return b.wish_num - a.wish_num;
+    });
+  }
+});
+//改变电影类型
+const optionMovieType = (flag) => {
+  isHotMovie.value = flag;
+  window.scroll(0, 0);
+};
 </script>
 
 <style scoped lang="scss">

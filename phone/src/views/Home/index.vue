@@ -8,7 +8,7 @@
         ><input
           type="text"
           placeholder="找电影、影院"
-          @focus="$router.push('search_all')"
+          @focus="router.push('search_all')"
       /></span>
       <span class="date"
         ><span class="calender"
@@ -55,7 +55,7 @@
                 :src="server + item.poster"
                 alt=""
                 @click="
-                  $router.push({
+                  router.push({
                     path: '/movie_detail',
                     query: { movie_id: item.movie_id },
                   })
@@ -77,7 +77,7 @@
               <div
                 class="buy"
                 @click="
-                  $router.push({
+                  router.push({
                     path: '/select_cinema',
                     query: { movie_id: item.movie_id },
                   })
@@ -93,7 +93,7 @@
             <span class="blue-name">即将上映</span
             ><span
               class="more"
-              @click="$router.push({ path: '/movie', query: { hotMovie: 0 } })"
+              @click="router.push({ path: '/movie', query: { hotMovie: 0 } })"
               >全部{{ notShowMovieList.length }}部
               <span class="icon-more"></span
             ></span>
@@ -108,7 +108,7 @@
                 :src="server + item.poster"
                 alt=""
                 @click="
-                  $router.push({
+                  router.push({
                     path: '/movie_detail',
                     query: { movie_id: item.movie_id },
                   })
@@ -141,7 +141,7 @@
                   <span
                     class="btn"
                     @click="
-                      $router.push({
+                      router.push({
                         path: '/select_cinema',
                         query: { movie_id: item.movie_id },
                       })
@@ -160,7 +160,8 @@
 
 <script setup>
 import { ref } from "vue";
-import { findMovieList } from "@/api/movie";
+import { getMovieList } from "@/api/movie";
+import { useRouter } from "vue-router";
 
 //服务器地址
 const server = ref("http://localhost:3001");
@@ -176,7 +177,7 @@ const images = [
   require("@/assets/swiper/3.jpg"),
   require("@/assets/swiper/4.jpg"),
 ];
-findMovieList().then((res) => {
+getMovieList().then((res) => {
   // console.log(res);
   if (res.status == 200) {
     res.data.forEach((value) => {
@@ -194,6 +195,7 @@ findMovieList().then((res) => {
     });
   }
 });
+const router = useRouter();
 </script>
 
 <style lang="scss" scoped>
