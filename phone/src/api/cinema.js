@@ -3,7 +3,7 @@ import { requestWithToken } from "@/utils/request";
 /**
  *  影院列表
  * @returns {AxiosPromise}
- */
+ */ getCurrentCinemaDetail;
 
 export function getCinemaList() {
   return requestWithToken("/cinema/getCinemaList", "get");
@@ -13,4 +13,12 @@ export function getCinemaList() {
  */
 export function getmatchCinemaByName(name) {
   return requestWithToken("/cinema/getmatchCinemaByName", "get", { name });
+}
+/**
+ *加载影院详情
+ */
+export function getCurrentCinemaDetail(cinema_id) {
+  return requestWithToken("/cinema/getCurrentCinemaDetail", "get", {
+    cinema_id,
+  });
 }
