@@ -29,7 +29,15 @@
         style="height: 3rem"
       >
         <van-swipe-item v-for="image in images" :key="image">
-          <img :src="image" />
+          <img
+            :src="image.src"
+            @click="
+              router.push({
+                path: '/movie_detail',
+                query: { movie_id: image.movie_id },
+              })
+            "
+          />
         </van-swipe-item>
       </van-swipe>
     </div>
@@ -41,7 +49,7 @@
             <span class="red-name">正在热映</span
             ><span
               class="more"
-              @click="$router.push({ path: '/movie', query: { hotMovie: 1 } })"
+              @click="router.push({ path: '/movie', query: { hotMovie: 1 } })"
               >全部{{ hotMovieList.length }}部 <span class="icon-more"></span
             ></span>
           </div>
@@ -172,10 +180,10 @@ const hotMovieList = ref([]);
 //未上映电影列表
 const notShowMovieList = ref([]);
 const images = [
-  require("@/assets/swiper/1.jpg"),
-  require("@/assets/swiper/2.jpg"),
-  require("@/assets/swiper/3.jpg"),
-  require("@/assets/swiper/4.jpg"),
+  { src: require("@/assets/swiper/1.jpg"), movie_id: 1 },
+  { src: require("@/assets/swiper/2.jpg"), movie_id: 2 },
+  { src: require("@/assets/swiper/3.jpg"), movie_id: 3 },
+  { src: require("@/assets/swiper/4.jpg"), movie_id: 4 },
 ];
 getMovieList().then((res) => {
   // console.log(res);
