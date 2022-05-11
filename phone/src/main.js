@@ -11,7 +11,10 @@ import "@/assets/css/adapter.css";
 import "@/assets/css/reset.css";
 //引入vant
 import Vant from "vant";
+// 引入 element
+import ElementPlus from "element-plus";
 import { Icon } from "vant";
 import "vant/lib/index.css";
+import "element-plus/dist/index.css";
 const app = createApp(App);
-app.use(router).use(store).use(Vant).use(Icon).mount("#app");
+app.use(router).use(store).use(Vant).use(ElementPlus).use(Icon).mount("#app");
