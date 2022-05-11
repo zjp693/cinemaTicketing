@@ -5,6 +5,8 @@ import Cinema from "../views/Cinema/index";
 import My from "../views/My/index";
 import Movie from "../views/Movie/index";
 import SearchAll from "../views/Home/children/search_all.vue";
+// import CinemaDetail from "../components/CinemaDetail/CinemaDetail.vue";
+import MovieDetail from "../components/MovieDetail/MovieDetail.vue";
 
 const routes = [
   {
@@ -49,6 +51,11 @@ const routes = [
   {
     path: "/search_all",
     component: SearchAll,
+  },
+  // 电影详情
+  {
+    path: "/movie_detail",
+    component: MovieDetail,
   },
 ];
 
