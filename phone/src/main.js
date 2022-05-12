@@ -14,6 +14,7 @@ import Vant from "vant";
 // 引入 element
 import ElementPlus from "element-plus";
 import { Icon } from "vant";
+
 import "vant/lib/index.css";
 import "element-plus/dist/index.css";
 const app = createApp(App);

@@ -22,3 +22,11 @@ export function getCurrentCinemaDetail(cinema_id) {
     cinema_id,
   });
 }
+/**
+ *加载当前影院排片
+ */
+export function getCurrentCinemaMovieSchedule(cinema_id) {
+  return requestWithToken("/cinema/getCurrentCinemaMovieSchedule", "get", {
+    cinema_id,
+  });
+}

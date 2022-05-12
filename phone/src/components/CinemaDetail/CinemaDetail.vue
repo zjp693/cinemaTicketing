@@ -1,7 +1,7 @@
 <template>
   <div id="cinema-detail">
     <div class="top">
-      <span class="icon-back" @click="$router.go(-1)"></span>
+      <span class="icon-back" @click="router.go(-1)"></span>
       <span class="name ellipsis">{{ currentCinemaInfo.cinema_name }}</span>
     </div>
     <div class="cinema-info">
@@ -16,21 +16,23 @@
       >
     </div>
     <el-carousel
-      :autoplay="false"
+      :autoplay="autoplay"
+      :interval="1"
       type="card"
       height="5rem"
       arrow="never"
       :loop="false"
-      :initial-index="initMovieId"
       indicator-position="none"
+      :initial-index="initMovieId"
       @change="changeCarousel"
       v-if="carouselReset"
     >
+      <!-- 走马灯 -->
       <el-carousel-item v-for="(item, index) in hasMovieInfo" :key="index">
         <a
           href="#"
           @click.prevent="
-            $router.push({
+            router.push({
               path: '/movie_detail',
               query: { movie_id: item.movie_id },
             })
@@ -39,6 +41,7 @@
         /></a>
       </el-carousel-item>
     </el-carousel>
+
     <div
       class="movie-info"
       v-for="(item, index) in hasMovieInfo"
@@ -86,7 +89,7 @@
           <span
             class="buy-btn"
             @click="
-              $router.push({
+              router.push({
                 path: '/select_seat',
                 query: {
                   cinema_id: item.cinema_id,
@@ -104,10 +107,17 @@
 </template>
 
 <script setup>
+// 提示
+import { Toast } from "vant";
 import { ref } from "vue";
-import { getCurrentCinemaDetail } from "../../api/cinema";
-import { useRoute } from "vue-router";
+import {
+  getCurrentCinemaDetail,
+  getCurrentCinemaMovieSchedule,
+} from "../../api/cinema";
+import { useRoute, useRouter } from "vue-router";
 const route = useRoute();
+const router = useRouter();
+// 幻灯片的索引
 const initMovieId = ref(0);
 //当前影院信息
 const currentCinemaInfo = ref({});
@@ -120,26 +130,65 @@ const movieDaySchedule = ref([]);
 // const hackReset = ref(false);
 const carouselReset = ref(true);
 const movieIndex = ref(0);
+const autoplay = ref(true);
 //服务器地址
-const server = ref("http://localhost:3000");
-// const selectedId = ref(0);
-// const items = ref([]);
-// const options = ref([
-//   {
-//     activeColor: "#dd2727",
-//   },
-// ]);
-
-const changeCarousel = () => {
-  console.log(1);
+const server = ref("http://localhost:3001");
+const changeCarousel = (index) => {
+  initMovieId.value = index;
+  console.log(index);
+  console.log(hasMovieInfo.value[initMovieId.value]);
+  let aa = movieDaySchedule.value.filter((item) => {
+    console.log(item);
+    return (item.movie_id = hasMovieInfo.value[initMovieId.value].movie_id);
+  });
+  console.log(aa);
 };
+// 提示
+Toast.loading({
+  duration: 0,
+  message: "Loading...",
+  forbidClick: true,
+});
+
 // 影院详情
 getCurrentCinemaDetail(route.query.cinema_id).then((res) => {
-  console.log(res);
+  // console.log(res);
   if (res.status == 200) {
     currentCinemaInfo.value = res.data[0];
   }
 });
+getCurrentCinemaMovieSchedule(route.query.cinema_id).then((res) => {
+  // console.log(res);
+  if (res.status == 200) {
+    hasMovieInfo.value = res.data.hasMovieInfo;
+    movieDaySchedule.value = res.data.movieScheduleInfo;
+    movieDaySchedule.value.map((item) => {
+      console.log(item.movie_id);
+    });
+    Toast.clear();
+    // console.log(res.data);
+    // console.log(movieDaySchedule.value[0]);
+  }
+});
+//影片结束时间
+const endDate = (item) => {
+  let h = parseInt(
+    Number(item.show_time.split(":")[0]) + parseInt(item.movie_long) / 60
+  );
+  let m =
+    Number(item.show_time.split(":")[1]) + (parseInt(item.movie_long) % 60);
+  if (m > 59) {
+    return (
+      (h + parseInt(m / 60) < 10
+        ? "0" + (h + parseInt(m / 60))
+        : h + parseInt(m / 60)) +
+      ":" +
+      (m % 60 < 10 ? "0" + (m % 60) : m % 60)
+    );
+  } else {
+    return (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m);
+  }
+};
 </script>
 
 <style scoped lang="scss">
@@ -251,6 +300,7 @@ getCurrentCinemaDetail(route.query.cinema_id).then((res) => {
       }
     }
   }
+
   .ly-tab {
     color: #000;
     border: none;
