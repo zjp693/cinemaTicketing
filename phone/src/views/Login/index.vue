@@ -78,12 +78,12 @@
               </section>
               <section class="login-info">
                 <input type="text" placeholder="验证码" v-model="captcha" />
-                <img
+
+                <div
                   class="captcha"
-                  :src="captchaSrc"
-                  alt="captcha"
+                  v-html="captchaSrc"
                   @click="refreshCaptcha"
-                />
+                ></div>
               </section>
             </div>
             <button class="login-submit" @click.prevent="login">登录</button>
@@ -94,9 +94,16 @@
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { Dialog } from "vant";
-// import { Toast } from "vant";
+import {
+  getPhoneCode,
+  phoneLogin,
+  getCaptchaSrc,
+  accountLogin,
+} from "../../api/user";
+import { useRouter } from "vue-router";
+import { Toast } from "vant";
 const phone = ref(""); // 手机号码
 const phoneCode = ref(""); //手机验证码
 const userName = ref(""); //用户名
@@ -105,8 +112,9 @@ const captcha = ref(""); //图形验证码
 const loginType = ref(true); //登录方式
 const countDown = ref(0); //倒计时
 const isShowPassword = ref(false); //密码显示方式
-const captchaSrc = ref("http://localhost:3000/api/captcha");
+const captchaSrc = ref();
 
+const router = useRouter();
 //选择登录类型
 const changeLoginType = () => {
   loginType.value = !loginType.value;
@@ -115,14 +123,11 @@ const changeLoginType = () => {
 const changePwdShow = () => {
   isShowPassword.value = !isShowPassword.value;
 };
-// const checkPhone = computed(() => {
-//   return /^1[3|4|5|6|7|8][0-9]{9}$/.test(this.phone);
-// });
-// //检查手机格式
-//         checkPhone(){
-//           return /^1[3|4|5|6|7|8][0-9]{9}$/.test(this.phone);
-//         }
-// 账号密码登录
+//检查手机格式
+const checkPhone = computed(() => {
+  return /^1[3|4|5|6|7|8][0-9]{9}$/.test(phone.value);
+});
+
 //登录
 const login = async () => {
   //判断登录模式
@@ -133,22 +138,34 @@ const login = async () => {
         title: "提示",
         message: "请输入手机号码",
       });
-    }
-    // else if (!checkPhone.value) {
-    //   // MessageBox.alert("请输入正确的手机号码");
-    //  Dialog.alert({
-    //   title: "提示",
-    //   message: "请输入正确的手机号码",
-    // });
-    // }
-    else if (phoneCode.value === "") {
+    } else if (!checkPhone.value) {
+      // MessageBox.alert("请输入正确的手机号码");
+      Dialog.alert({
+        title: "提示",
+        message: "请输入正确的手机号码",
+      });
+    } else if (phoneCode.value === "") {
       // MessageBox.alert("请输入手机验证码");
       Dialog.alert({
         title: "提示",
         message: "请输入手机验证码",
       });
     } else {
-      // let json = await phoneLogin(this.phone, this.phoneCode);
+      await phoneLogin(phone.value, phoneCode.value).then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+          Toast({
+            message: "登录成功",
+            position: "middle",
+            duration: 2000,
+          });
+          router.go(-1);
+        }
+        Dialog.alert({
+          title: "提示",
+          message: res.message,
+        });
+      });
       // if (json.success_code === 200) {
       //   Toast({
       //     message: "登录成功",
@@ -158,50 +175,88 @@ const login = async () => {
       //   this.$router.go(-1);
       // } else {
       // MessageBox.alert(json.message);
-      Dialog.alert({
-        title: "提示",
-        message: "请输入手机号码",
-      });
+
       // }
     }
   } else {
     //账号密码登录
     if (userName.value === "") {
-      // MessageBox.alert("请输入用户名");
       Dialog.alert({
         title: "提示",
         message: "请输入用户名",
       });
     } else if (password.value === "") {
-      // MessageBox.alert("请输入密码");
       Dialog.alert({
         title: "提示",
         message: "请输入密码",
       });
     } else if (captcha.value === "") {
-      // MessageBox.alert("请输入验证码");
       Dialog.alert({
         title: "提示",
         message: "请输入验证码",
       });
     } else {
-      // let json = await pwdLogin(this.userName, this.password, this.captcha);
-      // if (json.success_code === 200) {
-      //   Toast({
-      //     message: "登录成功",
-      //     position: "middle",
-      //     duration: 2000,
-      //   });
-      //   this.$router.go(-1);
-      // } else {
-      // MessageBox.alert(json.message);
-      Dialog.alert({
-        title: "提示",
-        message: "请输入手机号码",
-      });
-      // this.refreshCaptcha();
-      // }
+      await accountLogin(userName.value, password.value, captcha.value).then(
+        (res) => {
+          // console.log(res);
+          if (res.status == 200) {
+            Toast({
+              message: "登录成功",
+              position: "middle",
+              duration: 2000,
+            });
+            //跳转到你登录的地方
+            router.go(-1);
+          }
+        }
+      );
+      refreshCaptcha();
     }
+  }
+};
+
+// 获取验证码
+const refreshCaptcha = () => {
+  // 获取图片验证码
+  getCaptchaSrc().then((res) => {
+    if (res.status == 200) {
+      captchaSrc.value = res.data;
+    }
+  });
+};
+refreshCaptcha();
+const getValidateCode = async () => {
+  // 是否通过手机格式验证
+  if (checkPhone.value) {
+    // 60秒倒计时
+    countDown.value = 60;
+    let timer = setInterval(() => {
+      countDown.value--;
+      if (countDown.value === 0) {
+        clearInterval(timer);
+      }
+    }, 1000);
+    await getPhoneCode(phone.value).then((res) => {
+      console.log(res);
+      if (res.status == 200) {
+        Dialog.alert({
+          title: "提示",
+          message: `手机验证码为：${res.data}`,
+        });
+      } else {
+        Dialog.alert({
+          title: "提示",
+          message: `手机验证码获取失败`,
+        });
+        clearInterval(timer);
+        countDown.value = 0;
+      }
+    });
+  } else {
+    Dialog.alert({
+      title: "提示",
+      message: "手机号码格式不正确",
+    });
   }
 };
 </script>
@@ -337,7 +392,7 @@ const login = async () => {
               transform: translateY(-50%);
             }
             .login-info > .captcha {
-              height: 68%;
+              height: 96%;
             }
             .login-hint {
               color: #888;
