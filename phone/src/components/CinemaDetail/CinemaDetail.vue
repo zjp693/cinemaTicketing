@@ -15,9 +15,10 @@
         >{{ currentCinemaInfo.cinema_phone }}</span
       >
     </div>
+    <!-- 走马灯 -->
     <el-carousel
       :autoplay="autoplay"
-      :interval="1"
+      :interval="4000"
       type="card"
       height="5rem"
       arrow="never"
@@ -25,9 +26,8 @@
       indicator-position="none"
       :initial-index="initMovieId"
       @change="changeCarousel"
-      v-if="carouselReset"
+      v-if="hasMovieInfo.length > 0"
     >
-      <!-- 走马灯 -->
       <el-carousel-item v-for="(item, index) in hasMovieInfo" :key="index">
         <a
           href="#"
@@ -72,6 +72,8 @@
       v-if="hackReset"
       @change="changeLyTabItem"
     /> -->
+    <!-- 时间 -->
+
     <div class="ticket-container">
       <div class="item" v-for="(item, index) in movieDaySchedule" :key="index">
         <div class="left">
@@ -121,28 +123,25 @@ const router = useRouter();
 const initMovieId = ref(0);
 //当前影院信息
 const currentCinemaInfo = ref({});
+// // 影院的所有的电影信息
+// const allHasMovieInfo = ref([]);
 //影院的电影信息
 const hasMovieInfo = ref([]);
 //所有的电影安排
-// const allMovieSchedule = ref([]);
+const allMovieSchedule = ref([]);
 //电影某天的安排
-const movieDaySchedule = ref([]);
+const movieDaySchedule = ref({});
+// const movieDayData = ref({});
 // const hackReset = ref(false);
-const carouselReset = ref(true);
+// const carouselReset = ref(true);
 const movieIndex = ref(0);
-const autoplay = ref(true);
+const autoplay = ref(false);
+// 时间显示控制
+let ids = ref();
+
 //服务器地址
 const server = ref("http://localhost:3001");
-const changeCarousel = (index) => {
-  initMovieId.value = index;
-  console.log(index);
-  console.log(hasMovieInfo.value[initMovieId.value]);
-  let aa = movieDaySchedule.value.filter((item) => {
-    console.log(item);
-    return (item.movie_id = hasMovieInfo.value[initMovieId.value].movie_id);
-  });
-  console.log(aa);
-};
+
 // 提示
 Toast.loading({
   duration: 0,
@@ -157,19 +156,34 @@ getCurrentCinemaDetail(route.query.cinema_id).then((res) => {
     currentCinemaInfo.value = res.data[0];
   }
 });
+// 当前电影信息
 getCurrentCinemaMovieSchedule(route.query.cinema_id).then((res) => {
   // console.log(res);
   if (res.status == 200) {
     hasMovieInfo.value = res.data.hasMovieInfo;
-    movieDaySchedule.value = res.data.movieScheduleInfo;
-    movieDaySchedule.value.map((item) => {
-      console.log(item.movie_id);
+    allMovieSchedule.value = res.data.movieScheduleInfo;
+    // console.log(allMovieSchedule.value);
+    // console.log(hasMovieInfo.value[0].movie_id);
+    ids.value = hasMovieInfo.value[0].movie_id;
+    // 过滤时间
+    movieDaySchedule.value = allMovieSchedule.value.filter((item) => {
+      return item.movie_id == ids.value;
     });
+    // 关闭提示
     Toast.clear();
-    // console.log(res.data);
-    // console.log(movieDaySchedule.value[0]);
   }
 });
+// 点击切换
+const changeCarousel = (index) => {
+  // 电影的索引
+  movieIndex.value = index;
+  ids.value = hasMovieInfo.value[movieIndex.value].movie_id;
+  // 时间
+  movieDaySchedule.value = allMovieSchedule.value.filter((item) => {
+    return item.movie_id == ids.value;
+  });
+};
+
 //影片结束时间
 const endDate = (item) => {
   let h = parseInt(
