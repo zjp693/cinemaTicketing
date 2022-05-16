@@ -24,9 +24,8 @@
               query: { movie_id: item.movie_id },
             })
           "
-        >
-          {{ item.name }}
-        </div>
+          v-html="ruleName(item.name)"
+        ></div>
         <div v-if="new Date() - new Date(item.public_date) >= 0">
           <div class="descInfo" v-if="item.score">
             评分：<span class="number">{{ item.score.toFixed(1) }}</span>
@@ -63,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps } from "vue";
+import { ref, defineProps, computed } from "vue";
 import { useRouter } from "vue-router";
 const props = defineProps({
   movieList: {
@@ -75,29 +74,26 @@ const props = defineProps({
     default: "",
   },
 });
+
 setTimeout(() => {
-  console.log(props);
+  console.log(props.searchName);
 }, 0);
-
 const router = useRouter();
-
-console.log(router);
-// console.log();
 
 //服务器地址
 const server = ref("http://localhost:3000");
 
-// const ruleName = () => {
-//   console.log(props.searchName);
-//   return (nameString) => {
-//     if (props.searchName) {
-//       let replaceReg = new RegExp(props.searchName, "g");
-//       let replaceString = `<span style="color:#dd2727">${props.searchName}</span>`;
-//       return nameString.replace(replaceReg, replaceString);
-//     }
-//     return nameString;
-//   };
-// };
+// 计算有几个字符符合 并且改变颜色
+const ruleName = computed(() => {
+  return (nameString) => {
+    if (props.searchName) {
+      let replaceReg = new RegExp(props.searchName, "g");
+      let replaceString = `<span style="color:#dd2727">${props.searchName}</span>`;
+      return nameString.replace(replaceReg, replaceString);
+    }
+    return nameString;
+  };
+});
 </script>
 
 <style lang="scss" scoped>

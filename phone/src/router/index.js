@@ -9,6 +9,7 @@ import CinemaDetail from "../components/CinemaDetail/CinemaDetail.vue";
 import MovieDetail from "../components/MovieDetail/MovieDetail.vue";
 // import SelectCinema from ".././views/Cinema/children/SearchCinema.vue";
 import SelectCinema from "../views/Cinema/children/SearchCinema.vue";
+import SearchMovie from "../views/Movie/children/SearchMovie.vue";
 const routes = [
   {
     path: "/",
@@ -67,6 +68,11 @@ const routes = [
   {
     path: "/search_cinema",
     component: SelectCinema,
+  },
+  //搜索电影
+  {
+    path: "/search_movie",
+    component: SearchMovie,
   },
 ];
 
