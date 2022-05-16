@@ -1,17 +1,22 @@
 <template>
   <div id="select-cinema">
     <div class="top">
-      <span class="icon-back" @click="$router.go(-1)"></span>
+      <span class="icon-back" @click="router.go(-1)"></span>
       <span class="name ellipsis">{{ movieInfo.name }}</span>
     </div>
-    <tab
-      v-model="selectedId"
-      :items="items"
-      :options="options"
-      class="ly-tab"
-      v-if="hackReset"
-      @change="changeLyTabItem"
-    />
+    <!-- 日期 -->
+    <div class="date" v-if="array">
+      <ul class="ly-tab">
+        <li
+          v-for="(item, index) in array"
+          :key="item.id"
+          v-show="movieIndex === Number(index)"
+        >
+          {{ item.label }}{{}}
+        </li>
+      </ul>
+      <span></span>
+    </div>
     <div class="content">
       <div
         class="item"
@@ -45,16 +50,16 @@
 
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const movieInfo = ref("");
-const selectedId = ref(0);
+const movieIndex = ref(0);
 // const hasCinemaInfo = ref([]);
 // const cinemaScheduleInfo = ref([]);
 const dateCinemaSchedule = ref([]);
-const hackReset = ref(true);
-const items = ref([]);
-const options = ref({
-  activeColor: "#dd2727",
-});
+// const hackReset = ref(true);
+// const items = ref([]);
+const array = ref([]);
 </script>
 
 <style lang="scss" scoped>
@@ -90,6 +95,27 @@ const options = ref({
     position: fixed;
     top: 1rem;
     left: 0;
+  }
+  .ly-tab {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #dd2727;
+    border: none;
+    height: 0.8rem;
+    box-shadow: 0 0px 6px 1px #eee;
+  }
+  .date {
+    span {
+      position: relative;
+      left: 1rem;
+      display: block;
+      margin-top: -0.2rem;
+      width: 60%;
+      height: 0.08rem;
+      background-color: #dd2727;
+    }
   }
   .select {
     position: fixed;

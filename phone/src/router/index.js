@@ -7,7 +7,8 @@ import Movie from "../views/Movie/index";
 import SearchAll from "../views/Home/children/search_all.vue";
 import CinemaDetail from "../components/CinemaDetail/CinemaDetail.vue";
 import MovieDetail from "../components/MovieDetail/MovieDetail.vue";
-import SelectCinema from "../components/SelectCinema/SelectCinema.vue";
+// import SelectCinema from ".././views/Cinema/children/SearchCinema.vue";
+import SelectCinema from "../views/Cinema/children/SearchCinema.vue";
 const routes = [
   {
     path: "/",
@@ -62,9 +63,9 @@ const routes = [
     path: "/Cinema_detail",
     component: CinemaDetail,
   },
-  // 选择影院
+  // 搜索影院
   {
-    path: "/select_cinema",
+    path: "/search_cinema",
     component: SelectCinema,
   },
 ];
