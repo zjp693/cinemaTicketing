@@ -64,14 +64,19 @@
         ><span class="actors">{{ item.actor }}</span>
       </span>
     </div>
-    <!-- <ly-tab
-      v-model="selectedId"
-      :items="items"
-      :options="options"
-      class="ly-tab"
-      v-if="hackReset"
-      @change="changeLyTabItem"
-    /> -->
+    <!-- 日期 -->
+    <div class="date">
+      <ul class="ly-tab">
+        <li
+          v-for="(item, index) in array"
+          :key="item.id"
+          v-show="movieIndex === Number(index)"
+        >
+          {{ item.label }}{{}}
+        </li>
+      </ul>
+      <span></span>
+    </div>
     <!-- 时间 -->
 
     <div class="ticket-container">
@@ -117,6 +122,8 @@ import {
   getCurrentCinemaMovieSchedule,
 } from "../../api/cinema";
 import { useRoute, useRouter } from "vue-router";
+import { formatDate } from "../../common/util/formatDate";
+
 const route = useRoute();
 const router = useRouter();
 // 幻灯片的索引
@@ -138,10 +145,10 @@ const movieIndex = ref(0);
 const autoplay = ref(false);
 // 时间显示控制
 let ids = ref();
-
 //服务器地址
 const server = ref("http://localhost:3001");
-
+// 电影时间提示
+const array = ref([]);
 // 提示
 Toast.loading({
   duration: 0,
@@ -169,6 +176,16 @@ getCurrentCinemaMovieSchedule(route.query.cinema_id).then((res) => {
     movieDaySchedule.value = allMovieSchedule.value.filter((item) => {
       return item.movie_id == ids.value;
     });
+    console.log(allMovieSchedule.value);
+    allMovieSchedule.value.forEach((value) => {
+      console.log(value.show_date);
+      array.value.push({
+        label: formatDate(new Date(value.show_date), true),
+        date: value.show_date,
+      });
+      console.log(array.value);
+    });
+    // console.log(array);
     // 关闭提示
     Toast.clear();
   }
@@ -316,8 +333,25 @@ const endDate = (item) => {
   }
 
   .ly-tab {
-    color: #000;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #dd2727;
     border: none;
+    height: 0.8rem;
+    box-shadow: 0 0px 6px 1px #eee;
+  }
+  .date {
+    span {
+      position: relative;
+      left: 1rem;
+      display: block;
+      margin-top: -0.2rem;
+      width: 60%;
+      height: 0.08rem;
+      background-color: #dd2727;
+    }
   }
   .ticket-container {
     padding: 0.25rem;
