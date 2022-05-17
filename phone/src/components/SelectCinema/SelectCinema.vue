@@ -50,16 +50,28 @@
 
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
+import { getMovieDetail } from "../../api/movie";
+import { getCurrentCinemaMovieSchedule } from "../../api/cinema";
 const router = useRouter();
+const route = useRoute();
 const movieInfo = ref("");
 const movieIndex = ref(0);
 // const hasCinemaInfo = ref([]);
 // const cinemaScheduleInfo = ref([]);
 const dateCinemaSchedule = ref([]);
-// const hackReset = ref(true);
-// const items = ref([]);
 const array = ref([]);
+// 电影信息
+getMovieDetail(route.query.movie_id).then((res) => {
+  console.log(res);
+  if (res.status == 200) {
+    movieInfo.value = res.data[0];
+  }
+});
+// 影院信息
+getCurrentCinemaMovieSchedule(route.query).then((res) => {
+  console.log(res);
+});
 </script>
 
 <style lang="scss" scoped>
@@ -95,27 +107,6 @@ const array = ref([]);
     position: fixed;
     top: 1rem;
     left: 0;
-  }
-  .ly-tab {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #dd2727;
-    border: none;
-    height: 0.8rem;
-    box-shadow: 0 0px 6px 1px #eee;
-  }
-  .date {
-    span {
-      position: relative;
-      left: 1rem;
-      display: block;
-      margin-top: -0.2rem;
-      width: 60%;
-      height: 0.08rem;
-      background-color: #dd2727;
-    }
   }
   .select {
     position: fixed;

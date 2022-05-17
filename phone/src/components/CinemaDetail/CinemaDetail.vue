@@ -130,17 +130,13 @@ const router = useRouter();
 const initMovieId = ref(0);
 //当前影院信息
 const currentCinemaInfo = ref({});
-// // 影院的所有的电影信息
-// const allHasMovieInfo = ref([]);
 //影院的电影信息
 const hasMovieInfo = ref([]);
 //所有的电影安排
 const allMovieSchedule = ref([]);
 //电影某天的安排
 const movieDaySchedule = ref({});
-// const movieDayData = ref({});
-// const hackReset = ref(false);
-// const carouselReset = ref(true);
+
 const movieIndex = ref(0);
 const autoplay = ref(false);
 // 时间显示控制
@@ -164,7 +160,7 @@ getCurrentCinemaDetail(route.query.cinema_id).then((res) => {
   }
 });
 // 当前电影信息
-getCurrentCinemaMovieSchedule(route.query.cinema_id).then((res) => {
+getCurrentCinemaMovieSchedule(route.query).then((res) => {
   // console.log(res);
   if (res.status == 200) {
     hasMovieInfo.value = res.data.hasMovieInfo;
