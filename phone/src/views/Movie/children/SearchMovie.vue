@@ -10,7 +10,7 @@
           @change="hanlerChanger"
         />
       </div>
-      <span class="cancel-btn" @click="$router.go(-1)">取消</span>
+      <span class="cancel-btn" @click="router.go(-1)">取消</span>
     </div>
     <div class="content">
       <div class="movie-container" v-if="movieInfo.length">
@@ -29,12 +29,13 @@
 import { ref } from "vue";
 import movieItem from "../../../components/MovieItem/MovieItem";
 import { getmatchMovieByName } from "../../../api/movie";
+import { useRouter } from "vue-router";
+// 搜索值
 const name = ref("");
+// 电影信息
 const movieInfo = ref("");
-// const namemovieInfo = ref([]);
-//服务器地址
-// const server = ref("http://localhost:3000");
-// const timer = ref("");
+// 路由
+const router = useRouter();
 // 搜索电影
 const hanlerChanger = () => {
   getmatchMovieByName(name.value).then((res) => {
