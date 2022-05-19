@@ -10,12 +10,12 @@
         <li
           v-for="(item, index) in array"
           :key="item.id"
-          v-show="movieIndex === Number(index)"
+          @click="hanleChange(index)"
         >
-          {{ item.label }}{{}}
+          {{ item.label }}
+          <span :class="movieIndex == Number(index) ? 'span' : ''"></span>
         </li>
       </ul>
-      <span></span>
     </div>
     <div class="content">
       <div
@@ -52,26 +52,49 @@
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { getMovieDetail } from "../../api/movie";
-import { getCurrentCinemaMovieSchedule } from "../../api/cinema";
+import { getCurrentCinemaMovieSchedule } from "../../api/movie";
+import { formatDate } from "../../common/util/formatDate";
 const router = useRouter();
 const route = useRoute();
+// 电影信息
 const movieInfo = ref("");
+// 被点击
 const movieIndex = ref(0);
-// const hasCinemaInfo = ref([]);
-// const cinemaScheduleInfo = ref([]);
+// 所有影院信息
+const cinemaScheduleInfo = ref([]);
+// 影院信息
 const dateCinemaSchedule = ref([]);
 const array = ref([]);
 // 电影信息
 getMovieDetail(route.query.movie_id).then((res) => {
-  console.log(res);
   if (res.status == 200) {
     movieInfo.value = res.data[0];
   }
 });
 // 影院信息
 getCurrentCinemaMovieSchedule(route.query).then((res) => {
-  console.log(res);
+  console.log(res.data);
+  if (res.status == 200) {
+    cinemaScheduleInfo.value = res.data.cinemaScheduleInfo;
+    dateCinemaSchedule.value.push(cinemaScheduleInfo.value[0]);
+    // dateCinemaSchedule.value = cinemaScheduleInfo.value;
+    // console.log(res.data.cinemaScheduleInfo[0]);
+    // 时间格式转化
+    res.data.halCinemaInfo.forEach((value) => {
+      array.value.push({
+        label: formatDate(new Date(value.show_date), true),
+        date: value.show_date,
+      });
+    });
+  }
 });
+//切换
+const hanleChange = (id) => {
+  dateCinemaSchedule.value = [];
+  dateCinemaSchedule.value.push(cinemaScheduleInfo.value[id]);
+  movieIndex.value = id;
+  console.log(cinemaScheduleInfo.value[id]);
+};
 </script>
 
 <style lang="scss" scoped>
@@ -107,7 +130,30 @@ getCurrentCinemaMovieSchedule(route.query).then((res) => {
     position: fixed;
     top: 1rem;
     left: 0;
+    overflow-x: hidden;
   }
+  .ly-tab {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    color: #dd2727;
+    border: none;
+    height: 0.8rem;
+    box-shadow: 0 0px 6px 1px #eee;
+    li {
+      padding: 0 0.2rem;
+      .span {
+        position: relative;
+        left: 0.3rem;
+        display: block;
+        margin-top: 0.1rem;
+        width: 1rem;
+        height: 0.05rem;
+        background-color: #dd2727;
+      }
+    }
+  }
+
   .select {
     position: fixed;
     left: 0;

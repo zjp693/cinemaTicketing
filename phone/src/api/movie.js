@@ -31,3 +31,13 @@ export function getisWishMovie(user_id, movie_id) {
     movie_id,
   });
 }
+/**
+ * 加载当前电影排片
+ */
+export function getCurrentCinemaMovieSchedule(movie_id) {
+  return requestWithToken(
+    "/movie/getCurrentCinemaMovieSchedule",
+    "get",
+    movie_id
+  );
+}
