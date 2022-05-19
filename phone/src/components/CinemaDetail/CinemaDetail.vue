@@ -72,7 +72,7 @@
           :key="item.id"
           v-show="movieIndex === Number(index)"
         >
-          {{ item.label }}{{}}
+          {{ item.label }}
         </li>
       </ul>
       <span></span>
