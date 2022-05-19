@@ -77,8 +77,7 @@ getCurrentCinemaMovieSchedule(route.query).then((res) => {
   if (res.status == 200) {
     cinemaScheduleInfo.value = res.data.cinemaScheduleInfo;
     dateCinemaSchedule.value.push(cinemaScheduleInfo.value[0]);
-    // dateCinemaSchedule.value = cinemaScheduleInfo.value;
-    // console.log(res.data.cinemaScheduleInfo[0]);
+
     // 时间格式转化
     res.data.halCinemaInfo.forEach((value) => {
       array.value.push({

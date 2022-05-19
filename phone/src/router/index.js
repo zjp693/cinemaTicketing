@@ -11,6 +11,7 @@ import MovieDetail from "../components/MovieDetail/MovieDetail.vue";
 import SelectCinema from "../views/Cinema/children/SearchCinema.vue";
 import SearchMovie from "../views/Movie/children/SearchMovie.vue";
 import selectCinema from "../components/SelectCinema/SelectCinema.vue";
+import selectSeat from "../components/SelectSeat/SelectSeat.vue";
 const routes = [
   {
     path: "/",
@@ -79,6 +80,11 @@ const routes = [
   {
     path: "/select_cinema",
     component: selectCinema,
+  },
+  // 选座
+  {
+    path: "/select_seat",
+    component: selectSeat,
   },
 ];
 
