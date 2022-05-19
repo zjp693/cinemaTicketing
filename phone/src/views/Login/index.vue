@@ -159,6 +159,8 @@ const login = async () => {
             position: "middle",
             duration: 2000,
           });
+          // 存储token
+          sessionStorage.setItem("user_id", res.token);
           router.go(-1);
         }
         Dialog.alert({
@@ -166,17 +168,6 @@ const login = async () => {
           message: res.message,
         });
       });
-      // if (json.success_code === 200) {
-      //   Toast({
-      //     message: "登录成功",
-      //     position: "middle",
-      //     duration: 2000,
-      //   });
-      //   this.$router.go(-1);
-      // } else {
-      // MessageBox.alert(json.message);
-
-      // }
     }
   } else {
     //账号密码登录
@@ -205,6 +196,9 @@ const login = async () => {
               position: "middle",
               duration: 2000,
             });
+            // 存储token
+            sessionStorage.setItem("user_id", res.token);
+
             //跳转到你登录的地方
             router.go(-1);
           }
