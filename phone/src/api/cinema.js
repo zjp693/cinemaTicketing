@@ -38,3 +38,12 @@ export function getCurrentCinemaMovieSchedule(cinema_id) {
 export function getScheduleById(schedule_id) {
   return requestWithToken("/cinema/getScheduleById", "get", { schedule_id });
 }
+/**
+ *影院座位信息更新
+ */
+export function getUpdateScheduleSeat(schedule_id, seat_info) {
+  return requestWithToken("/cinema/getUpdateScheduleSeat", "post", {
+    schedule_id,
+    seat_info,
+  });
+}

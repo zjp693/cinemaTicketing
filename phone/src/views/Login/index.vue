@@ -160,7 +160,9 @@ const login = async () => {
             duration: 2000,
           });
           // 存储token
-          sessionStorage.setItem("user_id", res.token);
+          sessionStorage.setItem("token", res.token);
+          sessionStorage.setItem("user_id", res.user_id);
+
           router.go(-1);
         }
         Dialog.alert({
@@ -197,7 +199,8 @@ const login = async () => {
               duration: 2000,
             });
             // 存储token
-            sessionStorage.setItem("user_id", res.token);
+            sessionStorage.setItem("token", res.token);
+            sessionStorage.setItem("user_id", res.user_id);
 
             //跳转到你登录的地方
             router.go(-1);

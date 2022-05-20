@@ -213,7 +213,10 @@ getMovieDetail(id.value).then((res) => {
       starValue.value = movieDetail.value.score * (0.5).toFixed(1);
     }
     if (sessionStorage.getItem("user_id"))
-      getisWishMovie().then((res) => {
+      getisWishMovie(
+        sessionStorage.getItem("user_id"),
+        route.query.movie_id
+      ).then((res) => {
         console.log(res);
         if (res.status == 200) {
           notWishMovie.value = false;

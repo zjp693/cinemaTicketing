@@ -81,6 +81,7 @@
 </template>
 
 <script setup>
+import { getUpdateScheduleSeat } from "../../api/cinema";
 import { getScheduleById } from "../../api/cinema";
 import { getMovieDetail } from "../../api/movie";
 import { useRoute, useRouter } from "vue-router";
@@ -92,7 +93,7 @@ const route = useRoute();
 const cinemaInfo = ref({});
 const movieInfo = ref({});
 const scheduleInfo = ref({});
-const seatInfo = ref({});
+const seatInfo = ref([]);
 const seatCount = ref(0);
 const selectedSeat = ref(false);
 const hackReset = ref(true);
@@ -130,7 +131,9 @@ getScheduleById(route.query.schedule_id).then((res) => {
   if (res.status == 200) {
     scheduleInfo.value = res.data[0];
     seatInfo.value = scheduleInfo.value.seat_info;
-    if (seatInfo.value) {
+    if (seatInfo.value != "undefined") {
+      console.log(11);
+      console.log(seatInfo.value);
       seatInfo.value = JSON.parse(seatInfo.value);
       seatInfo.value.forEach((value) => {
         if (value % 10 !== 0) {
@@ -197,12 +200,15 @@ const cancelSelectedSeat = (i, j) => {
 // 确认选座
 const ensureSeatBtn = () => {
   if (sessionStorage.getItem("user_id")) {
-    if (!seatInfo.value) {
+    if (seatInfo.value == "undefined") {
       seatInfo.value = [];
     }
+    console.log(seatInfo.value);
     selectedSeatInfo.value.forEach((value, index) => {
       // 座位信息
-      seatInfo.value.push(value[0] * 10 + value[1] + 1);
+      console.log(seatInfo.value);
+      console.log(value[0] * 10 + value[1] + 1);
+      seatInfo.value.push(1);
       // 存储座位
       sessionStorage.setItem(
         "seat_" + (index + 1),
@@ -211,36 +217,28 @@ const ensureSeatBtn = () => {
       //价格
       sessionStorage.setItem("seat_count", selectedSeatInfo.value.length);
       seatInfo.value = JSON.stringify(seatInfo.value);
-      //  let json = await updateScheduleSeat(route.query.schedule_id,seatInfo.value);
+      getUpdateScheduleSeat(route.query.schedule_id).then((res) => {
+        if (res.status == 200) {
+          Toast.loading({
+            message: "锁定座位成功",
+            position: "middle",
+            duration: 2000,
+          });
+          router.push({
+            path: "/submit_order",
+            query: {
+              cinema_id: route.query.cinema_id,
+              movie_id: route.query.movie_id,
+              schedule_id: route.query.schedule_id,
+            },
+          });
+        }
+      });
     });
   } else {
     router.push("/login");
   }
 };
-// async ensureSeatBtn(){
-//   if (this.$cookies.get('user_id')){
-//     if (!this.seatInfo) {
-//       this.seatInfo = [];
-//     }
-//     this.selectedSeatInfo.forEach((value,index)=>{
-//       this.seatInfo.push(value[0]*10+value[1]+1);
-//       this.$cookies.set('seat_'+(index+1),value[0]*10+value[1]+1);
-//     });
-//     this.$cookies.set('seat_count',this.selectedSeatInfo.length);
-//     this.seatInfo = JSON.stringify(this.seatInfo);
-//     let json = await updateScheduleSeat(this.$route.query.schedule_id,this.seatInfo);
-//     if (json.success_code===200){
-//       Toast({
-//         message: '锁定座位成功',
-//         position: 'middle',
-//         duration: 2000
-//       });
-//       this.$router.push({path:'/submit_order',query:{cinema_id:this.$route.query.cinema_id,movie_id:this.$route.query.movie_id,schedule_id:this.$route.query.schedule_id,}});
-//     }
-//   } else{
-//     this.$router.push('./login');
-//   }
-// }
 </script>
 
 <style lang="scss" scoped>
