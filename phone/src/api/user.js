@@ -37,3 +37,13 @@ export function accountLogin(username, password, captcha) {
 export function phoneLogin(phone, phoneCode) {
   return requestWithToken("/users/phoneLogin", "post", { phone, phoneCode });
 }
+/**
+ *  获取用户信息
+ * @param phone 手机号码
+ * @returns {AxiosPromise}
+ */
+export function getSfyUserInfo(user_id) {
+  return requestWithToken("/users/getSfyUserInfo", "get", {
+    user_id,
+  });
+}

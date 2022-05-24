@@ -1,3 +1,4 @@
+<script src="../../router/index.js"></script>
 <template>
   <div v-if="props.movieList.length">
     <div

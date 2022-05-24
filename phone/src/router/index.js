@@ -12,6 +12,7 @@ import SelectCinema from "../views/Cinema/children/SearchCinema.vue";
 import SearchMovie from "../views/Movie/children/SearchMovie.vue";
 import selectCinema from "../components/SelectCinema/SelectCinema.vue";
 import selectSeat from "../components/SelectSeat/SelectSeat.vue";
+import submitOrder from "../components/SubmitOrder/SubmitOrder";
 const routes = [
   {
     path: "/",
@@ -85,6 +86,11 @@ const routes = [
   {
     path: "/select_seat",
     component: selectSeat,
+  },
+  //提交订单
+  {
+    path: "/submit_order",
+    component: submitOrder,
   },
 ];
 

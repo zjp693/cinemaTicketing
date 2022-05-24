@@ -5,32 +5,30 @@
       <span class="name ellipsis">确认订单</span>
       <div class="time-down">
         <span class="icon-time"></span
-        ><span class="time"
-          >{{ countdownM | timeFilter }}:{{ countdownS | timeFilter }}</span
-        >
+        ><span class="time">{{ countdownM }}:{{ countdownS }}</span>
       </div>
     </div>
     <div class="order-info">
       <div class="info movie-name">{{ movieInfo.name }}</div>
       <div class="info date">
-        <span class="day">{{ scheduleInfo.show_date | dateFilter }}</span
+        <span class="day">{{ dateFilter(scheduleInfo.show_date) }}</span
         ><span class="time">{{ scheduleInfo.show_time }}</span
         ><span class="language">{{ movieInfo.language }}3D</span>
       </div>
       <div class="info cinema">{{ cinemaInfo.cinema_name }}</div>
       <div class="info location">
         <span class="hall">{{ scheduleInfo.hall_name }}</span>
-        <span class="seat" v-if="this.$cookies.get('seat_1')">{{
-          formatSeatInfo(Number(this.$cookies.get("seat_1")))
+        <span class="seat" v-if="seat_1">{{
+          formatSeatInfo(Number(seat_1))
         }}</span>
-        <span class="seat" v-if="this.$cookies.get('seat_2')">{{
-          formatSeatInfo(Number(this.$cookies.get("seat_2")))
+        <span class="seat" v-if="seat_2">{{
+          formatSeatInfo(Number(seat_2))
         }}</span>
-        <span class="seat" v-if="this.$cookies.get('seat_3')">{{
-          formatSeatInfo(Number(this.$cookies.get("seat_3")))
+        <span class="seat" v-if="seat_3">{{
+          formatSeatInfo(Number(seat_3))
         }}</span>
-        <span class="seat" v-if="this.$cookies.get('seat_4')">{{
-          formatSeatInfo(Number(this.$cookies.get("seat_4")))
+        <span class="seat" v-if="seat_4">{{
+          formatSeatInfo(Number(seat_4))
         }}</span>
       </div>
     </div>
@@ -62,10 +60,7 @@
         <div class="text">不支持退票、改签</div>
         <div class="total">
           应支付<span class="money">{{
-            (
-              Number(scheduleInfo.price) *
-              Number(this.$cookies.get("seat_count"))
-            ).toFixed(2)
+            Number(scheduleInfo.price) * Number(seats).toFixed(2)
           }}</span
           ><span>元</span>
         </div>
@@ -75,7 +70,116 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { computed, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { getCurrentCinemaDetail, getScheduleById } from "@/api/cinema";
+import { getMovieDetail } from "@/api/movie";
+import { getSfyUserInfo } from "@/api/user";
+// 影院信息;
+const cinemaInfo = ref({});
+//电影信息
+const movieInfo = ref({});
+//电影排片信息
+const scheduleInfo = ref({});
+// const seatInfo = ref("");
+//手机号
+const phone = ref("");
+//时间 分
+const countdownM = ref(14);
+//时间 秒
+const countdownS = ref(59);
+const route = useRoute();
+const router = useRouter();
+//购买的座位数
+const seats = sessionStorage.getItem("seat_count");
+console.log(router);
+const seat_1 = ref(sessionStorage.getItem("seat_1"));
+const seat_2 = ref(sessionStorage.getItem("seat_2"));
+const seat_3 = ref(sessionStorage.getItem("seat_3"));
+const seat_4 = ref(sessionStorage.getItem("seat_4"));
+//定时器 倒计时15分钟订单自动取消
+let timer = setInterval(() => {
+  countdownS.value = Number(countdownS.value);
+  countdownS.value = Number(countdownS.value);
+  if (countdownS.value == 0) {
+    if (countdownM.value !== 0) {
+      countdownM.value -= 1;
+      countdownS.value = 59;
+    } else {
+      clearInterval(timer);
+      // loadInfo();
+    }
+  } else {
+    countdownS.value -= 1;
+  }
+}, 1000);
+//订票信息
+let loadInfo = async () => {
+  if (
+    route.query.cinema_id &&
+    route.query.movie_id &&
+    route.query.schedule_id &&
+    sessionStorage.getItem("user_id")
+  ) {
+    //影院信息
+    await getCurrentCinemaDetail(route.query.cinema_id).then((res) => {
+      if (res.status == 200) {
+        cinemaInfo.value = res.data[0];
+      }
+    });
+    //电影信息
+    await getMovieDetail(route.query.movie_id).then((res) => {
+      if (res.status == 200) {
+        movieInfo.value = res.data[0];
+      }
+    });
+    //电影放映时间信息
+    await getScheduleById(route.query.schedule_id).then((res) => {
+      if (res.status == 200) {
+        scheduleInfo.value = res.data[0];
+        console.log(scheduleInfo.value);
+      }
+    });
+    //用户信息
+    await getSfyUserInfo(sessionStorage.getItem("user_id")).then((res) => {
+      console.log(res);
+      if (res.status == 200) {
+        phone.value = res.data[0].phone;
+      }
+    });
+  }
+};
+//座位信息
+const formatSeatInfo = (seatNum) => {
+  if (seatNum % 10 === 0) {
+    return seatNum / 10 + "排" + 10 + "座";
+  } else {
+    return parseInt(seatNum / 10) + 1 + "排" + (seatNum % 10) + "座";
+  }
+};
+const dateFilter = computed(() => {
+  let date = date + "";
+  return (
+    date.split("-")[0] +
+    "年" +
+    date.split("-")[1] +
+    "月" +
+    date.split("-")[2] +
+    "日"
+  );
+});
+// timeFilter(time){
+//   if (Number(time)<=9){
+//     return '0'+time;
+//   }else{
+//     return time;
+//   }
+// }
+// });
+
+loadInfo();
+</script>
 
 <style lang="scss" scoped>
 #submit-order {
@@ -146,7 +250,7 @@
       display: flex;
       flex-flow: column;
       margin-top: 0.12rem;
-      /deep/ .phone {
+      .phone {
         width: 100%;
         box-sizing: border-box;
         height: 1rem;

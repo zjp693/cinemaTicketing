@@ -130,11 +130,16 @@ getMovieDetail(route.query.movie_id).then((res) => {
 getScheduleById(route.query.schedule_id).then((res) => {
   if (res.status == 200) {
     scheduleInfo.value = res.data[0];
-    seatInfo.value = scheduleInfo.value.seat_info;
-    if (seatInfo.value != "undefined") {
-      console.log(11);
-      console.log(seatInfo.value);
-      seatInfo.value = JSON.parse(seatInfo.value);
+
+    seatInfo.value =
+      scheduleInfo.value.seat_info === "undefined"
+        ? []
+        : scheduleInfo.value.seat_info;
+
+    if (seatInfo.value.length > 0) {
+      // console.log(seatInfo.value);
+      // console.log(seatInfo.value);
+      // seatInfo.value = JSON.parse(seatInfo.value);
       seatInfo.value.forEach((value) => {
         if (value % 10 !== 0) {
           seatIJ.value[parseInt(value / 10)][(value % 10) - 1] = 1;
@@ -207,7 +212,7 @@ const ensureSeatBtn = () => {
     selectedSeatInfo.value.forEach((value, index) => {
       // 座位信息
       console.log(seatInfo.value);
-      console.log(value[0] * 10 + value[1] + 1);
+      //console.log(value[0] * 10 + value[1] + 1);
       seatInfo.value.push(1);
       // 存储座位
       sessionStorage.setItem(
@@ -216,7 +221,7 @@ const ensureSeatBtn = () => {
       );
       //价格
       sessionStorage.setItem("seat_count", selectedSeatInfo.value.length);
-      seatInfo.value = JSON.stringify(seatInfo.value);
+      //seatInfo.value = JSON.stringify(seatInfo.value);
       getUpdateScheduleSeat(route.query.schedule_id).then((res) => {
         if (res.status == 200) {
           Toast.loading({
