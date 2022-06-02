@@ -11,7 +11,7 @@
     <div class="order-info">
       <div class="info movie-name">{{ movieInfo.name }}</div>
       <div class="info date">
-        <span class="day">{{ dateFilter(scheduleInfo.show_date) }}</span
+        <span class="day">{{ scheduleInfo.show_date }}</span
         ><span class="time">{{ scheduleInfo.show_time }}</span
         ><span class="language">{{ movieInfo.language }}3D</span>
       </div>
@@ -71,7 +71,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getCurrentCinemaDetail, getScheduleById } from "@/api/cinema";
 import { getMovieDetail } from "@/api/movie";
@@ -91,6 +91,10 @@ const countdownM = ref(14);
 const countdownS = ref(59);
 const route = useRoute();
 const router = useRouter();
+//返回上一页
+const backSeatInfo = () => {
+  router.go(-1);
+};
 //购买的座位数
 const seats = sessionStorage.getItem("seat_count");
 console.log(router);
@@ -158,26 +162,20 @@ const formatSeatInfo = (seatNum) => {
     return parseInt(seatNum / 10) + 1 + "排" + (seatNum % 10) + "座";
   }
 };
-const dateFilter = computed(() => {
-  let date = date + "";
-  return (
-    date.split("-")[0] +
-    "年" +
-    date.split("-")[1] +
-    "月" +
-    date.split("-")[2] +
-    "日"
-  );
-});
-// timeFilter(time){
-//   if (Number(time)<=9){
-//     return '0'+time;
-//   }else{
-//     return time;
-//   }
-// }
+//时间年月日的转化
+// const dateFilter = computed(() => {
+//   let date = scheduleInfo.value.show_date + "";
+//   // console.log(date);
+//   return (
+//     date.split("-")[0] +
+//     "年" +
+//     date.split("-")[1] +
+//     "月" +
+//     date.split("-")[2] +
+//     "日"
+//   );
 // });
-
+// console.log(dateFilter);
 loadInfo();
 </script>
 
