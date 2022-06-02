@@ -132,14 +132,10 @@ getScheduleById(route.query.schedule_id).then((res) => {
     scheduleInfo.value = res.data[0];
 
     seatInfo.value =
-      scheduleInfo.value.seat_info === "undefined"
+      scheduleInfo.value.seat_info == "undefined" || null
         ? []
         : scheduleInfo.value.seat_info;
-
-    if (seatInfo.value.length > 0) {
-      // console.log(seatInfo.value);
-      // console.log(seatInfo.value);
-      // seatInfo.value = JSON.parse(seatInfo.value);
+    if (seatInfo.value) {
       seatInfo.value.forEach((value) => {
         if (value % 10 !== 0) {
           seatIJ.value[parseInt(value / 10)][(value % 10) - 1] = 1;
@@ -205,13 +201,11 @@ const cancelSelectedSeat = (i, j) => {
 // 确认选座
 const ensureSeatBtn = () => {
   if (sessionStorage.getItem("user_id")) {
-    if (seatInfo.value == "undefined") {
+    if (seatInfo.value) {
       seatInfo.value = [];
     }
-    console.log(seatInfo.value);
     selectedSeatInfo.value.forEach((value, index) => {
       // 座位信息
-      console.log(seatInfo.value);
       //console.log(value[0] * 10 + value[1] + 1);
       seatInfo.value.push(1);
       // 存储座位
@@ -221,7 +215,6 @@ const ensureSeatBtn = () => {
       );
       //价格
       sessionStorage.setItem("seat_count", selectedSeatInfo.value.length);
-      //seatInfo.value = JSON.stringify(seatInfo.value);
       getUpdateScheduleSeat(route.query.schedule_id).then((res) => {
         if (res.status == 200) {
           Toast.loading({
