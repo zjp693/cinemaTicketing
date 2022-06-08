@@ -201,13 +201,13 @@ const cancelSelectedSeat = (i, j) => {
 // 确认选座
 const ensureSeatBtn = () => {
   if (sessionStorage.getItem("user_id")) {
-    if (seatInfo.value) {
+    if (!seatInfo.value) {
       seatInfo.value = [];
     }
     selectedSeatInfo.value.forEach((value, index) => {
       // 座位信息
       //console.log(value[0] * 10 + value[1] + 1);
-      seatInfo.value.push(1);
+      seatInfo.value.push(value[0] * 10 + value[1] + 1);
       // 存储座位
       sessionStorage.setItem(
         "seat_" + (index + 1),
