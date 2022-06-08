@@ -130,12 +130,9 @@ getMovieDetail(route.query.movie_id).then((res) => {
 getScheduleById(route.query.schedule_id).then((res) => {
   if (res.status == 200) {
     scheduleInfo.value = res.data[0];
-
-    seatInfo.value =
-      scheduleInfo.value.seat_info == "undefined" || null
-        ? []
-        : scheduleInfo.value.seat_info;
-    if (seatInfo.value) {
+    seatInfo.value = scheduleInfo.value.seat_info;
+    seatInfo.value = JSON.parse(seatInfo.value);
+    if (seatInfo.value.length > 0) {
       seatInfo.value.forEach((value) => {
         if (value % 10 !== 0) {
           seatIJ.value[parseInt(value / 10)][(value % 10) - 1] = 1;
@@ -206,7 +203,6 @@ const ensureSeatBtn = () => {
     }
     selectedSeatInfo.value.forEach((value, index) => {
       // 座位信息
-      //console.log(value[0] * 10 + value[1] + 1);
       seatInfo.value.push(value[0] * 10 + value[1] + 1);
       // 存储座位
       sessionStorage.setItem(
