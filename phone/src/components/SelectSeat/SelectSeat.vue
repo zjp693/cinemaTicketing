@@ -130,13 +130,18 @@ getMovieDetail(route.query.movie_id).then((res) => {
 getScheduleById(route.query.schedule_id).then((res) => {
   if (res.status == 200) {
     scheduleInfo.value = res.data[0];
+    console.log(res.data[0]);
+    //座位信息
     seatInfo.value =
-      scheduleInfo.value.seat_info == "undefined" || null || undefined
+      scheduleInfo.value.seat_info == undefined || null
         ? []
         : scheduleInfo.value.seat_info;
-    seatInfo.value = JSON.parse(seatInfo.value);
-    // console.log(JSON.parse(seatInfo.value));
-    console.log(seatInfo.value);
+    // console.log(seatInfo.value);
+    //将字符串转化为js对象
+    if (seatInfo.value.length > 0) {
+      seatInfo.value = JSON.parse(seatInfo.value);
+    }
+    // console.log(seatInfo.value);
     if (seatInfo.value.length > 0) {
       seatInfo.value.forEach((value) => {
         if (value % 10 !== 0) {
@@ -214,25 +219,29 @@ const ensureSeatBtn = () => {
         "seat_" + (index + 1),
         value[0] * 10 + value[1] + 1
       );
+      console.log(seatInfo.value);
       //价格
       sessionStorage.setItem("seat_count", selectedSeatInfo.value.length);
-      getUpdateScheduleSeat(route.query.schedule_id).then((res) => {
-        if (res.status == 200) {
-          Toast.loading({
-            message: "锁定座位成功",
-            position: "middle",
-            duration: 2000,
-          });
-          router.push({
-            path: "/submit_order",
-            query: {
-              cinema_id: route.query.cinema_id,
-              movie_id: route.query.movie_id,
-              schedule_id: route.query.schedule_id,
-            },
-          });
+      getUpdateScheduleSeat(route.query.schedule_id, seatInfo.value).then(
+        (res) => {
+          console.log(res);
+          if (res.status == 200) {
+            Toast.loading({
+              message: "锁定座位成功",
+              position: "middle",
+              duration: 2000,
+            });
+            router.push({
+              path: "/submit_order",
+              query: {
+                cinema_id: route.query.cinema_id,
+                movie_id: route.query.movie_id,
+                schedule_id: route.query.schedule_id,
+              },
+            });
+          }
         }
-      });
+      );
     });
   } else {
     router.push("/login");

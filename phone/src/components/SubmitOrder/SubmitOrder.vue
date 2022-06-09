@@ -98,68 +98,7 @@ const countdownS = ref(59);
 const seatInfo = ref([]);
 const route = useRoute();
 const router = useRouter();
-//返回上一页
-const backSeatInfo = async () => {
-  //回退座位信息
-  let currentIndex;
-  //删除本地存储的座位信息
-  if (sessionStorage.getItem("seat_1")) {
-    seatInfo.value.forEach((value, index) => {
-      if (Number(sessionStorage.getItem("seat_1")) === value) {
-        currentIndex = index;
-      }
-    });
-    seatInfo.value.splice(currentIndex, 1);
-  }
-  if (sessionStorage.getItem("seat_2")) {
-    seatInfo.value.forEach((value, index) => {
-      if (Number(sessionStorage.getItem("seat_2")) === value) {
-        currentIndex = index;
-      }
-    });
-    seatInfo.value.splice(currentIndex, 1);
-  }
-  if (sessionStorage.getItem("seat_3")) {
-    seatInfo.value.forEach((value, index) => {
-      if (Number(sessionStorage.getItem("seat_3")) === value) {
-        currentIndex = index;
-      }
-    });
-    seatInfo.value.splice(currentIndex, 1);
-  }
-  if (sessionStorage.getItem("seat_4")) {
-    seatInfo.value.forEach((value, index) => {
-      if (Number(sessionStorage.getItem("seat_4")) === value) {
-        currentIndex = index;
-      }
-    });
-    seatInfo.value.splice(currentIndex, 1);
-  }
-  await getUpdateScheduleSeat(
-    route.query.schedule_id,
-    JSON.stringify(seatInfo.value)
-  ).then((res) => {
-    console.log(res);
-    if (res.status === 200) {
-      //清空
-      sessionStorage.removeItem("seat_1");
-      sessionStorage.removeItem("seat_2");
-      sessionStorage.removeItem("seat_3");
-      sessionStorage.removeItem("seat_4");
-      sessionStorage.removeItem("seat_count");
-      //清空到倒计时
-      clearInterval(timer);
-      setTimeout(() => {
-        Toast.loading({
-          message: "解除锁定座位成功",
-          position: "middle",
-          duration: 2000,
-        });
-      }, 100);
-      router.go(-1);
-    }
-  });
-};
+
 //购买的座位数
 const seats = sessionStorage.getItem("seat_count");
 const seat_1 = ref(sessionStorage.getItem("seat_1"));
@@ -202,11 +141,14 @@ let loadInfo = async () => {
         movieInfo.value = res.data[0];
       }
     });
-    //电影放映时间信息
+    //电影放映时间信息座位
     await getScheduleById(route.query.schedule_id).then((res) => {
       if (res.status == 200) {
         scheduleInfo.value = res.data[0];
-        console.log(scheduleInfo.value);
+        seatInfo.value = scheduleInfo.value.seat_info;
+        seatInfo.value = JSON.parse(seatInfo.value);
+        console.log(seatInfo.value);
+        console.log(111);
       }
     });
     //用户信息
@@ -218,6 +160,9 @@ let loadInfo = async () => {
     });
   }
 };
+//初始化数据
+loadInfo();
+
 //座位信息
 const formatSeatInfo = (seatNum) => {
   if (seatNum % 10 === 0) {
@@ -245,7 +190,68 @@ const handleSubmitOrder = () => {
     query: { schedule_id: route.query.schedule_id },
   });
 };
-loadInfo();
+//返回上一页
+const backSeatInfo = async () => {
+  //回退座位信息
+  let currentIndex;
+  //删除本地存储的座位信息
+  if (sessionStorage.getItem("seat_1")) {
+    seatInfo.value.forEach((value, index) => {
+      if (Number(sessionStorage.getItem("seat_1")) === value) {
+        currentIndex = index;
+      }
+    });
+    seatInfo.value.splice(currentIndex, 1);
+  }
+  if (sessionStorage.getItem("seat_2")) {
+    seatInfo.value.forEach((value, index) => {
+      if (Number(sessionStorage.getItem("seat_2")) === value) {
+        currentIndex = index;
+      }
+    });
+    seatInfo.value.splice(currentIndex, 1);
+  }
+  if (sessionStorage.getItem("seat_3")) {
+    seatInfo.value.forEach((value, index) => {
+      if (Number(sessionStorage.getItem("seat_3")) === value) {
+        currentIndex = index;
+      }
+    });
+    seatInfo.value.splice(currentIndex, 1);
+  }
+  if (sessionStorage.getItem("seat_4")) {
+    seatInfo.value.forEach((value, index) => {
+      if (Number(sessionStorage.getItem("seat_4")) === value) {
+        currentIndex = index;
+      }
+    });
+    seatInfo.value.splice(currentIndex, 1);
+  }
+  console.log(seatInfo.value);
+  await getUpdateScheduleSeat(route.query.schedule_id, seatInfo.value).then(
+    (res) => {
+      console.log(res);
+      if (res.status === 200) {
+        //清空
+        sessionStorage.removeItem("seat_1");
+        sessionStorage.removeItem("seat_2");
+        sessionStorage.removeItem("seat_3");
+        sessionStorage.removeItem("seat_4");
+        sessionStorage.removeItem("seat_count");
+        //清空到倒计时
+        clearInterval(timer);
+        setTimeout(() => {
+          Toast.loading({
+            message: "解除锁定座位成功",
+            position: "middle",
+            duration: 2000,
+          });
+        }, 100);
+        router.go(-1);
+      }
+    }
+  );
+};
 </script>
 
 <style lang="scss" scoped>
