@@ -1,7 +1,7 @@
 <template>
   <div id="submit-order">
     <div class="top">
-      <span class="icon-back" @click="backSeatInfo"></span>
+      <span class="icon-back" @click="backSeatInfo()"></span>
       <span class="name ellipsis">确认订单</span>
       <div class="time-down">
         <span class="icon-time"></span
@@ -91,9 +91,9 @@ const scheduleInfo = ref({});
 //手机号
 const phone = ref("");
 //时间 分
-const countdownM = ref(14);
+const countdownM = ref(0);
 //时间 秒
-const countdownS = ref(59);
+const countdownS = ref(30);
 //座位信息1
 const seatInfo = ref([]);
 const route = useRoute();
@@ -109,13 +109,15 @@ const seat_4 = ref(sessionStorage.getItem("seat_4"));
 let timer = setInterval(() => {
   countdownS.value = Number(countdownS.value);
   countdownM.value = Number(countdownM.value);
+  console.log(countdownS.value);
   if (countdownS.value == 0) {
     if (countdownM.value !== 0) {
       countdownM.value -= 1;
       countdownS.value = 59;
     } else {
       clearInterval(timer);
-      // loadInfo();
+      loadInfo();
+      backSeatInfo();
     }
   } else {
     countdownS.value -= 1;
@@ -162,7 +164,6 @@ let loadInfo = async () => {
 };
 //初始化数据
 loadInfo();
-
 //座位信息
 const formatSeatInfo = (seatNum) => {
   if (seatNum % 10 === 0) {
@@ -230,7 +231,6 @@ const backSeatInfo = async () => {
   console.log(seatInfo.value);
   await getUpdateScheduleSeat(route.query.schedule_id, seatInfo.value).then(
     (res) => {
-      console.log(res);
       if (res.status === 200) {
         //清空
         sessionStorage.removeItem("seat_1");
@@ -247,6 +247,9 @@ const backSeatInfo = async () => {
             duration: 2000,
           });
         }, 100);
+        // if (!state) {
+        //   router.go(-1);
+        // }
         router.go(-1);
       }
     }

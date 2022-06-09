@@ -31,6 +31,7 @@ import MovieItem from "../../components/MovieItem/MovieItem";
 import { getMovieList } from "../../api/movie";
 //切换电影选项
 const isHotMovie = ref(true);
+
 //服务器地址
 // const server = ref("http://localhost:3000");
 //热门电影列表

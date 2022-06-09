@@ -145,7 +145,7 @@ const handlePay = () => {
           // MessageBox.alert("您的取票码为:" + json.data.phone_code, "支付成功");
           Dialog.alert({
             title: "支付成功",
-            message: "您的取票码为" + res.data,
+            message: "您的取票码为：" + res.data,
           });
           sessionStorage.removeItem("seat_1");
           sessionStorage.removeItem("seat_2");
