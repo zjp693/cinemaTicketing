@@ -13,6 +13,7 @@ import SearchMovie from "../views/Movie/children/SearchMovie.vue";
 import selectCinema from "../components/SelectCinema/SelectCinema.vue";
 import selectSeat from "../components/SelectSeat/SelectSeat.vue";
 import submitOrder from "../components/SubmitOrder/SubmitOrder";
+import pay from "../components/Pay/pay";
 const routes = [
   {
     path: "/",
@@ -91,6 +92,11 @@ const routes = [
   {
     path: "/submit_order",
     component: submitOrder,
+  },
+  // 支付订单
+  {
+    path: "/pay",
+    component: pay,
   },
 ];
 
