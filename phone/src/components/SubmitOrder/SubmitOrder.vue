@@ -226,20 +226,25 @@ const formatSeatInfo = (seatNum) => {
     return parseInt(seatNum / 10) + 1 + "排" + (seatNum % 10) + "座";
   }
 };
-//时间年月日的转化
-// const dateFilter = computed(() => {
-//   let date = scheduleInfo.value.show_date + "";
-//   // console.log(date);
-//   return (
-//     date.split("-")[0] +
-//     "年" +
-//     date.split("-")[1] +
-//     "月" +
-//     date.split("-")[2] +
-//     "日"
-//   );
-// });
-// console.log(dateFilter);
+//提交订单
+const handleSubmitOrder = () => {
+  sessionStorage.setItem(
+    "total_price",
+    scheduleInfo.value.price * Number(sessionStorage.getItem("seat_count"))
+  );
+  sessionStorage.setItem("countdown_m", countdownM.value);
+  sessionStorage.setItem("countdown_s", countdownS.value);
+  sessionStorage.setItem(
+    "order_num",
+    (Number(Math.random()) * 10000000000000).toFixed(0)
+  );
+  sessionStorage.setItem("order_phone", phone.value);
+  clearInterval(timer);
+  router.push({
+    path: "/pay",
+    query: { schedule_id: route.query.schedule_id },
+  });
+};
 loadInfo();
 </script>
 

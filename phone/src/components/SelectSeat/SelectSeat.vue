@@ -130,8 +130,13 @@ getMovieDetail(route.query.movie_id).then((res) => {
 getScheduleById(route.query.schedule_id).then((res) => {
   if (res.status == 200) {
     scheduleInfo.value = res.data[0];
-    seatInfo.value = scheduleInfo.value.seat_info;
+    seatInfo.value =
+      scheduleInfo.value.seat_info == "undefined" || null || undefined
+        ? []
+        : scheduleInfo.value.seat_info;
     seatInfo.value = JSON.parse(seatInfo.value);
+    // console.log(JSON.parse(seatInfo.value));
+    console.log(seatInfo.value);
     if (seatInfo.value.length > 0) {
       seatInfo.value.forEach((value) => {
         if (value % 10 !== 0) {
