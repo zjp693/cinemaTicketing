@@ -236,6 +236,7 @@ getMovieDetail(id.value).then((res) => {
   background: linear-gradient(to bottom, #242342 0%, #11182b 100%);
   color: #fff;
   font-size: 0.3125rem;
+  overflow: hidden;
   .top {
     width: 100%;
     height: 1rem;

@@ -255,6 +255,7 @@ const ensureSeatBtn = () => {
   height: 100%;
   color: #000;
   font-size: 0.3125rem;
+  overflow: hidden;
   .top {
     width: 100%;
     height: 1rem;
