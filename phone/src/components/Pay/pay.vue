@@ -63,9 +63,10 @@
 
 <script setup>
 import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { getScheduleById } from "@/api/cinema";
 import { Dialog } from "vant";
+import { getUserOrder } from "@/api/order";
 const scheduleInfo = ref([]);
 const seatInfo = ref([]);
 
@@ -80,6 +81,7 @@ const order_num = ref(0); //数量
 total_price.value = JSON.parse(sessionStorage.getItem("total_price"));
 order_num.value = JSON.parse(sessionStorage.getItem("order_num"));
 const route = useRoute();
+const router = useRouter();
 //加载初始化数据
 const loadInfo = async () => {
   await getScheduleById(route.query.schedule_id).then((res) => {
@@ -93,6 +95,75 @@ const loadInfo = async () => {
   });
 };
 loadInfo();
+
+//确定支付
+const handlePay = () => {
+  let info;
+  if (selectPayType.value) {
+    info =
+      "您的微信将支付￥" +
+      Number(sessionStorage.getItem("total_price")).toFixed(2) +
+      "元";
+  } else {
+    info =
+      "您的支付宝将支付￥" +
+      Number(sessionStorage.getItem("total_price")).toFixed(2) +
+      "元";
+  }
+  Dialog.confirm({ title: "支付提示", message: info }).then((action) => {
+    if (action === "confirm") {
+      let seatArr = [];
+      if (sessionStorage.getItem("seat_1")) {
+        seatArr.push(Number(sessionStorage.getItem("seat_1")));
+      }
+      if (sessionStorage.getItem("seat_2")) {
+        seatArr.push(Number(sessionStorage.getItem("seat_2")));
+      }
+      if (sessionStorage.getItem("seat_3")) {
+        seatArr.push(Number(sessionStorage.getItem("seat_3")));
+      }
+      if (sessionStorage.getItem("seat_4")) {
+        seatArr.push(Number(sessionStorage.getItem("seat_4")));
+      }
+      //订单支付接口
+      getUserOrder(
+        sessionStorage.getItem("user_id"),
+        route.query.schedule_id,
+        sessionStorage.getItem("order_phone"),
+        new Date().getFullYear() +
+          "-" +
+          (Number(new Date().getMonth()) + 1) +
+          "-" +
+          new Date().getDate(),
+        seatArr.length,
+        sessionStorage.getItem("total_price"),
+        JSON.stringify(seatArr),
+        selectPayType.value ? 0 : 1
+      ).then((res) => {
+        console.log(res);
+        if (res.status == 200) {
+          // MessageBox.alert("您的取票码为:" + json.data.phone_code, "支付成功");
+          Dialog.alert({
+            title: "支付成功",
+            message: "您的取票码为" + res.data,
+          });
+          sessionStorage.removeItem("seat_1");
+          sessionStorage.removeItem("seat_2");
+          sessionStorage.removeItem("seat_3");
+          sessionStorage.removeItem("seat_4");
+          sessionStorage.removeItem("seat_count");
+          sessionStorage.removeItem("order_phone");
+          sessionStorage.removeItem("countdown_m");
+          sessionStorage.removeItem("countdown_s");
+          sessionStorage.removeItem("order_num");
+          sessionStorage.removeItem("total_price");
+          // clearInterval(timer);
+          router.push("/home");
+        }
+      });
+    }
+  });
+};
 </script>
 
 <style lang="scss" scoped>
