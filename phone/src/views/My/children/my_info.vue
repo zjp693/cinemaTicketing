@@ -58,6 +58,11 @@
             <i class="icon-more"></i>
           </span>
         </div>
+        <!--        <van-cell-->
+        <!--          title="选择单个日期"-->
+        <!--          :value="date"-->
+        <!--          @click="showDatePicker = true"-->
+        <!--        />-->
         <div class="item" @click="showDatePicker = true">
           <span>生日</span>
           <span class="right">
@@ -101,6 +106,14 @@
     <!--      @cancel="handleCancel"-->
     <!--      @confirm="handleConfirm"-->
     <!--    />-->
+
+    <!--    <van-calendar v-model:show="" @confirm="onConfirm" />-->
+    <vue-hash-calendar
+      :visible="showDatePicker"
+      model="dialog"
+      :changeYearFast="changeYearFast"
+      @confirm="onConfirm"
+    ></vue-hash-calendar>
   </div>
 </template>
 
@@ -108,7 +121,13 @@
 import { ref } from "vue";
 import { Dialog, Toast } from "vant";
 import { useRouter } from "vue-router";
-import { getSfyUserInfo, getUserUpLoadImg, updateUserAvatar } from "@/api/user";
+import {
+  getSfyUserInfo,
+  getUpdateUserSex,
+  getUserUpLoadImg,
+  updateUserAvatar,
+  updateUserBirthday,
+} from "@/api/user";
 
 const userName = ref(""); //用户名
 const userPwd = ref(""); //密码
@@ -123,6 +142,9 @@ const userData = ref({});
 const showDatePicker = ref(false);
 const showSexPanel = ref(false);
 const router = useRouter();
+const date = ref("");
+const changeYearFast = ref(true);
+const userId = ref(sessionStorage.getItem("user_id"));
 //获取用户信息
 const loadUsersInfo = async () => {
   if (sessionStorage.getItem("user_id")) {
@@ -133,7 +155,9 @@ const loadUsersInfo = async () => {
         avatar.value = "http://localhost:3001" + res.data[0].avatar;
         userName.value = res.data[0].user_name;
         userSex.value = res.data[0].sex;
-        birthday.value = res.data[0].birthday;
+        birthday.value = new Date(res.data[0].birthday)
+          .toLocaleDateString()
+          .replaceAll("/", "-");
         sign.value = res.data[0].sign;
         userPwd.value = res.data[0].password;
       }
@@ -162,16 +186,37 @@ const modifyUserAvatar = () => {
     getUserUpLoadImg(formDate).then((res) => {
       if (res.status == 200) {
         let userNweAvatar = res.data;
-        updateUserAvatar(sessionStorage.getItem("user_id"), userNweAvatar).then(
-          (res) => {
-            if (res.status == 200) {
-              Toast.success("修改头像成功");
-            }
+        updateUserAvatar(userId.value, userNweAvatar).then((res) => {
+          if (res.status == 200) {
+            Toast.success("修改头像成功");
           }
-        );
+        });
       }
     });
   }
+};
+//修改性别
+const modifyUserSex = (sex) => {
+  showSexPanel.value = false;
+  getUpdateUserSex(userId.value, sex).then((res) => {
+    if (res.status == 200) {
+      Toast.success("修改性别成功");
+      loadUsersInfo();
+    }
+  });
+};
+//确定时间
+const onConfirm = (value) => {
+  showDatePicker.value = false;
+  date.value = new Date(value).toLocaleDateString().replaceAll("/", "-");
+  console.log(date.value);
+  updateUserBirthday(userId.value, date.value).then((res) => {
+    console.log(res);
+    if (res.status == 200) {
+      Toast.success("修改生日成功");
+      loadUsersInfo();
+    }
+  });
 };
 </script>
 

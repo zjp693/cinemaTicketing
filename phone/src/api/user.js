@@ -66,7 +66,7 @@ export function updateUserAvatar(user_id, userNweAvatar) {
 }
 
 /**
- *
+ * 修改用户昵称
  * @param user_id
  * @param userNweAvatar
  * @returns {AxiosPromise}
@@ -75,5 +75,31 @@ export function updateUserName(user_id, userName) {
   return requestWithToken("/users/updateUserName", "post", {
     user_id,
     userName,
+  });
+}
+
+/**
+ * 修改用户性别
+ * @param user_id
+ * @param sex
+ * @returns {AxiosPromise}
+ */
+export function getUpdateUserSex(user_id, sex) {
+  return requestWithToken("/users/updateUserSex", "post", {
+    user_id,
+    sex,
+  });
+}
+
+/**
+ *  修改用户生日
+ * @param user_id
+ * @param sex
+ * @returns {AxiosPromise}
+ */
+export function updateUserBirthday(user_id, birthday) {
+  return requestWithToken("/users/updateUserBirthday", "post", {
+    user_id,
+    birthday,
   });
 }

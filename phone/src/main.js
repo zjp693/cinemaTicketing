@@ -14,8 +14,18 @@ import Vant from "vant";
 // 引入 element
 import ElementPlus from "element-plus";
 import { Icon } from "vant";
-
+// 在入口文件中（main.js），导入组件库
+import vueHashCalendar from "vue3-hash-calendar";
+// 引入组件CSS样式
+import "vue3-hash-calendar/lib/style.css";
 import "vant/lib/index.css";
 import "element-plus/dist/index.css";
 const app = createApp(App);
-app.use(router).use(store).use(Vant).use(ElementPlus).use(Icon).mount("#app");
+app
+  .use(router)
+  .use(store)
+  .use(Vant)
+  .use(ElementPlus)
+  .use(Icon)
+  .use(vueHashCalendar)
+  .mount("#app");

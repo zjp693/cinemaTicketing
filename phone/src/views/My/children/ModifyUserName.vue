@@ -50,7 +50,7 @@ const modifyUserName = () => {
     updateUserName(sessionStorage.getItem("user_id"), input.value).then(
       (res) => {
         if (res.status == 200) {
-          Toast.success(res.message);
+          Toast.success("用户昵称修改成功");
           router.go(-1);
         }
       }
