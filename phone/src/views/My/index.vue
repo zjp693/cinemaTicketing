@@ -49,15 +49,50 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { getCinemaList } from "../../api/cinema";
+import { getSfyUserInfo } from "@/api/user";
 const router = useRouter();
 // 个人资料说
 const myData = ref([]);
 // 默认头像
 const avatar = ref("http://localhost:3000/images/avatar/userIcon.png");
-getCinemaList().then((res) => {
-  console.log(res);
-});
+//获取用户信息
+if (sessionStorage.getItem("user_id")) {
+  getSfyUserInfo(sessionStorage.getItem("user_id")).then((res) => {
+    console.log(res.data[0]);
+    if (res.status == 200) {
+      myData.value = res.data[0];
+      avatar.value = "http://localhost:3000" + res.data[0].avatar;
+    }
+  });
+}
+//查看个人信息
+const viewUserInfo = () => {
+  if (sessionStorage.getItem("user_id")) {
+    router.push("my_info");
+  }
+};
+//查看个人订单
+const viewMyOrder = () => {
+  if (sessionStorage.getItem("user_id")) {
+    router.push({
+      path: "my_order",
+      query: { user_id: sessionStorage.getItem("user_id") },
+    });
+  } else {
+    router.push("login");
+  }
+};
+//查看个人电影
+const viewMyMovie = (flag) => {
+  if (sessionStorage.getItem("user_id")) {
+    router.push({
+      path: "my_movie",
+      query: { user_id: sessionStorage.getItem("user_id"), wish_movie: flag },
+    });
+  } else {
+    router.push("login");
+  }
+};
 </script>
 
 <style lang="scss" scoped>

@@ -14,6 +14,8 @@ import selectCinema from "../components/SelectCinema/SelectCinema.vue";
 import selectSeat from "../components/SelectSeat/SelectSeat.vue";
 import submitOrder from "../components/SubmitOrder/SubmitOrder";
 import pay from "../components/Pay/pay";
+import myInfo from "../views/My/children/my_info";
+
 const routes = [
   {
     path: "/",
@@ -97,6 +99,11 @@ const routes = [
   {
     path: "/pay",
     component: pay,
+  },
+  // 个人信息
+  {
+    path: "/my_info",
+    component: myInfo,
   },
 ];
 
