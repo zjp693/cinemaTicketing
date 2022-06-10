@@ -84,7 +84,7 @@
         </div>
       </div>
       <div class="logout">
-        <span class="logout-btn" @click="logout()">退出</span>
+        <span class="logout-btn" @click="logout">退出</span>
       </div>
     </div>
     <div class="modify_sex" v-show="showSexPanel" @click="showSexPanel = false">
@@ -100,14 +100,7 @@
         </div>
       </div>
     </div>
-    <!--    <date-picker-->
-    <!--      :show-picker-model="showDatePicker"-->
-    <!--      :default-date="new Date(birthday)"-->
-    <!--      @cancel="handleCancel"-->
-    <!--      @confirm="handleConfirm"-->
-    <!--    />-->
-
-    <!--    <van-calendar v-model:show="" @confirm="onConfirm" />-->
+    <!--日历-->
     <vue-hash-calendar
       :visible="showDatePicker"
       model="dialog"
@@ -217,6 +210,12 @@ const onConfirm = (value) => {
       loadUsersInfo();
     }
   });
+};
+//退出
+const logout = () => {
+  sessionStorage.removeItem("user_id");
+  Toast.success("退出登录");
+  router.push("/my");
 };
 </script>
 
