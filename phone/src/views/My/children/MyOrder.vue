@@ -36,7 +36,7 @@
                   item.order_seat_info
                 )"
                 :key="valueSeat"
-                >{{ formatSeat(itemSeat) }}</span
+                >{{ itemSeat }}</span
               >
             </div>
           </div>
@@ -59,9 +59,39 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import { getOrderByUserId } from "@/api/user";
 const router = useRouter();
-
-const myOrderInfo = ref("");
+const userId = ref(sessionStorage.getItem("user_id"));
+const myOrderInfo = ref([]);
+const server = "http://localhost:3001";
+const seat_info = ref("");
+const loadInfo = () => {
+  getOrderByUserId(userId.value).then((res) => {
+    console.log(res);
+    if (res.status == 200) {
+      myOrderInfo.value = res.data;
+      res.data.map((item) => {
+        seat_info.value = formatSeat(JSON.parse(item.order_seat_info));
+        JSON.parse(item.order_seat_info).map((item) => {
+          console.log(item);
+        });
+        // console.log(JSON.parse(item.order_seat_info));
+        // console.log(seat_info.value);
+      });
+      myOrderInfo.value.sort((a, b) => {
+        return new Date(b.order_date) - new Date(a.order_date);
+      });
+    }
+  });
+  const formatSeat = (num) => {
+    if (num % 10 === 0) {
+      return num / 10 + "排" + 10 + "座";
+    } else {
+      return parseInt(num / 10) + 1 + "排" + (num % 10) + "座";
+    }
+  };
+};
+loadInfo();
 </script>
 
 <style lang="scss" scoped>
@@ -125,6 +155,10 @@ const myOrderInfo = ref("");
         padding: 0.12rem 0;
         .left {
           width: 16%;
+          img {
+            width: 100%;
+            height: 100%;
+          }
         }
         .right {
           align-self: flex-start;

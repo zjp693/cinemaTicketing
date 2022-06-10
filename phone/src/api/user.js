@@ -116,3 +116,14 @@ export function updateUserSign(user_id, sign) {
     sign,
   });
 }
+
+/**
+ * 获取订单信息
+ * @param user_id
+ * @returns {AxiosPromise}
+ */
+export function getOrderByUserId(user_id) {
+  return requestWithToken("/users/getOrderByUserId", "get", {
+    user_id,
+  });
+}
