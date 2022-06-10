@@ -103,3 +103,16 @@ export function updateUserBirthday(user_id, birthday) {
     birthday,
   });
 }
+
+/**
+ * 修改个性签名
+ * @param user_id
+ * @param sign
+ * @returns {AxiosPromise}
+ */
+export function updateUserSign(user_id, sign) {
+  return requestWithToken("/users/updateUserSign", "post", {
+    user_id,
+    sign,
+  });
+}
