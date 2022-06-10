@@ -17,6 +17,7 @@ import pay from "../components/Pay/pay";
 import myInfo from "../views/My/children/my_info";
 import modify_username from "../views/My/children/ModifyUserName";
 import modify_usersign from "../views/My/children/modify_usersign";
+import my_order from "../views/My/children/MyOrder";
 const routes = [
   {
     path: "/",
@@ -117,6 +118,12 @@ const routes = [
     path: "/modify_usersign",
     name: "modify_usersign",
     component: modify_usersign,
+  },
+  //  我的订单
+  {
+    path: "/my_order",
+    name: "my_order",
+    component: my_order,
   },
 ];
 
