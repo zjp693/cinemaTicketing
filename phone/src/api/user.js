@@ -47,7 +47,7 @@ export function getSfyUserInfo(user_id) {
   });
 }
 /**
- *  用户上传图片  updateUserAvatar
+ *  用户上传图片
  * @returns {AxiosPromise}
  */
 export function getUserUpLoadImg(info) {
@@ -62,5 +62,18 @@ export function updateUserAvatar(user_id, userNweAvatar) {
   return requestWithToken("/users/updateUserAvatar", "post", {
     user_id,
     userNweAvatar,
+  });
+}
+
+/**
+ *
+ * @param user_id
+ * @param userNweAvatar
+ * @returns {AxiosPromise}
+ */
+export function updateUserName(user_id, userName) {
+  return requestWithToken("/users/updateUserName", "post", {
+    user_id,
+    userName,
   });
 }

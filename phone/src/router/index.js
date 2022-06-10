@@ -15,7 +15,7 @@ import selectSeat from "../components/SelectSeat/SelectSeat.vue";
 import submitOrder from "../components/SubmitOrder/SubmitOrder";
 import pay from "../components/Pay/pay";
 import myInfo from "../views/My/children/my_info";
-
+import modify_username from "../views/My/children/ModifyUserName";
 const routes = [
   {
     path: "/",
@@ -104,6 +104,12 @@ const routes = [
   {
     path: "/my_info",
     component: myInfo,
+  },
+  //个人昵称
+  {
+    path: "/modify_username",
+    name: "modify_username",
+    component: modify_username,
   },
 ];
 
