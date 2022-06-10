@@ -106,9 +106,9 @@
 
 <script setup>
 import { ref } from "vue";
-import { Dialog } from "vant";
+import { Dialog, Toast } from "vant";
 import { useRouter } from "vue-router";
-import { getSfyUserInfo } from "@/api/user";
+import { getSfyUserInfo, getUserUpLoadImg, updateUserAvatar } from "@/api/user";
 
 const userName = ref(""); //用户名
 const userPwd = ref(""); //密码
@@ -130,7 +130,7 @@ const loadUsersInfo = async () => {
       if (res.status == 200) {
         console.log(res);
         userData.value = res.data[0];
-        avatar.value = "http://localhost:3000" + res.data[0].avatar;
+        avatar.value = "http://localhost:3001" + res.data[0].avatar;
         userName.value = res.data[0].user_name;
         userSex.value = res.data[0].sex;
         birthday.value = res.data[0].birthday;
@@ -147,13 +147,30 @@ const changeImg = () => {
   reader.readAsDataURL(uploadImg.value.files[0]); //发起异步请求
   reader.onload = function (res) {
     //读取完成后，将结果赋值给img的src
-    console.log(res);
     modifyUserAvatar();
     previewImg.value.src = res.target.result;
   };
 };
+//用户上传图片处理
 const modifyUserAvatar = () => {
   if (!sessionStorage.getItem("user_id")) {
+    Dialog.alert({ message: "请先请登录！" });
+    return false;
+  } else {
+    let formDate = new FormData();
+    formDate.append("file", uploadImg.value.files[0]);
+    getUserUpLoadImg(formDate).then((res) => {
+      if (res.status == 200) {
+        let userNweAvatar = res.data;
+        updateUserAvatar(sessionStorage.getItem("user_id"), userNweAvatar).then(
+          (res) => {
+            if (res.status == 200) {
+              Toast.success("修改头像成功");
+            }
+          }
+        );
+      }
+    });
   }
 };
 </script>

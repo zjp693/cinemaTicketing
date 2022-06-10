@@ -39,11 +39,28 @@ export function phoneLogin(phone, phoneCode) {
 }
 /**
  *  获取用户信息
- * @param phone 手机号码
  * @returns {AxiosPromise}
  */
 export function getSfyUserInfo(user_id) {
   return requestWithToken("/users/getSfyUserInfo", "get", {
     user_id,
+  });
+}
+/**
+ *  用户上传图片  updateUserAvatar
+ * @returns {AxiosPromise}
+ */
+export function getUserUpLoadImg(info) {
+  return requestWithToken("/users/getUserUpLoadImg", "post", info);
+}
+
+/**
+ *  修改用户头像
+ * @returns {AxiosPromise}
+ */
+export function updateUserAvatar(user_id, userNweAvatar) {
+  return requestWithToken("/users/updateUserAvatar", "post", {
+    user_id,
+    userNweAvatar,
   });
 }
