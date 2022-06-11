@@ -76,7 +76,7 @@ const loadInfo = () => {
           console.log(item);
         });
         // console.log(JSON.parse(item.order_seat_info));
-        // console.log(seat_info.value);
+        console.log(seat_info.value);
       });
       myOrderInfo.value.sort((a, b) => {
         return new Date(b.order_date) - new Date(a.order_date);
