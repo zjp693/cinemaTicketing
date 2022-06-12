@@ -60,7 +60,7 @@ if (sessionStorage.getItem("user_id")) {
     console.log(res.data[0]);
     if (res.status == 200) {
       myData.value = res.data[0];
-      avatar.value = "http://localhost:3000" + res.data[0].avatar;
+      avatar.value = "http://localhost:3001" + res.data[0].avatar;
     }
   });
 }

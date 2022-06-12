@@ -189,7 +189,7 @@ const averageScore = ref(0);
 // 评论数
 const commentNum = ref(0);
 //服务器地址
-const server = ref("http://localhost:3000");
+const server = ref("http://localhost:3001");
 // 电影数据
 const movieDetail = ref([]);
 // 电影是否上映

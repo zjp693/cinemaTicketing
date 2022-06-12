@@ -81,7 +81,7 @@ setTimeout(() => {
 const router = useRouter();
 
 //服务器地址
-const server = ref("http://localhost:3000");
+const server = ref("http://localhost:3001");
 
 // 计算有几个字符符合 并且改变颜色
 const ruleName = computed(() => {

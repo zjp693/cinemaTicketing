@@ -33,7 +33,7 @@ import { getMovieList } from "../../api/movie";
 const isHotMovie = ref(true);
 
 //服务器地址
-// const server = ref("http://localhost:3000");
+// const server = ref("http://localhost:3001");
 //热门电影列表
 const hotMovieList = ref([]);
 //未上映电影列表

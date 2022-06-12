@@ -71,12 +71,23 @@ const loadInfo = () => {
     if (res.status == 200) {
       myOrderInfo.value = res.data;
       res.data.map((item) => {
-        seat_info.value = formatSeat(JSON.parse(item.order_seat_info));
-        JSON.parse(item.order_seat_info).map((item) => {
-          console.log(item);
+        // seat_info.value = formatSeat(JSON.parse(item.order_seat_info));
+        var bb = [];
+
+        JSON.parse(item.order_seat_info).map((res) => {
+          let aa = formatSeat(res);
+          bb.push(aa);
+          // console.log(seat_info);
+          // console.log(item);
+          // let info = { ...item, ...seat_info };
+          // console.log(info);
+          console.log(bb);
         });
-        // console.log(JSON.parse(item.order_seat_info));
+        console.log(bb);
         console.log(seat_info.value);
+        // console.log(JSON.parse(item.order_seat_info));
+        // console.log(seat_info.value);
+        // console.log(2);
       });
       myOrderInfo.value.sort((a, b) => {
         return new Date(b.order_date) - new Date(a.order_date);
@@ -84,6 +95,7 @@ const loadInfo = () => {
     }
   });
   const formatSeat = (num) => {
+    console.log(num);
     if (num % 10 === 0) {
       return num / 10 + "排" + 10 + "座";
     } else {
