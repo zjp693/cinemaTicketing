@@ -1,7 +1,7 @@
 <template>
   <div id="login">
     <div class="top">
-      <span class="icon-close" @click="$router.go(-1)"></span>
+      <span class="icon-close" @click="router.go(-1)"></span>
     </div>
     <div class="login-container">
       <div class="login-header logo">
