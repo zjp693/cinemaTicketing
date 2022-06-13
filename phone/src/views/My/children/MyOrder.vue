@@ -5,7 +5,7 @@
       <span class="name ellipsis">我的订单</span>
     </div>
     <div class="order-container" v-if="myOrderInfo.length">
-      <div class="item" v-for="item in myOrderInfo" :key="item.id">
+      <div class="item" v-for="(item, index) in myOrderInfo" :key="index">
         <div class="item-top">
           <span class="cinema-name">{{ item.cinema_name }}</span>
           <span class="status">已完成</span>
@@ -32,11 +32,9 @@
               <span class="hall">{{ item.hall_name }}</span>
               <span
                 class="seat"
-                v-for="(itemSeat, valueSeat) in JSON.parse(
-                  item.order_seat_info
-                )"
-                :key="valueSeat"
-                >{{ itemSeat }}</span
+                v-for="(setItem, setIndex) in seat_info[index]"
+                :key="setIndex"
+                >{{ setItem }}</span
               >
             </div>
           </div>
@@ -64,43 +62,34 @@ const router = useRouter();
 const userId = ref(sessionStorage.getItem("user_id"));
 const myOrderInfo = ref([]);
 const server = "http://localhost:3001";
-const seat_info = ref("");
+const seat_info = [];
 const loadInfo = () => {
   getOrderByUserId(userId.value).then((res) => {
-    console.log(res);
     if (res.status == 200) {
       myOrderInfo.value = res.data;
+      console.log(res.data);
+      //座位信息
+      let order_seat_info = [];
       res.data.map((item) => {
-        // seat_info.value = formatSeat(JSON.parse(item.order_seat_info));
-        var bb = [];
-
-        JSON.parse(item.order_seat_info).map((res) => {
-          let aa = formatSeat(res);
-          bb.push(aa);
-          // console.log(seat_info);
-          // console.log(item);
-          // let info = { ...item, ...seat_info };
-          // console.log(info);
-          console.log(bb);
-        });
-        console.log(bb);
-        console.log(seat_info.value);
-        // console.log(JSON.parse(item.order_seat_info));
-        // console.log(seat_info.value);
-        // console.log(2);
+        order_seat_info = formatSeat(JSON.parse(item.order_seat_info));
+        seat_info.push(order_seat_info);
       });
+      console.log(seat_info);
       myOrderInfo.value.sort((a, b) => {
         return new Date(b.order_date) - new Date(a.order_date);
       });
     }
   });
   const formatSeat = (num) => {
-    console.log(num);
-    if (num % 10 === 0) {
-      return num / 10 + "排" + 10 + "座";
-    } else {
-      return parseInt(num / 10) + 1 + "排" + (num % 10) + "座";
-    }
+    // console.log(num);
+    return num.map((num) => {
+      // console.log(num);
+      if (num % 10 === 0) {
+        return num / 10 + "排" + 10 + "座";
+      } else {
+        return parseInt(num / 10) + 1 + "排" + (num % 10) + "座";
+      }
+    });
   };
 };
 loadInfo();
