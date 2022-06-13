@@ -41,3 +41,23 @@ export function getCurrentCinemaMovieSchedule(movie_id) {
     movie_id
   );
 }
+
+/**
+ * 获取当前用户想看的电影
+ * @param movie_id
+ * @returns {AxiosPromise}
+ */
+export function getWishMovieByUserId(user_id) {
+  return requestWithToken("/movie/getWishMovieByUserId", "get", { user_id });
+}
+
+/**
+ * 获取当前用户看过的电影
+ * @param user_id
+ * @returns {AxiosPromise}
+ */
+export function getIsWatchedMovieByUserId(user_id) {
+  return requestWithToken("/movie/getIsWatchedMovieByUserId", "get", {
+    user_id,
+  });
+}

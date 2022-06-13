@@ -2,23 +2,24 @@
   <div id="my-movie">
     <div class="top">
       <span class="icon-back" @click="router.go(-1)"></span>
-      <span class="name ellipsis">我的电影</span>
+      <span class="name ellipsis" v-if="isWatched">想看的电影</span>
+      <span class="name ellipsis" v-else>看过的电影</span>
     </div>
     <div class="movie">
-      <div v-show="!isWatched" class="want">
+      <div v-show="isWatched" class="want">
         <movieItem :movie-list="wishMovie"></movieItem>
         <div class="tips" v-if="wishMovie.length === 0">
           <span class="icon icon-empty-content"></span>
           <span class="text">暂时木有内容呀</span>
         </div>
       </div>
-      <div v-show="isWatched" class="watched">
+      <div v-show="!isWatched" class="watched">
         <div
           class="item"
           v-for="(item, index) in isWatchedMovie"
           :key="index"
           @click="
-            $router.push({
+            router.push({
               path: 'movie_detail',
               query: { movie_id: item.movie_id },
             })
@@ -27,11 +28,29 @@
           <img :src="server + item.poster" alt="" />
           <div class="info">
             <div class="name">{{ item.name }}</div>
-            <div class="my-score">
-              <span>我评：</span>
-              <el-rate v-model="item.user_score" allow-half :disabled="true" />
+            <div class="date">
+              {{
+                new Date(item.comment_date)
+                  .toLocaleDateString()
+                  .replaceAll("/", "-")
+              }}
             </div>
-            <div class="my-comment ellipsis">{{ item.commentContent }}</div>
+            <div v-if="item.commentContent">
+              <div class="my-score">
+                <span>评论：</span>
+                <el-rate
+                  v-model="item.user_score"
+                  allow-half
+                  :disabled="true"
+                />
+              </div>
+              <div class="my-comment ellipsis">{{ item.commentContent }}</div>
+            </div>
+            <div v-else>
+              <div class="my-score">
+                <span>暂未评论</span>
+              </div>
+            </div>
           </div>
         </div>
         <div class="tips" v-if="isWatchedMovie.length === 0">
@@ -46,13 +65,34 @@
 <script setup>
 import movieItem from "@/components/MovieItem/MovieItem";
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { getIsWatchedMovieByUserId, getWishMovieByUserId } from "@/api/movie";
 const router = useRouter();
+const route = useRoute();
 const isWatched = ref(false);
 const wishMovie = ref([]);
 const isWatchedMovie = ref([]);
+const userId = ref(sessionStorage.getItem("user_id"));
 //服务器地址
 const server = ref("http://localhost:3001");
+isWatched.value = JSON.parse(route.query.wish_movie);
+//想看的电影
+getWishMovieByUserId(userId.value).then((res) => {
+  console.log(res);
+  if (res.status == 200) {
+    wishMovie.value = res.data;
+    wishMovie.value.sort((a, b) => {
+      return new Date(a.public_date) - new Date(b.public_date);
+    });
+  }
+});
+//用户看过的电影
+getIsWatchedMovieByUserId(userId.value).then((res) => {
+  console.log(res);
+  if (res.status == 200) {
+    isWatchedMovie.value = res.data;
+  }
+});
 </script>
 
 <style lang="scss" scoped>
@@ -62,6 +102,7 @@ const server = ref("http://localhost:3001");
   color: #000;
   font-size: 0.3125rem;
   overflow: hidden;
+  overflow-y: scroll;
   .top {
     width: 100%;
     height: 1rem;
@@ -85,7 +126,6 @@ const server = ref("http://localhost:3001");
     }
   }
   .movie {
-    margin-top: 1rem;
     .option {
       display: flex;
       justify-content: center;
@@ -133,11 +173,14 @@ const server = ref("http://localhost:3001");
             padding-bottom: 0.2rem;
             color: #333;
           }
+          .date {
+            line-height: 0.5rem;
+          }
           .my-score {
             display: flex;
             align-items: center;
             color: #ffb400;
-            padding-bottom: 0.2rem;
+            //padding-bottom: 0.2rem;
             font-size: 0.28rem;
             span {
               margin-right: 0.12rem;

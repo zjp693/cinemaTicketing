@@ -35,10 +35,10 @@
         <div class="item" @click="viewMyOrder">
           我的订单 <span class="icon-more"></span>
         </div>
-        <div class="item" @click="viewMyMovie(1)">
+        <div class="item" @click="viewMyMovie(true)">
           想看的电影 <span class="icon-more"></span>
         </div>
-        <div class="item" @click="viewMyMovie(0)">
+        <div class="item" @click="viewMyMovie(false)">
           看过的电影 <span class="icon-more"></span>
         </div>
       </div>
