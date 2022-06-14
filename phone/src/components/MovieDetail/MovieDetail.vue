@@ -237,6 +237,7 @@ getMovieDetail(id.value).then((res) => {
   color: #fff;
   font-size: 0.3125rem;
   overflow: hidden;
+  overflow-y: scroll;
   .top {
     width: 100%;
     height: 1rem;
