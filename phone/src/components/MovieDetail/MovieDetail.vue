@@ -24,9 +24,6 @@
       >
         <span class="icon-like-fill"></span><span>想看</span>
       </div>
-      <div class="btn" @click="watchedBtnHandle">
-        <span class="icon-star-fill"></span><span>看过</span>
-      </div>
     </div>
     <div class="public-praise">
       <div class="header">
@@ -176,7 +173,8 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { getMovieDetail, getisWishMovie } from "../../api/movie";
+import { getMovieDetail, getisWishMovie, getWishMovies } from "../../api/movie";
+import { Toast } from "vant";
 
 const router = useRouter();
 const route = useRoute();
@@ -200,32 +198,51 @@ const currentUserCommentDate = ref([]);
 const otherUserCommentDate = ref([]);
 const id = ref(route.query.movie_id);
 // 加载电影详情
-getMovieDetail(id.value).then((res) => {
-  if (res.status == 200) {
-    movieDetail.value = res.data[0];
-    console.log(res);
-    // 判断电影是否上映
-    new Date() - new Date(movieDetail.value.public_date) >= 0
-      ? (isShowMovie.value = true)
-      : (isShowMovie.value = false);
-    if (isShowMovie.value) {
-      // 评分
-      starValue.value = movieDetail.value.score * (0.5).toFixed(1);
+const loadMovieDetail = () => {
+  getMovieDetail(id.value).then((res) => {
+    if (res.status == 200) {
+      movieDetail.value = res.data[0];
+      // console.log(res);
+      // 判断电影是否上映
+      new Date() - new Date(movieDetail.value.public_date) >= 0
+        ? (isShowMovie.value = true)
+        : (isShowMovie.value = false);
+      if (isShowMovie.value) {
+        // 评分
+        starValue.value = movieDetail.value.score * (0.5).toFixed(1);
+      }
+      if (sessionStorage.getItem("user_id"))
+        getisWishMovie(
+          sessionStorage.getItem("user_id"),
+          route.query.movie_id
+        ).then((res) => {
+          // console.log(res);
+          if (res.status == 200) {
+            notWishMovie.value = false;
+          } else {
+            notWishMovie.value = true;
+          }
+        });
     }
-    if (sessionStorage.getItem("user_id"))
-      getisWishMovie(
-        sessionStorage.getItem("user_id"),
-        route.query.movie_id
-      ).then((res) => {
-        console.log(res);
-        if (res.status == 200) {
-          notWishMovie.value = false;
-        } else {
-          notWishMovie.value = true;
-        }
-      });
-  }
-});
+  });
+};
+loadMovieDetail();
+//用户想看电影
+const wishBtnHandle = () => {
+  getWishMovies(
+    sessionStorage.getItem("user_id"),
+    id.value,
+    notWishMovie.value
+  ).then((res) => {
+    console.log(res);
+    if (res.status == 200) {
+      notWishMovie.value = !notWishMovie.value;
+      Toast.success(res.message);
+      console.log(notWishMovie.value);
+    }
+  });
+};
+
 //#endregion
 </script>
 

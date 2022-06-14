@@ -61,3 +61,17 @@ export function getIsWatchedMovieByUserId(user_id) {
     user_id,
   });
 }
+
+/**
+ * 是否想看电影
+ * @param user_id
+ * @param movie_id
+ * @returns {AxiosPromise}
+ */
+export function getWishMovies(user_id, movie_id, flag) {
+  return requestWithToken("/movie/getWishMovies", "post", {
+    user_id,
+    movie_id,
+    flag,
+  });
+}
