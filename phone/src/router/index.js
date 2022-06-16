@@ -18,7 +18,8 @@ import myInfo from "../views/My/children/my_info";
 import modify_username from "../views/My/children/ModifyUserName";
 import modify_usersign from "../views/My/children/modify_usersign";
 import my_order from "../views/My/children/MyOrder";
-import  my_movie from "../views/My/children/MyMovie"
+import my_movie from "../views/My/children/MyMovie";
+import comment_panel from "../components/MovieDetail/children/CommentPanel";
 const routes = [
   {
     path: "/",
@@ -131,6 +132,12 @@ const routes = [
     path: "/my_movie",
     name: "my_movie",
     component: my_movie,
+  },
+  //电影评论
+  {
+    path: "/comment_panel",
+    name: "comment_panel",
+    component: comment_panel,
   },
 ];
 

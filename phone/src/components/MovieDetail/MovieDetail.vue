@@ -242,7 +242,18 @@ const wishBtnHandle = () => {
     }
   });
 };
-
+//参与评论
+const watchedBtnHandle = () => {
+  //用户已登录
+  if (sessionStorage.getItem("user_id")) {
+    router.push({
+      path: "/comment_panel",
+      query: { movie_id: route.query.movie_id },
+    });
+  } else {
+    router.push("/login");
+  }
+};
 //#endregion
 </script>
 
