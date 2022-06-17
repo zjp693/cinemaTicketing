@@ -127,3 +127,52 @@ export function getOrderByUserId(user_id) {
     user_id,
   });
 }
+
+/**
+ * 加载当前用户评论
+ * @param user_id
+ * @returns {AxiosPromise}
+ */
+export function getUserComment(user_id, movie_id) {
+  return requestWithToken("/users/getUserComment", "get", {
+    user_id,
+    movie_id,
+  });
+}
+
+/**
+ * 更新用户评论
+ * @param user_id
+ * @param movie_id
+ * @param score
+ * @param comment_content
+ * @param comment_date
+ * @returns {AxiosPromise}
+ */
+export function updateUserComment(
+  user_id,
+  movie_id,
+  score,
+  comment_content,
+  comment_date
+) {
+  return requestWithToken("/users/updateUserComment", "post", {
+    user_id,
+    movie_id,
+    score,
+    comment_content,
+    comment_date,
+  });
+}
+
+/**
+ *   获取使用通过审核的评论
+ * @param user_id
+ * @param movie_id
+ * @returns {AxiosPromise}
+ */
+export function getAllUserComment(movie_id) {
+  return requestWithToken("/users/getAllUserComment", "get", {
+    movie_id,
+  });
+}
