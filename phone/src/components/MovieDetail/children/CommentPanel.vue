@@ -23,16 +23,69 @@
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import moment from "moment";
 import { ref } from "vue";
+import { getUserComment, updateUserComment } from "@/api/user";
+import { Toast } from "vant";
 const router = useRouter();
+const route = useRoute();
 const textarea = ref("");
-const score = ref("");
+const score = ref(0);
 const starValue = ref(0);
+//回显评论
+getUserComment(sessionStorage.getItem("user_id"), route.query.movie_id).then(
+  (res) => {
+    console.log(res.data[0]);
+    if (res.status == 200) {
+      starValue.value = res.data[0].user_score * 0.5;
+      score.value = res.data[0].user_score;
+      textarea.value = res.data[0].comment_content;
+    }
+  }
+);
 //发布
-const commentBtnHandle = () => {};
+const commentBtnHandle = () => {
+  if (textarea.value) {
+    let comment_date = moment().format("YYYY-MM-DD HH:mm:ss");
+    updateUserComment(
+      sessionStorage.getItem("user_id"),
+      route.query.movie_id,
+      score.value,
+      textarea.value,
+      comment_date
+    ).then((res) => {
+      console.log(res);
+      if (res.status == 200) {
+        Toast.success("评论成功，待管理员审核");
+        router.go(-1);
+      }
+    });
+  } else {
+    Toast.fail("请输入评论内容");
+  }
+};
 //
-const changeScore = () => {};
+const changeScore = (grade) => {
+  console.log(grade);
+  score.value = grade * 2;
+};
+//计算分数
+
+// //处理分数文本
+// const handleScoreText = computed((score) => {
+//   if (score.value === 1 || score.value === 2) {
+//     return "超烂啊";
+//   } else if (score.value === 3 || score.value === 4) {
+//     return "比较差";
+//   } else if (score.value === 5 || score.value === 6) {
+//     return "一般般";
+//   } else if (score.value === 7 || score.value === 8) {
+//     return "还不错";
+//   } else if (score.value === 9 || score.value === 10) {
+//     return "棒极了";
+//   }
+// });
 </script>
 
 <style lang="scss" scoped>

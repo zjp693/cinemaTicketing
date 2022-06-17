@@ -175,6 +175,7 @@ import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { getMovieDetail, getisWishMovie, getWishMovies } from "../../api/movie";
 import { Toast } from "vant";
+import { getAllUserComment } from "@/api/user";
 
 const router = useRouter();
 const route = useRoute();
@@ -199,6 +200,7 @@ const otherUserCommentDate = ref([]);
 const id = ref(route.query.movie_id);
 // 加载电影详情
 const loadMovieDetail = () => {
+  //电影信息
   getMovieDetail(id.value).then((res) => {
     if (res.status == 200) {
       movieDetail.value = res.data[0];
@@ -223,6 +225,40 @@ const loadMovieDetail = () => {
             notWishMovie.value = true;
           }
         });
+    }
+  });
+  //评论
+  getAllUserComment(route.query.movie_id).then((res) => {
+    console.log(res.data[0]);
+    if (res.status == 200) {
+      let currentIndex = -1;
+      let sum = 0;
+      //评论数
+      commentNum.value = res.data[0].length;
+      //遍历评论数
+      res.data.forEach((item, index) => {
+        console.log(item, index);
+        if (item.user_id == sessionStorage.getItem("user_id")) {
+          currentIndex = index;
+        }
+        sum += item.user_score;
+      });
+      //评分
+      averageScore.value = sum / res.data[0].length;
+      if (averageScore.value !== 0 && averageScore.value !== 10) {
+        averageScore.value = averageScore.value.toFixed(1);
+      }
+      //想看
+      starValue.value = averageScore.value * 0.5;
+      if (currentIndex === -1) {
+        currentUserCommentDate.value = [];
+      } else {
+        currentUserCommentDate.value = res.data.splice(currentIndex, 1);
+      }
+      otherUserCommentDate.value = res.data[0];
+      otherUserCommentDate.value.sort((a, b) => {
+        return b.support_num - a.support_num;
+      });
     }
   });
 };
