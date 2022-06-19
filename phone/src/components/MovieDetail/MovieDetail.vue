@@ -95,16 +95,16 @@
                 {{ currentUserCommentDate[0].comment_content }}
               </div>
               <div class="bottom">
+                <!--                {{-->
+                <!--                  formatCommentDate()-->
+                <!--                }}-->
                 <span class="comment-date">{{
-                  formatCommentDate(currentUserCommentDate[0].comment_date)
+                  currentUserCommentDate[0].comment_date
                 }}</span>
+                <!--                :class="{ active: userIsSupportComment(-->
+                <!--                currentUserCommentDate[0].support_user ), }"-->
                 <span
                   class="support"
-                  :class="{
-                    active: userIsSupportComment(
-                      currentUserCommentDate[0].support_user
-                    ),
-                  }"
                   @click="
                     supportBtnHandle(currentUserCommentDate[0].comment_id)
                   "
@@ -136,10 +136,8 @@
                 <span class="comment-date">{{
                   formatCommentDate(item.comment_date)
                 }}</span>
-                <span
-                  class="support"
-                  :class="{ active: userIsSupportComment(item.support_user) }"
-                  @click="supportBtnHandle(item.comment_id)"
+                <!--                :class="{ active: userIsSupportComment(item.support_user) }"-->
+                <span class="support" @click="supportBtnHandle(item.comment_id)"
                   ><span class="icon-support"></span
                   ><span class="number">{{ item.support_num }}</span></span
                 >
@@ -176,6 +174,8 @@ import { useRouter, useRoute } from "vue-router";
 import { getMovieDetail, getisWishMovie, getWishMovies } from "../../api/movie";
 import { Toast } from "vant";
 import { getAllUserComment } from "@/api/user";
+import moment from "moment";
+import { formatDate } from "@/common/util/formatDate";
 
 const router = useRouter();
 const route = useRoute();
@@ -243,22 +243,29 @@ const loadMovieDetail = () => {
         }
         sum += item.user_score;
       });
-      //评分
-      averageScore.value = sum / res.data[0].length;
+      // console.log(res.data.length);
+      // console.log(currentIndex, sum);
+      //   //评分
+      averageScore.value = sum / res.data.length;
       if (averageScore.value !== 0 && averageScore.value !== 10) {
         averageScore.value = averageScore.value.toFixed(1);
       }
-      //想看
+      //   //想看
       starValue.value = averageScore.value * 0.5;
       if (currentIndex === -1) {
         currentUserCommentDate.value = [];
       } else {
+        // formatCommentDate(currentUserCommentDate[0].comment_date)
         currentUserCommentDate.value = res.data.splice(currentIndex, 1);
+        currentUserCommentDate.value[0].comment_date = formatCommentDate(
+          currentUserCommentDate.value[0].comment_date
+        );
+        console.log(currentUserCommentDate.value);
       }
-      otherUserCommentDate.value = res.data[0];
-      otherUserCommentDate.value.sort((a, b) => {
-        return b.support_num - a.support_num;
-      });
+      //   otherUserCommentDate.value = res.data[0];
+      //   otherUserCommentDate.value.sort((a, b) => {
+      //     return b.support_num - a.support_num;
+      //   });
     }
   });
 };
@@ -289,6 +296,15 @@ const watchedBtnHandle = () => {
   } else {
     router.push("/login");
   }
+};
+//点赞
+const supportBtnHandle = () => {};
+//处理评论日期
+const formatCommentDate = (date) => {
+  return formatDate(
+    new Date(moment(date).format("YYYY-MM-DD HH:mm:ss")),
+    false
+  );
 };
 //#endregion
 </script>
