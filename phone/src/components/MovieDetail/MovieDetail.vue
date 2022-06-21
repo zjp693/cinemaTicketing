@@ -37,12 +37,7 @@
       </div>
       <div class="mark" v-if="isShowMovie">
         <div class="left">
-          <el-rate
-            v-model="starValue"
-            size="small"
-            allow-half
-            :disabled="true"
-          />
+          <el-rate v-model="starValue" size="small" allow-half />
         </div>
         <div class="right">
           <div class="score">
@@ -58,7 +53,7 @@
           ><span
             v-if="movieDetail.wish_num"
             style="
-              font-family: PingFangSC-Regular, Hiragino Sans GB, sans-serif;
+              font-family: PingFangSC-Regular, Hiragana Sans GB, sans-serif;
               font-size: 0.6rem;
             "
             >{{ movieDetail.wish_num }}</span
@@ -101,13 +96,17 @@
                 <span class="comment-date">{{
                   currentUserCommentDate[0].comment_date
                 }}</span>
-                <!--                :class="{ active: userIsSupportComment(-->
-                <!--                currentUserCommentDate[0].support_user ), }"-->
+
                 <span
                   class="support"
                   @click="
                     supportBtnHandle(currentUserCommentDate[0].comment_id)
                   "
+                  :class="{
+                    active: userIsSupportComment(
+                      currentUserCommentDate[0].support_user
+                    ),
+                  }"
                   ><span class="icon-support"></span
                   ><span class="number">{{
                     currentUserCommentDate[0].support_num
@@ -136,8 +135,10 @@
                 <span class="comment-date">{{
                   formatCommentDate(item.comment_date)
                 }}</span>
-                <!--                :class="{ active: userIsSupportComment(item.support_user) }"-->
-                <span class="support" @click="supportBtnHandle(item.comment_id)"
+                <span
+                  class="support"
+                  @click="supportBtnHandle(item.comment_id)"
+                  :class="{ active: userIsSupportComment(item.support_user) }"
                   ><span class="icon-support"></span
                   ><span class="number">{{ item.support_num }}</span></span
                 >
@@ -171,9 +172,13 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { getMovieDetail, getisWishMovie, getWishMovies } from "../../api/movie";
+import { getMovieDetail, getisWishMovie, getWishMovies } from "@/api/movie";
 import { Toast } from "vant";
-import { getAllUserComment } from "@/api/user";
+import {
+  getAllUserComment,
+  getCommentByID,
+  UpdateUserSupport,
+} from "@/api/user";
 import moment from "moment";
 import { formatDate } from "@/common/util/formatDate";
 
@@ -195,7 +200,9 @@ const movieDetail = ref([]);
 const isShowMovie = ref(false);
 // 是否想看
 const notWishMovie = ref(true);
+//当前我的评论
 const currentUserCommentDate = ref([]);
+//精选评论
 const otherUserCommentDate = ref([]);
 const id = ref(route.query.movie_id);
 // 加载电影详情
@@ -227,24 +234,23 @@ const loadMovieDetail = () => {
         });
     }
   });
-  //评论
+  //通过审核的评论
   getAllUserComment(route.query.movie_id).then((res) => {
-    console.log(res.data[0]);
+    // console.log(res.data);
     if (res.status == 200) {
       let currentIndex = -1;
       let sum = 0;
       //评论数
-      commentNum.value = res.data[0].length;
+      commentNum.value = res.data.length;
       //遍历评论数
       res.data.forEach((item, index) => {
-        console.log(item, index);
+        // console.log(item, index);
         if (item.user_id == sessionStorage.getItem("user_id")) {
           currentIndex = index;
         }
         sum += item.user_score;
       });
-      // console.log(res.data.length);
-      // console.log(currentIndex, sum);
+
       //   //评分
       averageScore.value = sum / res.data.length;
       if (averageScore.value !== 0 && averageScore.value !== 10) {
@@ -255,17 +261,18 @@ const loadMovieDetail = () => {
       if (currentIndex === -1) {
         currentUserCommentDate.value = [];
       } else {
-        // formatCommentDate(currentUserCommentDate[0].comment_date)
         currentUserCommentDate.value = res.data.splice(currentIndex, 1);
-        currentUserCommentDate.value[0].comment_date = formatCommentDate(
-          currentUserCommentDate.value[0].comment_date
-        );
-        console.log(currentUserCommentDate.value);
+        currentUserCommentDate.value.forEach((item, i) => {
+          currentUserCommentDate.value[i].comment_date = formatCommentDate(
+            item[i].comment_date
+          );
+        });
+        // console.log(currentUserCommentDate.value);
       }
-      //   otherUserCommentDate.value = res.data[0];
-      //   otherUserCommentDate.value.sort((a, b) => {
-      //     return b.support_num - a.support_num;
-      //   });
+      otherUserCommentDate.value = res.data;
+      otherUserCommentDate.value.sort((a, b) => {
+        return b.support_num - a.support_num;
+      });
     }
   });
 };
@@ -277,11 +284,11 @@ const wishBtnHandle = () => {
     id.value,
     notWishMovie.value
   ).then((res) => {
-    console.log(res);
+    // console.log(res);
     if (res.status == 200) {
       notWishMovie.value = !notWishMovie.value;
       Toast.success(res.message);
-      console.log(notWishMovie.value);
+      // console.log(notWishMovie.value);
     }
   });
 };
@@ -297,8 +304,71 @@ const watchedBtnHandle = () => {
     router.push("/login");
   }
 };
-//点赞
-const supportBtnHandle = () => {};
+// //点赞
+const supportBtnHandle = async (commentId) => {
+  // console.log(commentId);
+  if (sessionStorage.getItem("user_id")) {
+    await getCommentByID(commentId).then((res) => {
+      //点赞的用户 点赞数
+      let supportUser, supportNum;
+      if (res.status === 200) {
+        res.data.forEach((item) => {
+          if (item.support_user) {
+            //有点赞数据
+            supportUser = JSON.parse(item.support_user);
+            //当前用户已点赞
+            if (
+              supportUser.indexOf(Number(sessionStorage.getItem("user_id"))) >
+              -1
+            ) {
+              //取消点赞
+              supportUser.splice(
+                supportUser.indexOf(Number(sessionStorage.getItem("user_id"))),
+                1
+              );
+              //更新点赞数
+              supportNum = supportUser.length;
+              // 无点赞数则将记录用户id的数组为null
+              if (!supportUser.length) {
+                supportUser = null;
+              }
+            }
+          } else {
+            //无点赞数据
+            supportUser = [];
+            supportUser.push(Number(sessionStorage.getItem("user_id")));
+            supportNum = supportUser.length;
+          }
+        });
+        //判断是否被点赞
+        if (supportUser) {
+          supportUser = JSON.stringify(supportUser);
+        }
+        UpdateUserSupport(commentId, supportNum, supportUser).then((res) => {
+          if (res.status === 200) {
+            //获取所有用户通过审核的评论
+            loadMovieDetail();
+          }
+        });
+      }
+    });
+  }
+};
+
+//判断用户是否已点赞
+//判断用户是否点赞
+const userIsSupportComment = (supportStrArr) => {
+  if (
+    supportStrArr &&
+    JSON.parse(supportStrArr).indexOf(
+      Number(sessionStorage.getItem("user_id"))
+    ) > -1
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+};
 //处理评论日期
 const formatCommentDate = (date) => {
   return formatDate(
@@ -604,7 +674,7 @@ const formatCommentDate = (date) => {
       justify-content: center;
       align-items: center;
       border-radius: 0.4rem;
-      font-weight: light;
+      font-weight: lighter;
     }
   }
 }

@@ -176,3 +176,29 @@ export function getAllUserComment(movie_id) {
     movie_id,
   });
 }
+
+/**
+ * 获取当前电影评论
+ * @param commentId
+ * @returns {AxiosPromise}
+ */
+export function getCommentByID(commentId) {
+  return requestWithToken("/users/getCommentByID", "get", {
+    commentId,
+  });
+}
+
+/**
+ * 更新当前评论点赞
+ * @param commentId
+ * @returns {AxiosPromise}
+ * @constructor
+ */
+export function UpdateUserSupport(commentId, supportNum, supportUser) {
+  console.log(supportUser);
+  return requestWithToken("/users/UpdateUserSupport", "get", {
+    commentId,
+    supportNum,
+    supportUser,
+  });
+}
