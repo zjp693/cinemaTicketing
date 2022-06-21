@@ -20,6 +20,8 @@ import vueHashCalendar from "vue3-hash-calendar";
 import "vue3-hash-calendar/lib/style.css";
 import "vant/lib/index.css";
 import "element-plus/dist/index.css";
+import "default-passive-events";
+
 const app = createApp(App);
 app
   .use(router)
