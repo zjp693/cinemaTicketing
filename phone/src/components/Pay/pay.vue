@@ -64,16 +64,16 @@
 <script setup>
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { getScheduleById } from "@/api/cinema";
-import { Dialog } from "vant";
+import { getScheduleById, getUpdateScheduleSeat } from "@/api/cinema";
+import { Dialog, Toast } from "vant";
 import { getUserOrder } from "@/api/order";
 const scheduleInfo = ref([]);
 const seatInfo = ref([]);
 
-const countdown_m_b = ref("");
-const countdown_m_s = ref("");
-const countdown_s_b = ref("");
-const countdown_s_s = ref("");
+const countdown_m_b = ref(0);
+const countdown_m_s = ref(0);
+const countdown_s_b = ref(0);
+const countdown_s_s = ref(0);
 const selectPayType = ref(true); //微信
 // const timer = ref("");
 const total_price = ref(0); //价格
@@ -84,6 +84,7 @@ const route = useRoute();
 const router = useRouter();
 //加载初始化数据
 const loadInfo = async () => {
+  //加载当前影院数据
   await getScheduleById(route.query.schedule_id).then((res) => {
     scheduleInfo.value = res.data;
     console.log(res.data);
@@ -93,6 +94,53 @@ const loadInfo = async () => {
     }
     console.log(scheduleInfo.value);
   });
+  if (
+    sessionStorage.getItem("countdown_m") &&
+    sessionStorage.getItem("countdown_m")
+  ) {
+    if (!sessionStorage.getItem("countdown_m")[1]) {
+      countdown_m_s.value = Number(sessionStorage.getItem("countdown_m")[0]);
+      countdown_m_b.value = 0;
+    }
+    if (!sessionStorage.getItem("countdown_s")[1]) {
+      countdown_s_s.value = Number(sessionStorage.getItem("countdown_s")[0]);
+      countdown_s_b.value = 0;
+    }
+    console.log(sessionStorage.getItem("countdown_m"));
+    countdown_m_s.value = Number(sessionStorage.getItem("countdown_m")[1]);
+    countdown_m_b.value = Number(sessionStorage.getItem("countdown_m")[0]);
+    countdown_s_s.value = Number(sessionStorage.getItem("countdown_s")[1]);
+    countdown_s_b.value = Number(sessionStorage.getItem("countdown_s")[0]);
+  }
+  const timer = setInterval(() => {
+    if (countdown_s_s.value !== 0) {
+      countdown_s_s.value -= 1;
+    } else {
+      if (countdown_s_b.value !== 0) {
+        countdown_s_b.value -= 1;
+        countdown_s_s.value -= 1;
+        countdown_s_s.value = 9;
+      } else {
+        if (countdown_m_s.value !== 0) {
+          countdown_m_s.value -= 1;
+          countdown_s_b.value = 5;
+          countdown_s_s.value -= 1;
+          countdown_s_s.value = 9;
+        } else {
+          if (countdown_m_b.value !== 0) {
+            countdown_m_b.value -= 1;
+            countdown_m_s.value = 1;
+            countdown_s_b.value = 5;
+            countdown_s_s.value -= 1;
+            countdown_s_s.value = 9;
+          } else {
+            clearInterval(timer);
+            back();
+          }
+        }
+      }
+    }
+  }, 1000);
 };
 loadInfo();
 
@@ -161,6 +209,66 @@ const handlePay = () => {
           router.push("/home");
         }
       });
+    }
+  });
+};
+//返回 则删除时间和订单信息
+const back = async () => {
+  sessionStorage.removeItem("countdown_m");
+  sessionStorage.removeItem("countdown_s");
+  sessionStorage.removeItem("order_num");
+  sessionStorage.removeItem("total_price");
+  let currentIndex;
+  if (sessionStorage.getItem("seat_1")) {
+    seatInfo.value.forEach((value, index) => {
+      if (Number(sessionStorage.getItem("seat_1")) === value) {
+        currentIndex = index;
+      }
+    });
+    seatInfo.value.splice(currentIndex, 1);
+  }
+  if (sessionStorage.getItem("seat_2")) {
+    seatInfo.value.forEach((value, index) => {
+      if (Number(sessionStorage.getItem("seat_2")) === value) {
+        currentIndex = index;
+      }
+    });
+    seatInfo.value.splice(currentIndex, 1);
+  }
+  if (sessionStorage.getItem("seat_3")) {
+    seatInfo.value.forEach((value, index) => {
+      if (Number(sessionStorage.getItem("seat_3")) === value) {
+        currentIndex = index;
+      }
+    });
+    seatInfo.value.splice(currentIndex, 1);
+  }
+  if (sessionStorage.getItem("seat_4")) {
+    seatInfo.value.forEach((value, index) => {
+      if (Number(sessionStorage.getItem("seat_4")) === value) {
+        currentIndex = index;
+      }
+    });
+    seatInfo.value.splice(currentIndex, 1);
+  }
+  await getUpdateScheduleSeat(
+    route.query.schedule_id,
+    JSON.stringify(seatInfo.value)
+  ).then((res) => {
+    if (res.status === 200) {
+      sessionStorage.removeItem("seat_1");
+      sessionStorage.removeItem("seat_2");
+      sessionStorage.removeItem("seat_3");
+      sessionStorage.removeItem("seat_4");
+      sessionStorage.removeItem("seat_count");
+      sessionStorage.removeItem("order_phone");
+      clearInterval(this.timer);
+      Toast.success({
+        message: "解除座位锁定成功",
+        position: "middle",
+        duration: 2000,
+      });
+      router.go(-2);
     }
   });
 };
