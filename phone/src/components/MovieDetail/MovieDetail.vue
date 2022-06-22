@@ -37,7 +37,7 @@
       </div>
       <div class="mark" v-if="isShowMovie">
         <div class="left">
-          <el-rate v-model="starValue" size="small" allow-half />
+          <el-rate v-model="starValue" size="small" allow-half disabled />
         </div>
         <div class="right">
           <div class="score">
