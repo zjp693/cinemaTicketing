@@ -91,9 +91,9 @@ const scheduleInfo = ref({});
 //手机号
 const phone = ref("");
 //时间 分
-const countdownM = ref(0);
+const countdownM = ref(14);
 //时间 秒
-const countdownS = ref(30);
+const countdownS = ref(59);
 //座位信息1
 const seatInfo = ref([]);
 const route = useRoute();
