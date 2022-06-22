@@ -12,8 +12,10 @@
         >
           <template #append>
             <el-button @click="searchs" @keyup="searchs">
-              <el-icon><search /></el-icon> 搜索</el-button
-            >
+              <el-icon>
+                <search />
+              </el-icon>搜索
+            </el-button>
           </template>
         </el-input>
       </el-col>
@@ -30,30 +32,10 @@
           tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
         "
       >
-        <el-table-column
-          label="排片 ID"
-          align="center"
-          width="80"
-          prop="movie_id"
-        ></el-table-column>
-        <el-table-column
-          label="电影排片名"
-          align="center"
-          show-overflow-tooltip
-          prop="name"
-        ></el-table-column>
-        <el-table-column
-          label="影院名"
-          align="center"
-          show-overflow-tooltip
-          prop="cinema_name"
-        ></el-table-column>
-        <el-table-column
-          label="放映大厅"
-          align="center"
-          show-overflow-tooltip
-          prop="hall_name"
-        ></el-table-column>
+        <el-table-column label="排片 ID" align="center" width="80" prop="movie_id"></el-table-column>
+        <el-table-column label="电影排片名" align="center" show-overflow-tooltip prop="name"></el-table-column>
+        <el-table-column label="影院名" align="center" show-overflow-tooltip prop="cinema_name"></el-table-column>
+        <el-table-column label="放映大厅" align="center" show-overflow-tooltip prop="hall_name"></el-table-column>
         <el-table-column
           width="120"
           label="放映日期"
@@ -78,12 +60,7 @@
 
         <el-table-column align="center" width="100" label="操作">
           <template #default="scope">
-            <el-button
-              size="small"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-              >删除</el-button
-            >
+            <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -108,12 +85,7 @@
         v-if="dialogFormVisible"
         :show-close="false"
       >
-        <el-form
-          label-position="right"
-          :rules="rules"
-          label-width="80px"
-          :model="movieInfo"
-        >
+        <el-form label-position="right" :rules="rules" label-width="80px" :model="movieInfo">
           <el-form-item label="电影名" prop="movie_id">
             <el-col :span="12">
               <el-select
@@ -127,8 +99,7 @@
                   :key="item.movie_id"
                   :label="item.name"
                   :value="item.movie_id"
-                >
-                </el-option>
+                ></el-option>
               </el-select>
             </el-col>
           </el-form-item>
@@ -146,25 +117,19 @@
                   :key="item.cinema_id"
                   :label="item.cinema_name"
                   :value="item.cinema_id"
-                >
-                </el-option>
+                ></el-option>
               </el-select>
             </el-col>
           </el-form-item>
           <el-form-item label="影厅" prop="hall_name">
             <el-col :span="12">
-              <el-select
-                v-model="movieInfo.hall_name"
-                placeholder="请选择"
-                style="width: 100%"
-              >
+              <el-select v-model="movieInfo.hall_name" placeholder="请选择" style="width: 100%">
                 <el-option
                   v-for="item in cinemaList"
                   :key="item"
                   :label="item.name"
                   :value="item.name"
-                >
-                </el-option>
+                ></el-option>
               </el-select>
             </el-col>
           </el-form-item>
@@ -175,8 +140,7 @@
                 type="date"
                 readonly
                 style="width: 100%"
-              >
-              </el-date-picker>
+              ></el-date-picker>
             </el-col>
           </el-form-item>
           <el-form-item label="放映日期" prop="show_date">
@@ -193,18 +157,13 @@
           </el-form-item>
           <el-form-item label="放映时间" prop="show_time">
             <el-col :span="12">
-              <el-select
-                v-model="movieInfo.show_time"
-                placeholder="请选择"
-                style="width: 100%"
-              >
+              <el-select v-model="movieInfo.show_time" placeholder="请选择" style="width: 100%">
                 <el-option
                   v-for="item in timeOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
-                >
-                </el-option>
+                ></el-option>
               </el-select>
             </el-col>
           </el-form-item>
@@ -222,8 +181,8 @@
           <div class="dialog-footer">
             <el-button @click="cancel">取 消</el-button>
             <el-button type="primary" @click="manageMovieInfo">确 定</el-button>
-          </div></template
-        >
+          </div>
+        </template>
       </el-dialog>
     </div>
   </div>
@@ -394,8 +353,13 @@ const manageMovieInfo = async () => {
 //填充上映时间
 const changeMovie = async (value) => {
   await getAdminMovieList().then((res) => {
+    console.log(res);
     if (res.status === 200) {
-      movieInfo.value.public_date = res.data[value].public_date;
+      res.data.forEach((item) => {
+        if (item.movie_id == value) {
+          movieInfo.value.public_date = item.public_date;
+        }
+      });
     }
   });
 };
