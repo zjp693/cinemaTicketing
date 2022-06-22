@@ -5,7 +5,7 @@
         <span class="icon-search"></span>
         <input type="text" placeholder="搜影片、影院" v-model.trim="name" />
       </div>
-      <span class="cancel-btn" @click="$router.go(-1)">取消</span>
+      <span class="cancel-btn" @click="router.go(-1)">取消</span>
     </div>
     <div class="content">
       <div class="movie-container" v-if="movieInfo.length">
@@ -53,9 +53,11 @@ import MovieItem from "../../../components/MovieItem/MovieItem.vue";
 import { ref, watch } from "vue";
 import { getmatchMovieByName } from "../../../api/movie";
 import { getmatchCinemaByName } from "../../../api/cinema";
+import { useRouter } from "vue-router";
 const name = ref("");
 const movieInfo = ref([]);
 const cinemaInfo = ref([]);
+const router = useRouter();
 // const serve = "http://localhost:3000";
 // const timer = ref("");
 watch(name, (newVal, oldVal) => {
@@ -77,18 +79,18 @@ watch(name, (newVal, oldVal) => {
 });
 // watch:{
 //   async name(newVal,oldVal){
-//     this.movieInfo = [];
-//     this.cinemaInfo = [];
-//     clearTimeout(this.timer);
+//     movieInfo = [];
+//     cinemaInfo = [];
+//     clearTimeout(timer);
 //     if (newVal) {
-//       this.timer = setTimeout(async() => {
+//       timer = setTimeout(async() => {
 //       let json = await matchMovieByName(newVal);
 //       if (json.success_code===200){
-//         this.movieInfo = json.data;
+//         movieInfo = json.data;
 //       }
 //       json = await matchCinemaByName(newVal);
 //       if (json.success_code===200){
-//         this.cinemaInfo = json.data;
+//         cinemaInfo = json.data;
 //       }
 //     }, 500);
 //     }
