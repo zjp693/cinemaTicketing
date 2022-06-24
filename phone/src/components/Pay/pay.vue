@@ -88,11 +88,13 @@ const loadInfo = async () => {
   await getScheduleById(route.query.schedule_id).then((res) => {
     scheduleInfo.value = res.data;
     console.log(res.data);
-    seatInfo.value = scheduleInfo.value.seat_info;
+    seatInfo.value = scheduleInfo.value[0].seat_info;
+    console.log(seatInfo.value);
     if (seatInfo.value) {
       seatInfo.value = JSON.parse(seatInfo.value);
     }
     console.log(scheduleInfo.value);
+    console.log(seatInfo.value);
   });
   if (
     sessionStorage.getItem("countdown_m") &&
@@ -112,36 +114,37 @@ const loadInfo = async () => {
     countdown_s_s.value = Number(sessionStorage.getItem("countdown_s")[1]);
     countdown_s_b.value = Number(sessionStorage.getItem("countdown_s")[0]);
   }
-  const timer = setInterval(() => {
-    if (countdown_s_s.value !== 0) {
+};
+//定时器
+const timer = setInterval(() => {
+  if (countdown_s_s.value !== 0) {
+    countdown_s_s.value -= 1;
+  } else {
+    if (countdown_s_b.value !== 0) {
+      countdown_s_b.value -= 1;
       countdown_s_s.value -= 1;
+      countdown_s_s.value = 9;
     } else {
-      if (countdown_s_b.value !== 0) {
-        countdown_s_b.value -= 1;
+      if (countdown_m_s.value !== 0) {
+        countdown_m_s.value -= 1;
+        countdown_s_b.value = 5;
         countdown_s_s.value -= 1;
         countdown_s_s.value = 9;
       } else {
-        if (countdown_m_s.value !== 0) {
-          countdown_m_s.value -= 1;
+        if (countdown_m_b.value !== 0) {
+          countdown_m_b.value -= 1;
+          countdown_m_s.value = 1;
           countdown_s_b.value = 5;
           countdown_s_s.value -= 1;
           countdown_s_s.value = 9;
         } else {
-          if (countdown_m_b.value !== 0) {
-            countdown_m_b.value -= 1;
-            countdown_m_s.value = 1;
-            countdown_s_b.value = 5;
-            countdown_s_s.value -= 1;
-            countdown_s_s.value = 9;
-          } else {
-            clearInterval(timer);
-            back();
-          }
+          clearInterval(timer);
+          back();
         }
       }
     }
-  }, 1000);
-};
+  }
+}, 1000);
 loadInfo();
 
 //确定支付
@@ -251,26 +254,27 @@ const back = async () => {
     });
     seatInfo.value.splice(currentIndex, 1);
   }
-  await getUpdateScheduleSeat(
-    route.query.schedule_id,
-    JSON.stringify(seatInfo.value)
-  ).then((res) => {
-    if (res.status === 200) {
-      sessionStorage.removeItem("seat_1");
-      sessionStorage.removeItem("seat_2");
-      sessionStorage.removeItem("seat_3");
-      sessionStorage.removeItem("seat_4");
-      sessionStorage.removeItem("seat_count");
-      sessionStorage.removeItem("order_phone");
-      clearInterval(this.timer);
-      Toast.success({
-        message: "解除座位锁定成功",
-        position: "middle",
-        duration: 2000,
-      });
-      router.go(-2);
+  console.log(JSON.stringify(seatInfo.value));
+  await getUpdateScheduleSeat(route.query.schedule_id, seatInfo.value).then(
+    (res) => {
+      if (res.status === 200) {
+        sessionStorage.removeItem("seat_1");
+        sessionStorage.removeItem("seat_2");
+        sessionStorage.removeItem("seat_3");
+        sessionStorage.removeItem("seat_4");
+        sessionStorage.removeItem("seat_count");
+        sessionStorage.removeItem("order_phone");
+        // 清除定时器
+        clearInterval(timer);
+        Toast.success({
+          message: "解除座位锁定成功",
+          position: "middle",
+          duration: 2000,
+        });
+        router.go(-2);
+      }
     }
-  });
+  );
 };
 </script>
 

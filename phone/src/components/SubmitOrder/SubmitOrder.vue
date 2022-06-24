@@ -109,7 +109,6 @@ const seat_4 = ref(sessionStorage.getItem("seat_4"));
 let timer = setInterval(() => {
   countdownS.value = Number(countdownS.value);
   countdownM.value = Number(countdownM.value);
-  console.log(countdownS.value);
   if (countdownS.value == 0) {
     if (countdownM.value !== 0) {
       countdownM.value -= 1;

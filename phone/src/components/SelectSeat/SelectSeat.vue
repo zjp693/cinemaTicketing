@@ -131,6 +131,7 @@ getScheduleById(route.query.schedule_id).then((res) => {
   if (res.status == 200) {
     scheduleInfo.value = res.data[0];
     console.log(res.data[0]);
+    console.log(scheduleInfo.value.seat_info);
     //座位信息
     seatInfo.value =
       scheduleInfo.value.seat_info == undefined || null
@@ -138,10 +139,11 @@ getScheduleById(route.query.schedule_id).then((res) => {
         : scheduleInfo.value.seat_info;
     // console.log(seatInfo.value);
     //将字符串转化为js对象
+    console.log(seatInfo.value);
     if (seatInfo.value.length > 0) {
       seatInfo.value = JSON.parse(seatInfo.value);
     }
-    // console.log(seatInfo.value);
+    console.log(seatInfo.value);
     if (seatInfo.value.length > 0) {
       seatInfo.value.forEach((value) => {
         if (value % 10 !== 0) {

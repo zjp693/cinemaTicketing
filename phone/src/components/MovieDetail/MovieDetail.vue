@@ -262,9 +262,9 @@ const loadMovieDetail = () => {
         currentUserCommentDate.value = [];
       } else {
         currentUserCommentDate.value = res.data.splice(currentIndex, 1);
-        currentUserCommentDate.value.forEach((item, i) => {
-          currentUserCommentDate.value[i].comment_date = formatCommentDate(
-            item[i].comment_date
+        currentUserCommentDate.value.forEach((item) => {
+          currentUserCommentDate.value.comment_date = formatCommentDate(
+            item.comment_date
           );
         });
         // console.log(currentUserCommentDate.value);
