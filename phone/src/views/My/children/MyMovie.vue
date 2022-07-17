@@ -7,7 +7,7 @@
     </div>
     <div class="movie">
       <div v-show="isWatched" class="want">
-        <movieItem :movie-list="wishMovie"></movieItem>
+        <movieitem :movieList="wishMovie"></movieitem>
         <div class="tips" v-if="wishMovie.length === 0">
           <span class="icon icon-empty-content"></span>
           <span class="text">暂时木有内容呀</span>
@@ -63,7 +63,7 @@
 </template>
 
 <script setup>
-import movieItem from "@/components/MovieItem/MovieItem";
+import movieitem from "@/components/MovieItem/MovieItem";
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getIsWatchedMovieByUserId, getWishMovieByUserId } from "@/api/movie";

@@ -2,21 +2,12 @@
   <div id="login">
     <div class="box">
       <el-form :label-position="labelPosition" label-width="50px">
-        <h3>影院售票管理系统</h3>
+        <h3>影院票务管理系统</h3>
         <el-form-item label="用户">
-          <el-input
-            v-model="username"
-            clearable
-            placeholder="请输入用户名"
-          ></el-input>
+          <el-input v-model="username" clearable placeholder="请输入用户名"></el-input>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input
-            placeholder="请输入密码"
-            v-model="password"
-            show-password
-            @keyup.enter="login"
-          ></el-input>
+          <el-input placeholder="请输入密码" v-model="password" show-password @keyup.enter="login"></el-input>
         </el-form-item>
         <el-form-item style="margin-top: 30px; margin-left: 30px">
           <el-button @click="reset">重置</el-button>
@@ -38,16 +29,19 @@ const labelPosition = ref("right");
 const reset = () => {
   username.value = password.value = "";
 };
+//登录
 const adminLogin = async () => {
   await login({ username: username.value, password: password.value }).then(
     (res) => {
       if (res.status == 200) {
         sessionStorage.setItem("token", res.data.token);
         sessionStorage.setItem("admin_id", res.data.result[0].admin_id);
+        //提示登录成功
         ElMessage({
           message: res.message,
           type: "success",
         });
+        //首页
         router.push("/");
       }
     }

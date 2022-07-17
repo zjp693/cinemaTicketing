@@ -6,17 +6,13 @@
     <div class="login-container">
       <div class="login-header logo">
         <span class="icon icon-film-logo"></span>
-        <p class="title">淘气电影</p>
+        <p class="title">影院票务系统</p>
         <i class="eng-title">Monkey Movie</i>
       </div>
       <div class="login-content">
         <div class="login-type">
-          <span :class="{ active: loginType }" @click="changeLoginType"
-            >验证码登录</span
-          >
-          <span :class="{ active: !loginType }" @click="changeLoginType"
-            >密码登录</span
-          >
+          <span :class="{ active: loginType }" @click="changeLoginType">验证码登录</span>
+          <span :class="{ active: !loginType }" @click="changeLoginType">密码登录</span>
         </div>
         <div class="login-main">
           <form>
@@ -28,12 +24,8 @@
                   v-if="countDown === 0"
                   :class="{ phone_right: checkPhone }"
                   @click.prevent="getValidateCode"
-                >
-                  获取验证码
-                </button>
-                <button v-else class="phone_right">
-                  重新获取({{ countDown }}s)
-                </button>
+                >获取验证码</button>
+                <button v-else class="phone_right">重新获取({{ countDown }}s)</button>
               </section>
               <section class="login-info login-verification">
                 <input type="tel" placeholder="验证码" v-model="phoneCode" />
@@ -49,41 +41,17 @@
                 <input type="text" placeholder="用户名" v-model="userName" />
               </section>
               <section class="login-info login-verification">
-                <input
-                  type="password"
-                  placeholder="密码"
-                  v-show="!isShowPassword"
-                  v-model="password"
-                />
-                <input
-                  type="text"
-                  placeholder="密码"
-                  v-show="isShowPassword"
-                  v-model="password"
-                />
+                <input type="password" placeholder="密码" v-show="!isShowPassword" v-model="password" />
+                <input type="text" placeholder="密码" v-show="isShowPassword" v-model="password" />
                 <div class="switch-show">
-                  <span
-                    class="icon-eye-close-fill"
-                    v-show="!isShowPassword"
-                    @click="changePwdShow"
-                  >
-                  </span>
-                  <span
-                    class="icon-eye-open-fill"
-                    v-show="isShowPassword"
-                    @click="changePwdShow"
-                  >
-                  </span>
+                  <span class="icon-eye-close-fill" v-show="!isShowPassword" @click="changePwdShow"></span>
+                  <span class="icon-eye-open-fill" v-show="isShowPassword" @click="changePwdShow"></span>
                 </div>
               </section>
               <section class="login-info">
                 <input type="text" placeholder="验证码" v-model="captcha" />
 
-                <div
-                  class="captcha"
-                  v-html="captchaSrc"
-                  @click="refreshCaptcha"
-                ></div>
+                <div class="captcha" v-html="captchaSrc" @click="refreshCaptcha"></div>
               </section>
             </div>
             <button class="login-submit" @click.prevent="login">登录</button>

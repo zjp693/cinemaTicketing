@@ -100,7 +100,7 @@ import { ref } from "vue";
 import {
   getAdminCommentList,
   getAdminSearchComment,
-  getAdminDeleteComment,
+  getAdminDeleteComment, getAdminPassComment
 } from "@/api/comment";
 //region 定义的数据
 
@@ -140,6 +140,22 @@ const news = async () => {
 news();
 
 //endregion
+
+//region 通过电影评论
+const  handleEdit =async  (index,row)=>{
+ await getAdminPassComment(row.comment_id).then((res)=>{
+   console.log(res);
+   if (res.status==200){
+     ElMessage({
+       type: "success",
+       message: "通过电影评论成功",
+     });
+     news();
+   }
+
+ })
+}
+// endregion
 
 //region 搜索
 const searchs = async () => {

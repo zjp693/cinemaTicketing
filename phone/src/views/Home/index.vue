@@ -186,7 +186,7 @@ const images = [
   { src: require("@/assets/swiper/4.jpg"), movie_id: 4 },
 ];
 getMovieList().then((res) => {
-  // console.log(res);
+  console.log(res);
   if (res.status == 200) {
     res.data.forEach((value) => {
       if (new Date() - new Date(value.public_date) >= 0) {

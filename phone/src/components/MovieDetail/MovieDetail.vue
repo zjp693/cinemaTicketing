@@ -94,7 +94,9 @@
                 <!--                  formatCommentDate()-->
                 <!--                }}-->
                 <span class="comment-date">{{
-                  currentUserCommentDate[0].comment_date
+                  new Date(
+                    currentUserCommentDate[0].comment_date
+                  ).toLocaleDateString()
                 }}</span>
 
                 <span
@@ -289,6 +291,8 @@ const wishBtnHandle = () => {
       notWishMovie.value = !notWishMovie.value;
       Toast.success(res.message);
       // console.log(notWishMovie.value);
+      //重新获取数据
+      loadMovieDetail();
     }
   });
 };

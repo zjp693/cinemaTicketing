@@ -76,7 +76,8 @@ const props = defineProps({
 });
 
 setTimeout(() => {
-  console.log(props.searchName);
+  console.log(props);
+  console.log("进来了");
 }, 0);
 const router = useRouter();
 
