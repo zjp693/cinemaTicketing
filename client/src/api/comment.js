@@ -18,6 +18,18 @@ export function getAdminSearchComment(searchInput) {
     searchInput,
   });
 }
+
+/**
+ *  通过电影评论
+ * @param comment_id
+ * @returns {AxiosPromise}
+ */
+export function getAdminPassComment(comment_id) {
+  return requestWithToken("/comment/getAdminPassComment", "post", {
+    comment_id,
+  });
+}
+
 /**
  *  删除评论信息
  * @returns {AxiosPromise}
