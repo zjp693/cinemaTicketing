@@ -12,8 +12,10 @@
         >
           <template #append>
             <el-button @click="searchs" @keyup="searchs">
-              <el-icon><search /></el-icon> 搜索</el-button
-            >
+              <el-icon>
+                <search />
+              </el-icon>搜索
+            </el-button>
           </template>
         </el-input>
       </el-col>
@@ -26,66 +28,18 @@
           tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)
         "
       >
-        <el-table-column
-          label="订单 ID"
-          align="center"
-          width="80"
-          prop="order_id"
-        >
-        </el-table-column>
-        <el-table-column
-          label="用户名"
-          align="center"
-          show-overflow-tooltip
-          prop="user_name"
-        >
-        </el-table-column>
-        <el-table-column
-          label="电影名"
-          align="center"
-          show-overflow-tooltip
-          prop="name"
-        >
-        </el-table-column>
-        <el-table-column
-          label="影院名"
-          align="center"
-          show-overflow-tooltip
-          prop="cinema_name"
-        >
-        </el-table-column>
-        <el-table-column
-          label="票数"
-          width="80"
-          align="center"
-          prop="ticket_num"
-        >
-        </el-table-column>
-        <el-table-column
-          label="总价"
-          width="80"
-          align="center"
-          prop="ticket_total_price"
-        >
-        </el-table-column>
-        <el-table-column label="取票码" align="center" prop="phone_code">
-        </el-table-column>
-        <el-table-column
-          label="下单时间"
-          show-overflow-tooltip
-          align="center"
-          prop="order_date"
-        >
-        </el-table-column>
+        <el-table-column label="订单 ID" align="center" width="80" prop="order_id"></el-table-column>
+        <el-table-column label="用户名" align="center" show-overflow-tooltip prop="user_name"></el-table-column>
+        <el-table-column label="电影名" align="center" show-overflow-tooltip prop="name"></el-table-column>
+        <el-table-column label="影院名" align="center" show-overflow-tooltip prop="cinema_name"></el-table-column>
+        <el-table-column label="票数" width="80" align="center" prop="ticket_num"></el-table-column>
+        <el-table-column label="总价" width="80" align="center" prop="ticket_total_price"></el-table-column>
+        <el-table-column label="取票码" align="center" prop="phone_code"></el-table-column>
+        <el-table-column label="下单时间" show-overflow-tooltip align="center" prop="order_date"></el-table-column>
 
         <el-table-column align="center" width="100" label="操作">
           <template #default="scope">
-            <el-button
-              size="small"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-              >删除</el-button
-            >
+            <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
